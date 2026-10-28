@@ -23,7 +23,7 @@ In English, French, Spanish, German, Italian and Portuguese, following your TV's
 
 | | How | You need |
 |---|---|---|
-| **On the TV** | Install the app with [Downloader](https://www.aftvnews.com/downloader/), turn on USB debugging when it asks, say yes on the TV | Just the remote |
+| **On the TV** | In [Downloader](https://www.aftvnews.com/downloader/), open `github.com/pimado1/ownyourtv/releases/latest/download/OwnYourTV.apk`, install it, then follow the app | Just the remote |
 | **From a computer** | `python3 ownyourtv.py <tv ip>` | adb (Android platform-tools) |
 | **With an AI agent** | Paste [PROMPT.md](PROMPT.md) into Claude Code | Claude Code, adb |
 
