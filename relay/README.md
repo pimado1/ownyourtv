@@ -1,7 +1,7 @@
 # Reports relay
 
 When an owner presses **Share** on OwnYourTV's last screen, the TV sends this relay an anonymous report, and the
-relay files it on GitHub: one issue per TV model (`TV: <brand> <model>`, label `tv-report`), one comment per
+relay files it on GitHub: one issue per TV model (`TV: <brand> <model> (<device>)`, label `tv-report`), one comment per
 report, plus a `works`, `home-refused` or `home-blocked` label.
 
 What a report holds: the TV's brand and model names, Android version, OwnYourTV version, whether the TV is in

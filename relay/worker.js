@@ -57,7 +57,7 @@ export default {
     try { r = clean(JSON.parse(body)); } catch { r = null; }
     if (!r) return new Response("bad report", { status: 400 });
 
-    const title = `TV: ${r.brand} ${r.model}`;
+    const title = `TV: ${r.brand} ${r.model} (${r.device})`;
     const label = LABEL[r.home];
     try {
       const q = encodeURIComponent(`repo:${env.REPO} is:issue label:tv-report in:title "${title}"`);
