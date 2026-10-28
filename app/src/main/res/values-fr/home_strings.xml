@@ -119,7 +119,7 @@
     <string name="o_title">Bienvenue dans OwnYourTV</string>
     <string name="o_sub">Trois étapes et ta TV est à toi</string>
     <string name="o_home">Bouton Accueil</string>
-    <string name="o_home_d">Active « Bouton Accueil » dans Accessibilité, pour que Home ouvre OwnYourTV</string>
+    <string name="o_home_d">Active « Touches de la télécommande pour OwnYourTV » dans Accessibilité, pour que Home ouvre OwnYourTV</string>
     <string name="o_perm">Barre de son et Reprendre</string>
     <string name="o_perm_d">Autorise OwnYourTV à voir ta barre de son et tes séries en cours</string>
     <string name="o_city">Météo</string>

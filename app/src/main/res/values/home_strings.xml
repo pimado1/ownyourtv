@@ -119,7 +119,7 @@
     <string name="o_title">Welcome to OwnYourTV</string>
     <string name="o_sub">Three steps and your TV is yours</string>
     <string name="o_home">Home button</string>
-    <string name="o_home_d">Turn on “Bouton Accueil” in Accessibility, so Home opens OwnYourTV</string>
+    <string name="o_home_d">Turn on “OwnYourTV remote buttons” in Accessibility, so Home opens OwnYourTV</string>
     <string name="o_perm">Soundbar and Resume</string>
     <string name="o_perm_d">Allow OwnYourTV to see your soundbar and the shows you are watching</string>
     <string name="o_city">Weather</string>
