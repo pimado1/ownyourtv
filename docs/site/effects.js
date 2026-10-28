@@ -127,15 +127,4 @@
       el.addEventListener("pointerleave", function () { el.style.transform = ""; });
     });
   }
-
-  // Pick an app: the aurora takes its colour, as on the home screen.
-  document.querySelectorAll(".app").forEach(function (b) {
-    var pick = function () {
-      root.style.setProperty("--aurora", b.getAttribute("data-color"));
-      document.querySelectorAll(".app").forEach(function (o) { o.setAttribute("aria-pressed", o === b ? "true" : "false"); });
-    };
-    b.addEventListener("click", pick);
-    b.addEventListener("mouseenter", pick);
-    b.addEventListener("focus", pick);
-  });
 })();

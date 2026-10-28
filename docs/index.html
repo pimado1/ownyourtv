@@ -13,7 +13,7 @@
 <meta name="theme-color" content="#0b0d12">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect x='3' y='11' width='26' height='14' rx='4' fill='%23c6f432'/%3E%3Cpath d='M12 11V7.5a4 4 0 0 1 8 0' fill='none' stroke='%23f4f4f0' stroke-width='3' stroke-linecap='round'/%3E%3C/svg%3E">
 <link rel="apple-touch-icon" href="site/img/apple-touch-icon.png">
-<link rel="stylesheet" href="site/style.css">
+<link rel="stylesheet" href="site/style.css?v=202610290032">
 </head>
 <body>
 
@@ -83,37 +83,19 @@
 
   <section id="try" class="try">
     <div class="wrap">
-      <p class="eyebrow" data-i18n="try_eye">Try it here</p>
+      <p class="eyebrow" data-i18n="try_eye">On a real TV</p>
       <h2 data-i18n="try_h">The home screen, live</h2>
-      <p class="sub" data-i18n="try_sub">Move through the dock like with the remote: arrow keys, a swipe, or a click. The aurora takes the colour of the app you land on.</p>
+      <p class="sub" data-i18n="try_sub">Filmed on a real TV, moving through the dock with the remote. The aurora takes the colour of each app.</p>
       <div class="tvset">
-        <div class="screen" id="demo" tabindex="0" role="group" aria-roledescription="carousel" aria-label="OwnYourTV home screen demo" data-i18n-aria="demo_aria">
-          <canvas class="d-sky" aria-hidden="true"></canvas>
-          <div class="d-aurora" aria-hidden="true"></div>
-          <div class="d-hills" aria-hidden="true"></div>
-          <div class="d-top">
-            <div>
-              <div class="d-greet" id="d-greet"></div>
-              <div class="d-clock" id="d-clock">20:26</div>
-              <div class="d-date" id="d-date"></div>
-            </div>
-            <div class="d-side">
-              <div class="d-icons" aria-hidden="true"><i></i><i></i><i></i></div>
-              <div class="d-weather" aria-hidden="true">
-                <div class="d-now"><span class="d-moon"></span><b>12°</b><span data-i18n="d_clear">Clear sky</span></div>
-                <div class="d-days"><span>☁</span><span>☀</span><span>☁</span><span>☂</span><span>☀</span><span>☀</span></div>
-              </div>
-            </div>
-          </div>
-          <div class="d-deck" id="d-deck"></div>
-          <div class="d-label"><b id="d-name" aria-live="polite">Netflix</b><span data-i18n="d_ok">OK to open</span></div>
-          <div class="d-toast" id="d-toast" role="status"></div>
-          <button class="d-arrow d-prev" type="button" aria-label="Previous app" data-i18n-aria="d_prev">‹</button>
-          <button class="d-arrow d-next" type="button" aria-label="Next app" data-i18n-aria="d_next">›</button>
+        <div class="screen">
+          <video autoplay muted loop playsinline preload="metadata" poster="site/img/dock-poster.webp" aria-label="The OwnYourTV home screen on a real TV: the dock moves app by app and the aurora takes each app's colour." data-i18n-aria="video_aria">
+            <source src="site/img/dock.webm" type="video/webm">
+            <source src="site/img/dock.mp4" type="video/mp4">
+          </video>
         </div>
         <div class="stand" aria-hidden="true"></div>
       </div>
-      <p class="try-hint" data-i18n="try_hint">A web replica, for trying. On the TV it runs on the remote.</p>
+      <p class="try-hint" data-i18n="try_hint">A TCL C89B with Google TV 14, no editing.</p>
     </div>
   </section>
 
@@ -261,9 +243,8 @@
   </div>
 </footer>
 
-<script src="site/i18n.js"></script>
-<script src="site/effects.js"></script>
-<script src="site/demo.js"></script>
+<script src="site/i18n.js?v=202610290032"></script>
+<script src="site/effects.js?v=202610290032"></script>
 <script>
   // The TVs owners reported from the app: one GitHub issue per model, labelled with what happened.
   (function () {

@@ -76,13 +76,11 @@ var FR = {
   sf4_h: "Un bouton remet tout", sf4_p: "« Tout remettre » rallume chaque appli et ramène ton accueil d'origine.",
   q8: "Une mise à jour de la TV a remis les pubs",
   a8: "Ça arrive : les fabricants rallument leurs applis pendant les mises à jour. OwnYourTV le repère au démarrage suivant et propose de les recouper en un appui. Active le débogage USB quand elle le demande, puis recoupe-le à la fin.",
-  try_eye: "Essaie ici", try_h: "L'accueil, en vrai",
-  try_sub: "Déplace-toi dans le dock comme avec la télécommande : flèches du clavier, glissement du doigt ou clic. L'aurore prend la couleur de l'appli devant toi.",
-  try_hint: "Une réplique web, pour essayer. Sur la TV, tout se fait à la télécommande.",
-  demo_aria: "Démo de l'accueil OwnYourTV", d_prev: "Appli précédente", d_next: "Appli suivante",
-  d_clear: "Ciel dégagé", d_ok: "OK pour ouvrir", d_all: "Toutes les apps",
-  d_open: "%s s'ouvrirait ici", d_open_all: "Toutes tes applis s'ouvriraient ici",
-  g_morning: "BONJOUR", g_afternoon: "BON APRÈS-MIDI", g_evening: "BONSOIR", g_night: "BONNE NUIT", bar_cta: "Installer",
+  try_eye: "Sur une vraie TV", try_h: "L'accueil, en vrai",
+  try_sub: "Filmé sur une vraie TV, en parcourant le dock à la télécommande. L'aurore prend la couleur de chaque appli.",
+  try_hint: "Une TCL C89B sous Google TV 14, sans montage.",
+  video_aria: "L'accueil OwnYourTV sur une vraie TV : le dock défile appli par appli et l'aurore prend la couleur de chacune.",
+  bar_cta: "Installer",
   p_updated: "Mis à jour le 28 octobre 2026.", p_back: "← Retour à l'accueil"
 };
 
@@ -112,8 +110,6 @@ function apply(next) {
 }
 
 EN.copy = "Copy"; EN.copied = "Copied";
-EN.d_all = "All apps"; EN.d_open = "%s would open here"; EN.d_open_all = "All your apps would open here";
-EN.g_morning = "GOOD MORNING"; EN.g_afternoon = "GOOD AFTERNOON"; EN.g_evening = "GOOD EVENING"; EN.g_night = "GOOD NIGHT";
 EN.tag_ok = "Works"; EN.tag_no = "Home refused"; EN.tag_block = "Home blocked by the TV";
 EN.rep_none = "No TV shared yet.";
 EN.rep_err = "The list could not load. It is also <a href=\"https://github.com/pimado1/ownyourtv/issues?q=label%3Atv-report\">on GitHub</a>.";
