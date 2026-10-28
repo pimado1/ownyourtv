@@ -1,0 +1,324 @@
+{
+ "packages": {
+  "android.autoinstalls.config.google.gtvpai": {
+   "k": "tracking",
+   "r": true,
+   "v": [
+    "tcl-c89b-g08"
+   ]
+  },
+  "com.amazon.amazonvideo.livingroom": {
+   "k": "apps",
+   "r": false,
+   "v": [
+    "tcl-c89b-g08"
+   ]
+  },
+  "com.android.adservices.api": {
+   "k": "tracking",
+   "r": true,
+   "v": [
+    "tcl-c89b-g08"
+   ]
+  },
+  "com.android.dreams.basic": {
+   "k": "extras",
+   "r": false,
+   "v": []
+  },
+  "com.android.dynsystem": {
+   "k": "extras",
+   "r": false,
+   "v": []
+  },
+  "com.android.federatedcompute.services": {
+   "k": "tracking",
+   "r": true,
+   "v": [
+    "tcl-c89b-g08"
+   ]
+  },
+  "com.android.ondevicepersonalization.services": {
+   "k": "tracking",
+   "r": true,
+   "v": [
+    "tcl-c89b-g08"
+   ]
+  },
+  "com.android.printspooler": {
+   "k": "extras",
+   "r": false,
+   "v": []
+  },
+  "com.android.tv.feedbackconsent": {
+   "k": "tracking",
+   "r": true,
+   "v": [
+    "tcl-c89b-g08"
+   ]
+  },
+  "com.android.wallpaperbackup": {
+   "k": "extras",
+   "r": false,
+   "v": []
+  },
+  "com.apple.atve.androidtv.appletv": {
+   "k": "apps",
+   "r": false,
+   "v": [
+    "tcl-c89b-g08"
+   ]
+  },
+  "com.disney.disneyplus": {
+   "k": "apps",
+   "r": false,
+   "v": [
+    "tcl-c89b-g08"
+   ]
+  },
+  "com.google.android.apps.mediashell": {
+   "k": "apps",
+   "r": false,
+   "v": [
+    "tcl-c89b-g08"
+   ]
+  },
+  "com.google.android.apps.tv.dreamx": {
+   "k": "apps",
+   "r": false,
+   "v": [
+    "tcl-c89b-g08"
+   ]
+  },
+  "com.google.android.feedback": {
+   "k": "tracking",
+   "r": true,
+   "v": [
+    "tcl-c89b-g08"
+   ]
+  },
+  "com.google.android.katniss": {
+   "k": "apps",
+   "r": false,
+   "v": [
+    "tcl-c89b-g08"
+   ]
+  },
+  "com.google.android.partnersetup": {
+   "k": "tracking",
+   "r": true,
+   "v": [
+    "tcl-c89b-g08"
+   ]
+  },
+  "com.google.android.play.games": {
+   "k": "apps",
+   "r": false,
+   "v": [
+    "tcl-c89b-g08"
+   ]
+  },
+  "com.google.android.syncadapters.calendar": {
+   "k": "extras",
+   "r": false,
+   "v": []
+  },
+  "com.google.android.videos": {
+   "k": "apps",
+   "r": false,
+   "v": [
+    "tcl-c89b-g08"
+   ]
+  },
+  "com.google.android.youtube.tv": {
+   "k": "apps",
+   "r": false,
+   "v": [
+    "tcl-c89b-g08"
+   ]
+  },
+  "com.google.android.youtube.tvmusic": {
+   "k": "apps",
+   "r": false,
+   "v": [
+    "tcl-c89b-g08"
+   ]
+  },
+  "com.netflix.ninja": {
+   "k": "apps",
+   "r": false,
+   "v": [
+    "tcl-c89b-g08"
+   ]
+  },
+  "com.plexapp.android": {
+   "k": "apps",
+   "r": false,
+   "v": [
+    "tcl-c89b-g08"
+   ]
+  },
+  "com.spotify.tv.android": {
+   "k": "apps",
+   "r": false,
+   "v": [
+    "tcl-c89b-g08"
+   ]
+  },
+  "com.tcl.UpdatePeripheral": {
+   "k": "extras",
+   "r": true,
+   "v": [
+    "tcl-c89b-g08"
+   ]
+  },
+  "com.tcl.airplay2": {
+   "k": "apps",
+   "r": false,
+   "v": [
+    "tcl-c89b-g08"
+   ]
+  },
+  "com.tcl.channelplus": {
+   "k": "ads",
+   "r": true,
+   "v": [
+    "tcl-c89b-g08"
+   ]
+  },
+  "com.tcl.dashboard": {
+   "k": "ads",
+   "r": true,
+   "v": [
+    "tcl-c89b-g08"
+   ]
+  },
+  "com.tcl.esticker": {
+   "k": "ads",
+   "r": true,
+   "v": [
+    "tcl-c89b-g08"
+   ]
+  },
+  "com.tcl.exhibit": {
+   "k": "ads",
+   "r": true,
+   "v": [
+    "tcl-c89b-g08"
+   ]
+  },
+  "com.tcl.gamebar": {
+   "k": "apps",
+   "r": false,
+   "v": [
+    "tcl-c89b-g08"
+   ]
+  },
+  "com.tcl.guard": {
+   "k": "extras",
+   "r": true,
+   "v": [
+    "tcl-c89b-g08"
+   ]
+  },
+  "com.tcl.interactive": {
+   "k": "tracking",
+   "r": true,
+   "v": [
+    "tcl-c89b-g08"
+   ]
+  },
+  "com.tcl.logkit": {
+   "k": "tracking",
+   "r": true,
+   "v": [
+    "tcl-c89b-g08"
+   ]
+  },
+  "com.tcl.magiconnectfree": {
+   "k": "apps",
+   "r": false,
+   "v": [
+    "tcl-c89b-g08"
+   ]
+  },
+  "com.tcl.messagebox": {
+   "k": "ads",
+   "r": true,
+   "v": [
+    "tcl-c89b-g08"
+   ]
+  },
+  "com.tcl.miracast": {
+   "k": "apps",
+   "r": false,
+   "v": [
+    "tcl-c89b-g08"
+   ]
+  },
+  "com.tcl.ocean.instructions": {
+   "k": "extras",
+   "r": true,
+   "v": [
+    "tcl-c89b-g08"
+   ]
+  },
+  "com.tcl.partnercustomizer": {
+   "k": "ads",
+   "r": true,
+   "v": [
+    "tcl-c89b-g08"
+   ]
+  },
+  "com.tcl.repairguide": {
+   "k": "extras",
+   "r": true,
+   "v": [
+    "tcl-c89b-g08"
+   ]
+  },
+  "com.tcl.smartalexa": {
+   "k": "apps",
+   "r": false,
+   "v": [
+    "tcl-c89b-g08"
+   ]
+  },
+  "com.tcl.ttvs": {
+   "k": "tracking",
+   "r": true,
+   "v": [
+    "tcl-c89b-g08"
+   ]
+  },
+  "com.tcl.tv.tclhome_passive": {
+   "k": "ads",
+   "r": true,
+   "v": [
+    "tcl-c89b-g08"
+   ]
+  },
+  "com.tcl.usercenter": {
+   "k": "tracking",
+   "r": true,
+   "v": [
+    "tcl-c89b-g08"
+   ]
+  },
+  "com.tcl.waterfall.overseas": {
+   "k": "ads",
+   "r": true,
+   "v": [
+    "tcl-c89b-g08"
+   ]
+  },
+  "tv.twitch.android.app": {
+   "k": "apps",
+   "r": false,
+   "v": [
+    "tcl-c89b-g08"
+   ]
+  }
+ },
+ "version": 1
+}

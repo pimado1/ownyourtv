@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Horizon home. English here, French in values-fr; other languages fall back to English. -->
+<resources>
+    <string name="h_weather">Weather</string>
+    <string name="h_weather_upper">WEATHER</string>
+    <string name="h_pick_city_hint">Pick your city: Settings ▸ Weather</string>
+    <string name="h_city_field_hint">Your city, e.g. London</string>
+    <string name="h_search">Search</string>
+    <string name="h_searching" formatted="true">Searching for “%1$s”…</string>
+    <string name="h_no_city">No city found, try another spelling.</string>
+    <string name="h_choose_city">Pick your city:</string>
+    <string name="h_weather_set" formatted="true">Weather: %1$s</string>
+    <string name="h_city_title">Weather city</string>
+    <string name="h_city_current" formatted="true">Currently: %1$s</string>
+    <string name="h_city_none">No city chosen</string>
+    <string name="h_sources">Sources</string>
+    <string name="h_sources_upper">SOURCES</string>
+    <string name="h_wifi">Wi-Fi</string>
+    <string name="h_settings">Settings</string>
+    <string name="h_mode">MODE</string>
+    <string name="h_tonight">Tonight</string>
+    <string name="h_tonight_on">Tonight · on</string>
+    <string name="h_tonight_off">Tonight mode off</string>
+    <string name="h_tonight_done" formatted="true">Tonight: apps closed · %1$s</string>
+    <string name="h_tonight_speaker" formatted="true">%1$s connected</string>
+    <string name="h_tonight_ambience">cinema mood</string>
+    <string name="h_soundbar">SOUNDBAR</string>
+    <string name="h_not_connected">Not connected</string>
+    <string name="h_cast_ready">Ready to cast</string>
+    <string name="h_none">None</string>
+    <string name="h_close_apps">Close apps</string>
+    <string name="h_closing">Closing…</string>
+    <string name="h_apps_closed" formatted="true">%1$d apps closed · %2$d MB freed</string>
+    <string name="h_memory" formatted="true">MEMORY · %1$s / %2$s GB</string>
+    <string name="h_resume">Resume</string>
+    <string name="h_minutes" formatted="true">%1$d min</string>
+    <string name="h_all_apps">All apps</string>
+    <string name="h_ok_open">OK to open</string>
+    <string name="h_ok_all">OK to see your other apps</string>
+    <string name="h_good_night">Good night</string>
+    <string name="h_good_morning">Good morning</string>
+    <string name="h_good_afternoon">Good afternoon</string>
+    <string name="h_good_evening">Good evening</string>
+    <string name="h_next_shower" formatted="true">Next shooting stars: %1$s</string>
+    <string name="h_real_sky">REAL SKY</string>
+    <string name="h_real_sky_at" formatted="true">REAL SKY · %1$s</string>
+    <string name="h_feels" formatted="true">feels like %1$d°</string>
+    <string name="h_move">MOVE</string>
+    <string name="h_left">◀  Left</string>
+    <string name="h_right">Right  ▶</string>
+    <string name="h_moved_left" formatted="true">%1$s moved left</string>
+    <string name="h_moved_right" formatted="true">%1$s moved right</string>
+    <string name="h_dock">DOCK</string>
+    <string name="h_remove">Remove</string>
+    <string name="h_removed" formatted="true">%1$s removed from the dock</string>
+    <string name="h_theme_dock">Default dock</string>
+    <string name="h_theme_dock_back">Default dock restored</string>
+    <string name="h_dock_menu_hint">Add more apps from “All apps” by holding OK</string>
+    <string name="h_add_dock">Add to dock</string>
+    <string name="h_added" formatted="true">%1$s added to the dock</string>
+    <string name="h_app">APP</string>
+    <string name="h_uninstall">Uninstall</string>
+    <string name="h_app_info">App info</string>
+    <string name="h_system_app">System app: it can\'t be uninstalled, but “App info” can turn it off</string>
+    <string name="h_uninstall_confirm">Uninstalling always asks for confirmation</string>
+    <string name="h_apps_count" formatted="true">%1$d apps · hold OK for the dock or to uninstall</string>
+    <string name="h_input">INPUT</string>
+    <string name="h_no_inputs">No input found</string>
+    <string name="h_inputs_count" formatted="true">%1$d inputs</string>
+    <string name="h_cannot_open">Can\'t open this app</string>
+    <string name="h_quick_settings">Quick settings</string>
+    <string name="h_panel_hint">← → FOR VOLUME · OK TO OPEN</string>
+    <string name="h_picture">Picture</string>
+    <string name="h_picture_d">Picture mode, backlight</string>
+    <string name="h_sound">Sound</string>
+    <string name="h_sound_d">Sound mode, Dolby Atmos, output</string>
+    <string name="h_city_is" formatted="true">City: %1$s · change</string>
+    <string name="h_city_pick">Choose the city</string>
+    <string name="h_sources_d">HDMI, Fire TV, TV</string>
+    <string name="h_wifi_d">Network and internet</string>
+    <string name="h_bluetooth">Bluetooth</string>
+    <string name="h_bluetooth_d">Soundbar, headphones, controller</string>
+    <string name="h_saver">Screensaver</string>
+    <string name="h_saver_d">Start the code rain now</string>
+    <string name="h_all_settings">All settings</string>
+    <string name="h_all_settings_d">The TV\'s full menu</string>
+    <string name="h_volume">Volume</string>
+    <string name="h_muted">Muted</string>
+    <string name="h_episode" formatted="true">S%1$s · E%2$s</string>
+    <string name="h_tonight_night" formatted="true">%1$s tonight</string>
+    <string name="h_shower_on" formatted="true">%1$s on %2$s</string>
+    <string name="w_clear">Clear sky</string>
+    <string name="w_few">Mostly clear</string>
+    <string name="w_partly">Partly cloudy</string>
+    <string name="w_cloudy">Cloudy</string>
+    <string name="w_fog">Fog</string>
+    <string name="w_drizzle">Drizzle</string>
+    <string name="w_rain">Rain</string>
+    <string name="w_snow">Snow</string>
+    <string name="w_showers">Showers</string>
+    <string name="w_snow_showers">Snow showers</string>
+    <string name="w_storm">Thunderstorm</string>
+    <string name="m_new">New moon</string>
+    <string name="m_wax_cres">Waxing crescent</string>
+    <string name="m_first">First quarter</string>
+    <string name="m_wax_gib">Waxing gibbous</string>
+    <string name="m_full">Full moon</string>
+    <string name="m_wan_gib">Waning gibbous</string>
+    <string name="m_last">Last quarter</string>
+    <string name="m_wan_cres">Waning crescent</string>
+    <string name="s_quadrantids">Quadrantids</string>
+    <string name="s_lyrids">Lyrids</string>
+    <string name="s_eta">Eta Aquariids</string>
+    <string name="s_perseids">Perseids</string>
+    <string name="s_draconids">Draconids</string>
+    <string name="s_orionids">Orionids</string>
+    <string name="s_leonids">Leonids</string>
+    <string name="s_geminids">Geminids</string>
+    <string name="o_title">Welcome to Horizon</string>
+    <string name="o_sub">Three steps and your TV is yours</string>
+    <string name="o_home">Home button</string>
+    <string name="o_home_d">Turn on “Bouton Accueil” in Accessibility, so Home opens Horizon</string>
+    <string name="o_perm">Soundbar and Resume</string>
+    <string name="o_perm_d">Allow Horizon to see your soundbar and the shows you are watching</string>
+    <string name="o_city">Weather</string>
+    <string name="o_city_d">Pick your city</string>
+    <string name="o_done">Done</string>
+    <string name="o_start">Start</string>
+    <string name="o_ok">✓</string>
+    <string name="o_home_blocked">If the switch stays off, Android 13+ blocks apps installed from a file: install Horizon from a computer instead (horizon/install.sh).</string>
+</resources>
