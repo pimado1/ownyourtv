@@ -9,6 +9,8 @@ that is yours. From the remote, no computer needed.</p>
 
 <p align="center"><b>Install from your TV: in the Downloader app, type <code>8225348</code></b></p>
 
+<p align="center"><img src="docs/screenshots/before-after.jpg" alt="Before: the stock Google TV home with a full-screen ad and recommendations. After: the OwnYourTV home with a night sky, the weather and the apps as a 3D deck." width="100%"></p>
+
 ## What it does
 
 - **Ads**: promos, sponsored rows and store demos the maker put on your TV.
@@ -20,6 +22,19 @@ that is yours. From the remote, no computer needed.</p>
 - **One button puts everything back.** Apps are switched off, never deleted.
 
 In English, French, Spanish, German, Italian and Portuguese, following your TV's language.
+
+## Screenshots
+
+Taken on a TCL C89B, Google TV 14.
+
+| | |
+|---|---|
+| <img src="docs/screenshots/home-netflix.jpg" alt="The OwnYourTV home with Netflix selected: the aurora turns red, and Continue watching shows the episode in progress"> | <img src="docs/screenshots/quick-settings.jpg" alt="Quick settings on the remote's gear button: volume, picture, sound, weather, sources, Wi-Fi, Bluetooth"> |
+| **The aurora takes the colour of the app you pick**, and Continue watching picks up where you left off | **Quick settings** on the remote's gear button |
+| <img src="docs/screenshots/all-apps.jpg" alt="All apps, hold OK to add to the dock or uninstall"> | <img src="docs/screenshots/app-dashboard.jpg" alt="OwnYourTV's dashboard: home screen, dock, ads, tracking, clutter, preinstalled apps, and Optimise in one click"> |
+| **All apps**: hold OK to add one to the dock or uninstall it | **Your TV**: everything on one screen, and **Optimise in one click** |
+| <img src="docs/screenshots/app-ads.jpg" alt="The Ads list: each maker ad app with a tick box"> | <img src="docs/screenshots/app-dock.jpg" alt="Your dock: reorder, remove and add apps"> |
+| **App by app**, with a tick box each; untick one to switch it back on | **Your dock**: pick the home screen's apps and their order |
 
 ## Three ways to install
 
