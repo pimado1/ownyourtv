@@ -81,4 +81,14 @@
     <string name="l_verified">auf einem Testgerät geprüft</string>
     <string name="l_detected">am Namen erkannt: du entscheidest</string>
     <string name="h_home_back">Ursprünglicher Start</string>
+    <string name="dk_title">Dein Dock</string>
+    <string name="dk_empty">Noch keine App</string>
+    <string name="dk_reset">Standard</string>
+    <string name="dk_hint">Die Apps auf deinem Startbildschirm, in dieser Reihenfolge. ↑ ↓ zum Sortieren, ✕ zum Entfernen, rechts auswählen zum Hinzufügen.</string>
+    <string name="dk_in">In deinem Dock: %d</string>
+    <string name="dk_add">App hinzufügen</string>
+    <plurals name="dk_count">
+        <item quantity="one">%d App</item>
+        <item quantity="other">%d Apps</item>
+    </plurals>
 </resources>

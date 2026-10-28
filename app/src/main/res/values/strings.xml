@@ -82,4 +82,14 @@
     <string name="l_verified">checked on a test TV</string>
     <string name="l_detected">spotted by its name: your call</string>
     <string name="h_home_back">Original home</string>
+    <string name="dk_title">Your dock</string>
+    <string name="dk_empty">No app yet</string>
+    <string name="dk_reset">Reset</string>
+    <string name="dk_hint">The apps on your home screen, in this order. Use ↑ ↓ to reorder, ✕ to remove, and pick from the right to add.</string>
+    <string name="dk_in">In your dock: %d</string>
+    <string name="dk_add">Add an app</string>
+    <plurals name="dk_count">
+        <item quantity="one">%d app</item>
+        <item quantity="other">%d apps</item>
+    </plurals>
 </resources>

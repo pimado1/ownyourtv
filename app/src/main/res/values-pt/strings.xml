@@ -81,4 +81,14 @@
     <string name="l_verified">verificado numa TV de teste</string>
     <string name="l_detected">identificado pelo nome: você decide</string>
     <string name="h_home_back">Tela inicial original</string>
+    <string name="dk_title">Seu dock</string>
+    <string name="dk_empty">Nenhum app ainda</string>
+    <string name="dk_reset">Padrão</string>
+    <string name="dk_hint">Os apps da sua tela inicial, nesta ordem. ↑ ↓ para ordenar, ✕ para tirar, e escolha à direita para adicionar.</string>
+    <string name="dk_in">No seu dock: %d</string>
+    <string name="dk_add">Adicionar um app</string>
+    <plurals name="dk_count">
+        <item quantity="one">%d app</item>
+        <item quantity="other">%d apps</item>
+    </plurals>
 </resources>

@@ -61,7 +61,7 @@ class MainActivity : Activity() {
     @Deprecated("TV back key")
     override fun onBackPressed() {
         when (screen) {
-            "list", "restore" -> home()
+            "list", "restore", "dock" -> home()
             "progress" -> Unit
             else -> super.onBackPressed()
         }
@@ -224,7 +224,14 @@ class MainActivity : Activity() {
             when { ourHome && wantHome -> getString(R.string.h_home_on); wantHome -> getString(R.string.h_home_will); ourHome -> getString(R.string.h_home_back); else -> getString(R.string.h_home_skip) },
             if (wantHome) 1f else 0f, wide = true, check = wantHome)
         homeCard.setOnClickListener { wantHome = !wantHome; home() }
-        grid.addView(homeCard, ui.lp(MATCH_PARENT))
+        val dock = app.ownyourtv.home.Dock.current(this)
+        val dockCard = card(getString(R.string.dk_title), dock.take(4).joinToString(", ") { it.label }.ifEmpty { getString(R.string.dk_empty) },
+            resources.getQuantityString(R.plurals.dk_count, dock.size, dock.size), if (dock.isEmpty()) 0f else 1f)
+        dockCard.setOnClickListener { dockScreen() }
+        val top = ui.row(12).apply { clipChildren = false }
+        top.addView(homeCard, ui.lp(0, WRAP_CONTENT, 1.25f))
+        top.addView(dockCard, ui.lp(0, WRAP_CONTENT, 1f))
+        grid.addView(top, ui.lp(MATCH_PARENT))
         val kinds = listOf(Kind.ADS to (R.string.h_ads to R.string.h_ads_b), Kind.TRACKING to (R.string.h_track to R.string.h_track_b),
             Kind.EXTRAS to (R.string.h_extras to R.string.h_extras_b), Kind.APPS to (R.string.h_apps to R.string.h_apps_b))
         var first: View = homeCard
@@ -313,6 +320,74 @@ class MainActivity : Activity() {
         val scroll = ScrollView(this).apply { isFillViewport = false; clipToPadding = false; clipChildren = false; setPadding(ui.dp(22), ui.dp(12), ui.dp(22), ui.dp(24)); addView(rows) }
         p.addView(scroll, ui.lp(MATCH_PARENT, 0, 1f).apply { topMargin = ui.dp(14) })
         show("list", p, rows.getChildAt(0) ?: done)
+    }
+
+    // The home screen's dock: the apps in it, in order, and every app that can go in it.
+    private fun dockScreen(focusPkg: String? = null) {
+        val chosen = app.ownyourtv.home.Dock.current(this).toMutableList()
+        val all = app.ownyourtv.home.Dock.available(this)
+        val p = page()
+        val head = ui.row(18)
+        head.addView(ui.ellipsize(ui.title(getString(R.string.dk_title), 32)), ui.lp(0, WRAP_CONTENT, 1f))
+        head.addView(ui.button(getString(R.string.dk_reset), false) { app.ownyourtv.home.Dock.reset(this); dockScreen() })
+        val done = ui.button(getString(R.string.l_done), true) { home() }
+        head.addView(done)
+        p.addView(head, ui.lp(MATCH_PARENT))
+        p.addView(ui.text(getString(R.string.dk_hint), 15, Ui.GREY), ui.lp().apply { topMargin = ui.dp(8) })
+
+        fun save(list: List<app.ownyourtv.home.Dock.Entry>, focus: String?) {
+            app.ownyourtv.home.Dock.save(this, list.map { it.pkg }); dockScreen(focus)
+        }
+        fun art(e: app.ownyourtv.home.Dock.Entry) = android.widget.ImageView(this).apply {
+            setImageDrawable(e.art); scaleType = android.widget.ImageView.ScaleType.FIT_CENTER
+            background = ui.rounded(Color.argb(20, 255, 255, 255), 8)
+        }
+        var focusView: View? = null
+        val cols = ui.row(28).apply { gravity = Gravity.TOP; clipChildren = false }
+
+        val left = ui.col(10).apply { clipChildren = false }
+        left.addView(ui.chip(getString(R.string.dk_in, chosen.size)))
+        chosen.forEachIndexed { i, e ->
+            val r = ui.row(12).apply { setPadding(ui.dp(14), ui.dp(10), ui.dp(10), ui.dp(10)); background = ui.rounded(Ui.CARD, 14) }
+            r.addView(ui.text("${i + 1}", 18, Ui.LIME, ui.display), ui.lp(ui.dp(26)))
+            r.addView(art(e), ui.lp(ui.dp(64), ui.dp(36)))
+            r.addView(ui.ellipsize(ui.text(e.label, 17, bold = true)), ui.lp(0, WRAP_CONTENT, 1f))
+            fun small(t: String, enabled: Boolean, f: () -> Unit) = ui.text(t, 18, if (enabled) Ui.PAPER else Ui.DIM, bold = true).apply {
+                gravity = Gravity.CENTER
+                if (enabled) { ui.focusable(this, Color.argb(18, 255, 255, 255), Color.argb(50, 255, 255, 255), 10); setOnClickListener { f() } }
+            }
+            r.addView(small("↑", i > 0) { chosen.add(i - 1, chosen.removeAt(i)); save(chosen, "${e.pkg}#3") }, ui.lp(ui.dp(44), ui.dp(40)))
+            r.addView(small("↓", i < chosen.size - 1) { chosen.add(i + 1, chosen.removeAt(i)); save(chosen, "${e.pkg}#4") }, ui.lp(ui.dp(44), ui.dp(40)))
+            val remove = small("✕", true) { chosen.removeAt(i); save(chosen, (chosen.getOrNull(i) ?: chosen.lastOrNull())?.let { "${it.pkg}#5" }) }
+            r.addView(remove, ui.lp(ui.dp(44), ui.dp(40)))
+            if (focusPkg?.substringBefore('#') == e.pkg) {
+                val want = r.getChildAt(focusPkg!!.substringAfter('#', "5").toIntOrNull() ?: 5)
+                focusView = if (want?.isFocusable == true) want else remove
+            }
+            left.addView(r, ui.lp(MATCH_PARENT))
+        }
+        if (chosen.isEmpty()) left.addView(ui.text(getString(R.string.dk_empty), 15, Ui.GREY))
+
+        val right = ui.col(10).apply { clipChildren = false }
+        right.addView(ui.chip(getString(R.string.dk_add)))
+        val inDock = chosen.map { it.pkg }.toSet()
+        val left2 = all.filter { it.pkg !in inDock }
+        left2.forEachIndexed { k, e ->
+            val r = ui.row(12).apply { setPadding(ui.dp(14), ui.dp(10), ui.dp(14), ui.dp(10)) }
+            ui.focusable(r, radius = 14)
+            r.addView(art(e), ui.lp(ui.dp(64), ui.dp(36)))
+            r.addView(ui.ellipsize(ui.text(e.label, 17)), ui.lp(0, WRAP_CONTENT, 1f))
+            r.addView(ui.text("+", 22, Ui.LIME, ui.display))
+            val next = (left2.getOrNull(k + 1) ?: left2.getOrNull(k - 1))?.pkg
+            r.setOnClickListener { if (chosen.size < 12) { chosen.add(e); save(chosen, next?.let { "add:$it" }) } }
+            if (focusPkg == "add:${e.pkg}") focusView = r
+            right.addView(r, ui.lp(MATCH_PARENT))
+        }
+        fun scroll(v: View) = ScrollView(this).apply { clipToPadding = false; clipChildren = false; setPadding(ui.dp(10), ui.dp(10), ui.dp(10), ui.dp(24)); addView(v) }
+        cols.addView(scroll(left), ui.lp(0, MATCH_PARENT, 1f))
+        cols.addView(scroll(right), ui.lp(0, MATCH_PARENT, 1f))
+        p.addView(cols, ui.lp(MATCH_PARENT, 0, 1f).apply { topMargin = ui.dp(12) })
+        show("dock", p, focusView ?: (left.getChildAt(1) as? LinearLayout)?.getChildAt(5) ?: right.getChildAt(1) ?: done)
     }
 
     private fun kindName(k: Kind) = getString(when (k) {

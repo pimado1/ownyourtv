@@ -81,4 +81,14 @@
     <string name="l_verified">verificata su una TV di prova</string>
     <string name="l_detected">riconosciuta dal nome: decidi tu</string>
     <string name="h_home_back">Home originale</string>
+    <string name="dk_title">Il tuo dock</string>
+    <string name="dk_empty">Ancora nessuna app</string>
+    <string name="dk_reset">Predefinito</string>
+    <string name="dk_hint">Le app della tua home, in quest\'ordine. ↑ ↓ per riordinare, ✕ per togliere, e scegli a destra per aggiungere.</string>
+    <string name="dk_in">Nel tuo dock: %d</string>
+    <string name="dk_add">Aggiungi un\'app</string>
+    <plurals name="dk_count">
+        <item quantity="one">%d app</item>
+        <item quantity="other">%d app</item>
+    </plurals>
 </resources>

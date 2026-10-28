@@ -767,7 +767,11 @@ public class HomeActivity extends Activity {
         return out;
     }
 
+    /** The dock as last loaded, so a dock changed in OwnYourTV's own screen is picked up on the way back. */
+    private List<String> dockLoaded = new java.util.ArrayList<>();
+
     private void loadDock() {
+        dockLoaded = new java.util.ArrayList<>(HomeData.dock(this));
         dock.clear();
         Set<String> hidden = HomeData.hidden(this);
         for (String pkg : HomeData.dock(this)) {
@@ -1428,7 +1432,7 @@ public class HomeActivity extends Activity {
         super.onResume();
         scene.setRunning(true);
         if (needsOnboarding() && (popup == null || !popup.isShowing())) main.post(this::showOnboarding);
-        if (refreshAfterUninstall) {
+        if (refreshAfterUninstall || !HomeData.dock(this).equals(dockLoaded)) {
             // An uninstalled dock app is skipped by loadDock; one still installed comes back unchanged.
             refreshAfterUninstall = false;
             loadDock();
