@@ -3,7 +3,7 @@
     <string name="tagline">Tu l\'as payée. Elle est à toi.</string>
     <string name="w_lead">Sans pub, sans pistage, avec un accueil qui te ressemble. Tout à la télécommande, sans ordinateur.</string>
     <string name="w_p1">Coupe les pubs et le pistage installés d\'usine</string>
-    <string name="w_p2">Installe Horizon, un écran d\'accueil vivant</string>
+    <string name="w_p2">Un écran d\'accueil vivant, fait pour ta TV</string>
     <string name="w_p3">Change d\'avis quand tu veux : un bouton remet tout comme avant</string>
     <string name="start">Commencer</string>
     <string name="d_title">Débloque ta TV en 3 étapes</string>
@@ -33,7 +33,7 @@
     <string name="h_extras_b">Restes inutiles sur une TV</string>
     <string name="h_apps">Applis préinstallées</string>
     <string name="h_apps_b">Garde celles que tu utilises, coupe les autres</string>
-    <string name="h_home">Accueil Horizon</string>
+    <string name="h_home">Accueil OwnYourTV</string>
     <string name="h_home_b">Un ciel de nuit vivant, tes applis en cartes 3D</string>
     <string name="h_home_on">Déjà ton accueil</string>
     <string name="h_home_will">Sera installé</string>
@@ -53,10 +53,10 @@
     <string name="p_title">On reprend ta TV…</string>
     <string name="p_off">Couper %s</string>
     <string name="p_on">Rallumer %s</string>
-    <string name="p_install">Installer Horizon</string>
-    <string name="p_perms">Donner ses permissions à Horizon</string>
+    <string name="p_install">Installer OwnYourTV</string>
+    <string name="p_perms">Donner ses permissions à OwnYourTV</string>
     <string name="p_keys">Touches de la télécommande</string>
-    <string name="p_home">Mettre Horizon en accueil</string>
+    <string name="p_home">En faire ton accueil</string>
     <string name="p_restore_home">Remettre l\'accueil d\'origine</string>
     <string name="f_title">Ta TV est à toi.</string>
     <string name="f_sum">%1$d applis coupées · %2$d rallumées</string>
@@ -76,8 +76,8 @@
     <string name="k_apps">Appli préinstallée</string>
     <string name="h_changes">changements</string>
     <string name="h_apply_short">Appliquer</string>
-    <string name="key_service_name">Touches de la télécommande pour Horizon</string>
-    <string name="key_service_desc">Permet à la roue crantée d\'ouvrir les réglages rapides d\'Horizon et garde Horizon comme accueil.</string>
+    <string name="key_service_name">Touches de la télécommande pour OwnYourTV</string>
+    <string name="key_service_desc">Permet à la roue crantée d\'ouvrir les réglages rapides d\'OwnYourTV et garde OwnYourTV comme accueil.</string>
     <string name="l_verified">vérifiée sur une TV de test</string>
     <string name="l_detected">repérée à son nom : à toi de voir</string>
     <string name="h_home_back">Accueil d\'origine</string>

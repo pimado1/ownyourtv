@@ -5,14 +5,14 @@ import android.content.SharedPreferences;
 
 import org.json.JSONObject;
 
-/** Horizon's settings, kept on the TV: an optional JSON overlay (dock, hidden apps, weather place) and the sky. */
+/** the home screen's settings, kept on the TV: an optional JSON overlay (dock, hidden apps, weather place) and the sky. */
 final class HomePrefs {
     private static final String PREFS = "horizon_settings";
 
     private HomePrefs() {
     }
 
-    /** The overlay OwnYourTV may write for Horizon, or null when there is none. */
+    /** The overlay OwnYourTV may write for the home screen, or null when there is none. */
     static JSONObject overlay(Context ctx) {
         String raw = ctx.getSharedPreferences(PREFS, Context.MODE_PRIVATE).getString("overlay", null);
         if (raw == null) return null;

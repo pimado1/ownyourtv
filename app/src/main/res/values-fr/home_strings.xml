@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Horizon home. English here, French in values-fr; other languages fall back to English. -->
+<!-- The home screen. English here, French in values-fr; other languages fall back to English. -->
 <resources>
     <string name="h_weather">Météo</string>
     <string name="h_weather_upper">MÉTÉO</string>
@@ -116,16 +116,16 @@
     <string name="s_orionids">Orionides</string>
     <string name="s_leonids">Léonides</string>
     <string name="s_geminids">Géminides</string>
-    <string name="o_title">Bienvenue dans Horizon</string>
+    <string name="o_title">Bienvenue dans OwnYourTV</string>
     <string name="o_sub">Trois étapes et ta TV est à toi</string>
     <string name="o_home">Bouton Accueil</string>
-    <string name="o_home_d">Active « Bouton Accueil » dans Accessibilité, pour que Home ouvre Horizon</string>
+    <string name="o_home_d">Active « Bouton Accueil » dans Accessibilité, pour que Home ouvre OwnYourTV</string>
     <string name="o_perm">Barre de son et Reprendre</string>
-    <string name="o_perm_d">Autorise Horizon à voir ta barre de son et tes séries en cours</string>
+    <string name="o_perm_d">Autorise OwnYourTV à voir ta barre de son et tes séries en cours</string>
     <string name="o_city">Météo</string>
     <string name="o_city_d">Choisis ta ville</string>
     <string name="o_done">Terminé</string>
     <string name="o_start">Commencer</string>
     <string name="o_ok">✓</string>
-    <string name="o_home_blocked">Si l\'interrupteur reste éteint, Android 13+ bloque les apps installées depuis un fichier : installe alors Horizon depuis un ordinateur (horizon/install.sh).</string>
+    <string name="o_home_blocked">Si l\'interrupteur reste éteint, Android 13+ bloque les apps installées depuis un fichier : lance alors OwnYourTV depuis un ordinateur (ownyourtv.py).</string>
 </resources>

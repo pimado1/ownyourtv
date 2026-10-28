@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Horizon home. English here, French in values-fr; other languages fall back to English. -->
+<!-- The home screen. English here, French in values-fr; other languages fall back to English. -->
 <resources>
     <string name="h_weather">Weather</string>
     <string name="h_weather_upper">WEATHER</string>
@@ -116,16 +116,16 @@
     <string name="s_orionids">Orionids</string>
     <string name="s_leonids">Leonids</string>
     <string name="s_geminids">Geminids</string>
-    <string name="o_title">Welcome to Horizon</string>
+    <string name="o_title">Welcome to OwnYourTV</string>
     <string name="o_sub">Three steps and your TV is yours</string>
     <string name="o_home">Home button</string>
-    <string name="o_home_d">Turn on “Bouton Accueil” in Accessibility, so Home opens Horizon</string>
+    <string name="o_home_d">Turn on “Bouton Accueil” in Accessibility, so Home opens OwnYourTV</string>
     <string name="o_perm">Soundbar and Resume</string>
-    <string name="o_perm_d">Allow Horizon to see your soundbar and the shows you are watching</string>
+    <string name="o_perm_d">Allow OwnYourTV to see your soundbar and the shows you are watching</string>
     <string name="o_city">Weather</string>
     <string name="o_city_d">Pick your city</string>
     <string name="o_done">Done</string>
     <string name="o_start">Start</string>
     <string name="o_ok">✓</string>
-    <string name="o_home_blocked">If the switch stays off, Android 13+ blocks apps installed from a file: install Horizon from a computer instead (horizon/install.sh).</string>
+    <string name="o_home_blocked">If the switch stays off, Android 13+ blocks apps installed from a file: run OwnYourTV from a computer instead (ownyourtv.py).</string>
 </resources>

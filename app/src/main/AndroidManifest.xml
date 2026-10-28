@@ -4,9 +4,9 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
-    <!-- Reads the names of the apps it offers to switch off, and lists apps for Horizon. Never sent anywhere. -->
+    <!-- Reads the names of the apps it offers to switch off, and lists apps for the home screen. Never sent anywhere. -->
     <uses-permission android:name="android.permission.QUERY_ALL_PACKAGES" tools:ignore="QueryAllPackagesPermission" />
-    <!-- Horizon: "Close the apps", the soundbar pill, Continue watching, uninstalling from the app menu. -->
+    <!-- the home screen: "Close the apps", the soundbar pill, Continue watching, uninstalling from the app menu. -->
     <uses-permission android:name="android.permission.KILL_BACKGROUND_PROCESSES" />
     <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
     <uses-permission android:name="android.permission.BLUETOOTH" android:maxSdkVersion="30" />
@@ -34,9 +34,9 @@
             </intent-filter>
         </activity>
 
-        <!-- Horizon, the home screen OwnYourTV makes the TV's Home. -->
+        <!-- the home screen, the home screen OwnYourTV makes the TV's Home. -->
         <activity
-            android:name=".home.HorizonActivity"
+            android:name=".home.HomeActivity"
             android:enabled="false"
             android:exported="true"
             android:launchMode="singleTask"
@@ -53,7 +53,7 @@
         </activity>
 
         <activity
-            android:name=".home.HorizonPanelActivity"
+            android:name=".home.QuickPanelActivity"
             android:exported="false"
             android:excludeFromRecents="true"
             android:noHistory="true"

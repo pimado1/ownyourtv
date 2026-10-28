@@ -28,10 +28,10 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 /**
- * Horizon's quick settings: a glass panel on the right, over Home or over whatever app is playing. Volume is set
+ * the home screen's quick settings: a glass panel on the right, over Home or over whatever app is playing. Volume is set
  * here; picture and sound modes open the TV's own screens (TCL does not let an app change them).
  */
-public class HorizonPanelActivity extends Activity {
+public class QuickPanelActivity extends Activity {
     private static final PathInterpolator SPRING = new PathInterpolator(.2f, .85f, .25f, 1f);
     static final String EXTRA_INPUTS = "show_inputs";
 
@@ -42,8 +42,8 @@ public class HorizonPanelActivity extends Activity {
     private View volumeFill;
     private LinearLayout panel;
 
-    /** Whether Horizon is the Home the TV opens. */
-    static boolean horizonIsHome(Context ctx) {
+    /** Whether the home screen is the Home the TV opens. */
+    static boolean isOurHome(Context ctx) {
         android.content.pm.ResolveInfo r = ctx.getPackageManager().resolveActivity(
                 new android.content.Intent(android.content.Intent.ACTION_MAIN).addCategory(android.content.Intent.CATEGORY_HOME),
                 PackageManager.MATCH_DEFAULT_ONLY);
@@ -127,22 +127,22 @@ public class HorizonPanelActivity extends Activity {
 
         View volume = volumeRow();
         panel.addView(volume, rowParams());
-        addRow(HorizonGlyph.SPARKLE, getString(R.string.h_picture), getString(R.string.h_picture_d),
+        addRow(Glyph.SPARKLE, getString(R.string.h_picture), getString(R.string.h_picture_d),
                 () -> open(new Intent(Settings.ACTION_DISPLAY_SETTINGS)));
-        addRow(HorizonGlyph.SOUNDBAR, getString(R.string.h_sound), getString(R.string.h_sound_d),
+        addRow(Glyph.SOUNDBAR, getString(R.string.h_sound), getString(R.string.h_sound_d),
                 () -> open(new Intent("com.android.tv.action.VIEW_SOUND_SETTINGS")));
         Weather w = Weather.from(this);
-        addRow(HorizonGlyph.SPARKLE, getString(R.string.h_weather), w != null && !w.place.isEmpty() ? getString(R.string.h_city_is, w.place)
-                : getString(R.string.h_city_pick), () -> open(new Intent(this, HorizonActivity.class)
-                .putExtra(HorizonActivity.EXTRA_PICK_CITY, true)));
-        addRow(HorizonGlyph.TV, getString(R.string.h_sources), getString(R.string.h_sources_d),
-                () -> open(new Intent(this, HorizonActivity.class).putExtra(EXTRA_INPUTS, true)));
-        addRow(HorizonGlyph.CAST, getString(R.string.h_wifi), getString(R.string.h_wifi_d), () -> open(new Intent(Settings.ACTION_WIFI_SETTINGS)));
-        addRow(HorizonGlyph.SOUNDBAR, getString(R.string.h_bluetooth), getString(R.string.h_bluetooth_d),
+        addRow(Glyph.SPARKLE, getString(R.string.h_weather), w != null && !w.place.isEmpty() ? getString(R.string.h_city_is, w.place)
+                : getString(R.string.h_city_pick), () -> open(new Intent(this, HomeActivity.class)
+                .putExtra(HomeActivity.EXTRA_PICK_CITY, true)));
+        addRow(Glyph.TV, getString(R.string.h_sources), getString(R.string.h_sources_d),
+                () -> open(new Intent(this, HomeActivity.class).putExtra(EXTRA_INPUTS, true)));
+        addRow(Glyph.CAST, getString(R.string.h_wifi), getString(R.string.h_wifi_d), () -> open(new Intent(Settings.ACTION_WIFI_SETTINGS)));
+        addRow(Glyph.SOUNDBAR, getString(R.string.h_bluetooth), getString(R.string.h_bluetooth_d),
                 () -> open(new Intent(Settings.ACTION_BLUETOOTH_SETTINGS)));
-        addRow(HorizonGlyph.MOON, getString(R.string.h_saver), getString(R.string.h_saver_d),
+        addRow(Glyph.MOON, getString(R.string.h_saver), getString(R.string.h_saver_d),
                 () -> open(new Intent("com.google.android.pano.action.SLEEP")));
-        addRow(HorizonGlyph.GRID, getString(R.string.h_all_settings), getString(R.string.h_all_settings_d),
+        addRow(Glyph.GRID, getString(R.string.h_all_settings), getString(R.string.h_all_settings_d),
                 () -> open(new Intent(Settings.ACTION_SETTINGS)));
 
         FrameLayout.LayoutParams pl = new FrameLayout.LayoutParams(px(600), -2, Gravity.END | Gravity.CENTER_VERTICAL);
@@ -170,7 +170,7 @@ public class HorizonPanelActivity extends Activity {
         r.setFocusable(true);
         r.setClickable(true);
         r.setDefaultFocusHighlightEnabled(false);
-        HorizonGlyph g = new HorizonGlyph(this, glyph);
+        Glyph g = new Glyph(this, glyph);
         r.addView(g, new LinearLayout.LayoutParams(px(30), px(30)));
         LinearLayout col = new LinearLayout(this);
         col.setOrientation(LinearLayout.VERTICAL);
@@ -195,7 +195,7 @@ public class HorizonPanelActivity extends Activity {
     }
 
     private View volumeRow() {
-        LinearLayout r = row(HorizonGlyph.SOUNDBAR, getString(R.string.h_volume), "");
+        LinearLayout r = row(Glyph.SOUNDBAR, getString(R.string.h_volume), "");
         LinearLayout col = (LinearLayout) r.getChildAt(1);
         col.removeViewAt(1);
         FrameLayout track = new FrameLayout(this);

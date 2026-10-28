@@ -28,8 +28,8 @@ class MainActivity : Activity() {
 
     private var tv: Tv? = null
     private var items: List<Item> = emptyList()
-    private var horizonHome = false
-    private var wantHorizon = true
+    private var ourHome = false
+    private var wantHome = true
     private var screen = ""
     private var poll: Runnable? = null
     private var still = false
@@ -200,13 +200,13 @@ class MainActivity : Activity() {
         val installed = pkgs("")
         val disabled = pkgs("-d")
         items = Catalog.forTv(this, installed, disabled)
-        horizonHome = homeNow() == HOME_ACTIVITY
-        wantHorizon = true
+        ourHome = homeNow() == HOME_ACTIVITY
+        wantHome = true
     }
 
     private fun homeNow() = tv!!.sh("cmd package resolve-activity --brief -a android.intent.action.MAIN -c android.intent.category.HOME").out.lines().last().trim()
 
-    private fun changes() = items.count { it.changes } + if (wantHorizon != horizonHome) 1 else 0
+    private fun changes() = items.count { it.changes } + if (wantHome != ourHome) 1 else 0
 
     // 4. The dashboard: every choice in one screen.
     private fun home() {
@@ -219,14 +219,14 @@ class MainActivity : Activity() {
 
         val body = ui.row(28).apply { gravity = Gravity.TOP; clipChildren = false }
         val grid = ui.col(12).apply { clipChildren = false }
-        val horizon = card(getString(R.string.h_home), getString(R.string.h_home_b),
-            when { horizonHome && wantHorizon -> getString(R.string.h_home_on); wantHorizon -> getString(R.string.h_home_will); horizonHome -> getString(R.string.h_home_back); else -> getString(R.string.h_home_skip) },
-            if (wantHorizon) 1f else 0f, wide = true, check = wantHorizon)
-        horizon.setOnClickListener { wantHorizon = !wantHorizon; home() }
-        grid.addView(horizon, ui.lp(MATCH_PARENT))
+        val homeCard = card(getString(R.string.h_home), getString(R.string.h_home_b),
+            when { ourHome && wantHome -> getString(R.string.h_home_on); wantHome -> getString(R.string.h_home_will); ourHome -> getString(R.string.h_home_back); else -> getString(R.string.h_home_skip) },
+            if (wantHome) 1f else 0f, wide = true, check = wantHome)
+        homeCard.setOnClickListener { wantHome = !wantHome; home() }
+        grid.addView(homeCard, ui.lp(MATCH_PARENT))
         val kinds = listOf(Kind.ADS to (R.string.h_ads to R.string.h_ads_b), Kind.TRACKING to (R.string.h_track to R.string.h_track_b),
             Kind.EXTRAS to (R.string.h_extras to R.string.h_extras_b), Kind.APPS to (R.string.h_apps to R.string.h_apps_b))
-        var first: View = horizon
+        var first: View = homeCard
         kinds.chunked(2).forEach { pair ->
             val r = ui.row(12).apply { clipChildren = false }
             pair.forEach { (k, s) ->
@@ -333,9 +333,9 @@ class MainActivity : Activity() {
                 t.sh("pm enable ${item.pkg}").out.contains("enabled").also { if (it) forget(OURS, item.pkg) }
             }
         }
-        if (wantHorizon && !horizonHome) {
+        if (wantHome && !ourHome) {
             steps += Step(getString(R.string.p_perms)) {
-                setHorizon(true)
+                setOurHome(true)
                 t.sh("pm grant $packageName android.permission.BLUETOOTH_CONNECT 2>/dev/null; pm grant $packageName android.permission.READ_TV_LISTINGS 2>/dev/null; " +
                     "cmd appops set $packageName ACCESS_RESTRICTED_SETTINGS allow 2>/dev/null; cmd appops set $packageName AUTO_START allow 2>/dev/null; true").ok
             }
@@ -345,27 +345,27 @@ class MainActivity : Activity() {
                 t.sh("settings put secure enabled_accessibility_services $next; settings put secure accessibility_enabled 1").ok
             }
             steps += Step(getString(R.string.p_home)) { makeHome(t) }
-        } else if (!wantHorizon && horizonHome) {
+        } else if (!wantHome && ourHome) {
             steps += Step(getString(R.string.p_restore_home)) { undoHome(t) }
         }
         return steps
     }
 
-    /** Horizon's Home entry stays off until the owner picks Horizon, so the TV never asks which home to use. */
-    private fun setHorizon(on: Boolean) {
-        packageManager.setComponentEnabledSetting(android.content.ComponentName(this, app.ownyourtv.home.HorizonActivity::class.java),
+    /** the home screen's Home entry stays off until the owner picks the home screen, so the TV never asks which home to use. */
+    private fun setOurHome(on: Boolean) {
+        packageManager.setComponentEnabledSetting(android.content.ComponentName(this, app.ownyourtv.home.HomeActivity::class.java),
             if (on) android.content.pm.PackageManager.COMPONENT_ENABLED_STATE_ENABLED else android.content.pm.PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
             android.content.pm.PackageManager.DONT_KILL_APP)
         getSharedPreferences(app.ownyourtv.home.HomeKeyService.PREFS, MODE_PRIVATE).edit()
             .putBoolean(app.ownyourtv.home.HomeKeyService.KEY_CHOSEN, on).apply()
-        // OwnYourTV has already done what Horizon's own first-run steps would ask for.
+        // OwnYourTV has already done what the home screen's own first-run steps would ask for.
         if (on) getSharedPreferences("horizon_onboarding", MODE_PRIVATE).edit().putBoolean("done", true).apply()
     }
 
-    /** The original home comes back: what OwnYourTV switched off for Horizon comes back on, Horizon steps aside. */
+    /** The original home comes back: what OwnYourTV switched off for the home screen comes back on, the home screen steps aside. */
     private fun undoHome(t: Tv): Boolean {
         prefs.getStringSet(OURS_HOME, emptySet())!!.forEach { if (t.sh("pm enable $it").out.contains("enabled")) forget(OURS_HOME, it) }
-        setHorizon(false)
+        setOurHome(false)
         val s = t.sh("settings get secure enabled_accessibility_services").out.trim()
         val next = s.split(':').filter { it.isNotBlank() && it != "null" && it != KEY_SERVICE }.joinToString(":")
         t.sh(if (next.isEmpty()) "settings delete secure enabled_accessibility_services" else "settings put secure enabled_accessibility_services $next")
@@ -453,7 +453,7 @@ class MainActivity : Activity() {
                     t.sh("pm enable $pkg").out.contains("enabled").also { if (it) { forget(OURS, pkg); forget(OURS_HOME, pkg) } }
                 }
             }
-            if (horizonHome || prefs.getStringSet(OURS_HOME, emptySet())!!.isNotEmpty()) steps += Step(getString(R.string.p_restore_home)) { undoHome(t) }
+            if (ourHome || prefs.getStringSet(OURS_HOME, emptySet())!!.isNotEmpty()) steps += Step(getString(R.string.p_restore_home)) { undoHome(t) }
             items.forEach { if (it.pkg in prefs.getStringSet(OURS, emptySet())!!) it.want = false }
             runSteps(steps)
         })
@@ -462,7 +462,7 @@ class MainActivity : Activity() {
     }
 
     companion object {
-        const val HOME_ACTIVITY = "app.ownyourtv/.home.HorizonActivity"
+        const val HOME_ACTIVITY = "app.ownyourtv/.home.HomeActivity"
         const val KEY_SERVICE = "app.ownyourtv/.home.HomeKeyService"
         const val OURS = "ours"
         const val OURS_HOME = "ours_home"

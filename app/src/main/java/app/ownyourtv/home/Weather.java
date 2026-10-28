@@ -124,7 +124,7 @@ final class Weather {
         }
     }
 
-    /** One reading for the Horizon home: now, today's sun times, and the next two days. */
+    /** One reading for the the home screen home: now, today's sun times, and the next two days. */
     static final class Reading {
         long temp;
         long feels;

@@ -12,8 +12,8 @@ import android.graphics.Shader;
 import android.os.SystemClock;
 import android.view.View;
 
-/** The Horizon home's line icons, drawn in a 24 x 24 box scaled to the view, plus the memory ring and the sun arc. */
-final class HorizonGlyph extends View {
+/** The the home screen home's line icons, drawn in a 24 x 24 box scaled to the view, plus the memory ring and the sun arc. */
+final class Glyph extends View {
     static final int MOON = 1, SOUNDBAR = 2, CAST = 3, TV = 4, PLAY = 5, CHECK = 6, GRID = 7, FOG = 8, RAIN = 9,
             SUN = 10, NIGHT = 11, SNOW = 12, CLOUD = 13, RING = 14, ARC = 15, SPARKLE = 16, REFRESH = 17;
 
@@ -25,7 +25,7 @@ final class HorizonGlyph extends View {
     private float value;
     private boolean animated;
 
-    HorizonGlyph(Context ctx, int kind) {
+    Glyph(Context ctx, int kind) {
         super(ctx);
         this.kind = kind;
         p.setStrokeCap(Paint.Cap.ROUND);

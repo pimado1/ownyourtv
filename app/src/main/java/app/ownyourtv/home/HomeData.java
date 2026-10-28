@@ -34,13 +34,13 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
-/** What the Horizon home shows besides the weather; every read here is cheap or runs off the main thread. */
-final class HorizonData {
-    private static final String TAG = "HorizonData";
+/** What the the home screen home shows besides the weather; every read here is cheap or runs off the main thread. */
+final class HomeData {
+    private static final String TAG = "HomeData";
     static final String[] DEFAULT_DOCK = {"com.google.android.youtube.tv", "com.netflix.ninja",
             "com.amazon.amazonvideo.livingroom"};
 
-    private HorizonData() {
+    private HomeData() {
     }
 
     static final class App {

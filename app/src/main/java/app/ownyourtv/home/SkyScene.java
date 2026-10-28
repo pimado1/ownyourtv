@@ -21,12 +21,12 @@ import java.util.Calendar;
 import java.util.Random;
 
 /**
- * The Horizon home's living backdrop: sky by the time of day, twinkling stars, sparkles, shooting stars, an aurora,
+ * The the home screen home's living backdrop: sky by the time of day, twinkling stars, sparkles, shooting stars, an aurora,
  * three hills in parallax, the current weather (fog, rain, snow) and a pool of light in the
  * focused app's colour. Everything is drawn from shaders and paths, no bitmaps and no blur, at about 30 frames a
  * second while Home is on screen; {@link #setRunning} stops the loop when Home is paused.
  */
-final class HorizonScene extends View {
+final class SkyScene extends View {
     static final int WEATHER_CLEAR = 0, WEATHER_FOG = 1, WEATHER_RAIN = 2, WEATHER_SNOW = 3;
     private static final long FRAME_MS = 33;
     private static final float W = 1920f, H = 1080f;
@@ -60,7 +60,7 @@ final class HorizonScene extends View {
     private int[] hills = new int[3];
     private float auroraLevel = 1f, starLevel = 1f;
 
-    HorizonScene(Context ctx, Typeface text) {
+    SkyScene(Context ctx, Typeface text) {
         super(ctx);
         Random r = new Random(7);
         for (int i = 0; i < starX.length; i++) {

@@ -4,7 +4,7 @@
     <string name="tagline">You paid for it. Own it.</string>
     <string name="w_lead">No ads, no tracking, a home screen that is yours. Everything from the remote, no computer.</string>
     <string name="w_p1">Switch off the ads and tracking your TV came with</string>
-    <string name="w_p2">Install Horizon, a living home screen</string>
+    <string name="w_p2">A living home screen, made for your TV</string>
     <string name="w_p3">Change your mind any time: one button puts everything back</string>
     <string name="start">Get started</string>
     <string name="d_title">Unlock your TV in 3 steps</string>
@@ -34,7 +34,7 @@
     <string name="h_extras_b">Leftovers nobody uses on a TV</string>
     <string name="h_apps">Preinstalled apps</string>
     <string name="h_apps_b">Keep the ones you use, switch off the rest</string>
-    <string name="h_home">Horizon home screen</string>
+    <string name="h_home">OwnYourTV home screen</string>
     <string name="h_home_b">A living night sky, your apps as a 3D deck</string>
     <string name="h_home_on">Already your home</string>
     <string name="h_home_will">Will be installed</string>
@@ -54,10 +54,10 @@
     <string name="p_title">Taking your TV back…</string>
     <string name="p_off">Switch off %s</string>
     <string name="p_on">Switch on %s</string>
-    <string name="p_install">Install Horizon</string>
-    <string name="p_perms">Give Horizon its permissions</string>
+    <string name="p_install">Install OwnYourTV</string>
+    <string name="p_perms">Give OwnYourTV its permissions</string>
     <string name="p_keys">Remote buttons</string>
-    <string name="p_home">Make Horizon the home</string>
+    <string name="p_home">Make it your home screen</string>
     <string name="p_restore_home">Bring the original home back</string>
     <string name="f_title">Your TV is yours.</string>
     <string name="f_sum">%1$d apps off · %2$d back on</string>
@@ -77,8 +77,8 @@
     <string name="k_apps">Preinstalled app</string>
     <string name="h_changes">changes</string>
     <string name="h_apply_short">Apply</string>
-    <string name="key_service_name">Horizon remote buttons</string>
-    <string name="key_service_desc">Lets the remote\'s gear button open Horizon\'s quick settings and keeps Horizon as your home.</string>
+    <string name="key_service_name">OwnYourTV remote buttons</string>
+    <string name="key_service_desc">Lets the remote\'s gear button open OwnYourTV\'s quick settings and keeps OwnYourTV as your home.</string>
     <string name="l_verified">checked on a test TV</string>
     <string name="l_detected">spotted by its name: your call</string>
     <string name="h_home_back">Original home</string>

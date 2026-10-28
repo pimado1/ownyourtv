@@ -3,7 +3,7 @@
     <string name="tagline">Du hast ihn bezahlt. Er gehört dir.</string>
     <string name="w_lead">Keine Werbung, kein Tracking, ein Startbildschirm nach deinem Geschmack. Alles mit der Fernbedienung, ohne Computer.</string>
     <string name="w_p1">Schalte die vorinstallierte Werbung und das Tracking ab</string>
-    <string name="w_p2">Installiere Horizon, einen lebendigen Startbildschirm</string>
+    <string name="w_p2">Ein lebendiger Startbildschirm für deinen Fernseher</string>
     <string name="w_p3">Jederzeit umentscheiden: Ein Knopf stellt alles wieder her</string>
     <string name="start">Los geht\'s</string>
     <string name="d_title">Entsperre deinen Fernseher in 3 Schritten</string>
@@ -33,7 +33,7 @@
     <string name="h_extras_b">Reste, die auf einem Fernseher niemand nutzt</string>
     <string name="h_apps">Vorinstallierte Apps</string>
     <string name="h_apps_b">Behalte, was du nutzt, schalte den Rest ab</string>
-    <string name="h_home">Horizon-Startbildschirm</string>
+    <string name="h_home">OwnYourTV-Startbildschirm</string>
     <string name="h_home_b">Ein lebendiger Nachthimmel, deine Apps als 3D-Karten</string>
     <string name="h_home_on">Schon dein Start</string>
     <string name="h_home_will">Wird installiert</string>
@@ -53,10 +53,10 @@
     <string name="p_title">Wir holen deinen Fernseher zurück…</string>
     <string name="p_off">%s ausschalten</string>
     <string name="p_on">%s einschalten</string>
-    <string name="p_install">Horizon installieren</string>
-    <string name="p_perms">Horizon seine Berechtigungen geben</string>
+    <string name="p_install">OwnYourTV installieren</string>
+    <string name="p_perms">OwnYourTV seine Berechtigungen geben</string>
     <string name="p_keys">Tasten der Fernbedienung</string>
-    <string name="p_home">Horizon als Start festlegen</string>
+    <string name="p_home">Als Start festlegen</string>
     <string name="p_restore_home">Ursprünglichen Start zurückholen</string>
     <string name="f_title">Dein Fernseher gehört dir.</string>
     <string name="f_sum">%1$d Apps aus · %2$d wieder an</string>
@@ -76,8 +76,8 @@
     <string name="k_apps">Vorinstallierte App</string>
     <string name="h_changes">Änderungen</string>
     <string name="h_apply_short">Anwenden</string>
-    <string name="key_service_name">Fernbedienungstasten für Horizon</string>
-    <string name="key_service_desc">Lässt die Zahnradtaste die Schnelleinstellungen von Horizon öffnen und behält Horizon als Start.</string>
+    <string name="key_service_name">Fernbedienungstasten für OwnYourTV</string>
+    <string name="key_service_desc">Lässt die Zahnradtaste die Schnelleinstellungen von OwnYourTV öffnen und behält OwnYourTV als Start.</string>
     <string name="l_verified">auf einem Testgerät geprüft</string>
     <string name="l_detected">am Namen erkannt: du entscheidest</string>
     <string name="h_home_back">Ursprünglicher Start</string>

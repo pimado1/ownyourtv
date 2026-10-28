@@ -60,11 +60,11 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * "Horizon": a home screen drawn as a living landscape. The dock apps float in a curved 3D carousel that lights the
+ * "the home screen": a home screen drawn as a living landscape. The dock apps float in a curved 3D carousel that lights the
  * scene in their colour; the other apps open in a popup. Laid out on the 1920 x 1080 grid of its design mockup and
  * scaled to the screen, so every position below is in mockup pixels ({@link #px}).
  */
-public class HorizonActivity extends Activity {
+public class HomeActivity extends Activity {
     private static final float CARD_W = 400, CARD_H = 225, CARD_GAP = 410;
     private static final PathInterpolator SPRING = new PathInterpolator(.2f, .85f, .25f, 1f);
     private static final int ALL_APPS_COLOR = 0xFF9B8CFF;
@@ -75,21 +75,21 @@ public class HorizonActivity extends Activity {
     private float u;
     private Typeface display, displayLight, text, textBold;
 
-    private HorizonScene scene;
+    private SkyScene scene;
     private TextView chipTitle;
     private TextView greeting, clock, dateLine, moonLine, chipLine, focusName, focusHint, toast;
     private View accentDot;
     private FrameLayout carousel;
     private final List<View> cards = new ArrayList<>();
-    private final List<HorizonData.App> dock = new ArrayList<>();
+    private final List<HomeData.App> dock = new ArrayList<>();
     private int focus;
     private LinearLayout resumePill;
     private TextView resumeTitle, resumeLeft;
     private View resumeBar;
-    private final Map<String, HorizonData.Resume> resumes = new HashMap<>();
+    private final Map<String, HomeData.Resume> resumes = new HashMap<>();
 
     private View weatherCard;
-    private HorizonGlyph weatherIcon, sunArc;
+    private Glyph weatherIcon, sunArc;
     private TextView weatherTemp, weatherSky, weatherPlace, weatherRise, weatherSet;
     private Weather weather;
     private Weather.Reading reading;
@@ -97,7 +97,7 @@ public class HorizonActivity extends Activity {
 
     private LinearLayout soirPill, speakerPill, castPill, sourcesPill, memPill;
     private TextView soirLabel, speakerValue, sourcesValue, memTitle, memAction;
-    private HorizonGlyph memRing;
+    private Glyph memRing;
     private boolean soir;
     private String liveTvPkg = "";
     private String name = "";
@@ -122,7 +122,7 @@ public class HorizonActivity extends Activity {
         }
     };
 
-    /** am start -n app.ownyourtv/.home.HorizonActivity --ez make_default true: kept for scripts that start the Home. */
+    /** am start -n app.ownyourtv/.home.HomeActivity --ez make_default true: kept for scripts that start the Home. */
     static final String EXTRA_MAKE_DEFAULT = "make_default";
 
     /** Holding OK on Réglages opens OwnYourTV itself, where the original home can be brought back. */
@@ -156,7 +156,7 @@ public class HorizonActivity extends Activity {
         refreshInputs();
         if (weather != null) refreshWeather();
         else showNoCity();
-        if (getIntent().getBooleanExtra(HorizonPanelActivity.EXTRA_INPUTS, false)) main.post(this::showInputs);
+        if (getIntent().getBooleanExtra(QuickPanelActivity.EXTRA_INPUTS, false)) main.post(this::showInputs);
         if (getIntent().getBooleanExtra(EXTRA_PICK_CITY, false)) main.post(this::showCityPicker);
     }
 
@@ -190,7 +190,7 @@ public class HorizonActivity extends Activity {
     }
 
     private View onboardingStep(int n, int title, int detail, boolean done, View.OnClickListener click) {
-        LinearLayout p = pill(done ? HorizonGlyph.CHECK : HorizonGlyph.SPARKLE,
+        LinearLayout p = pill(done ? Glyph.CHECK : Glyph.SPARKLE,
                 n + " · " + getString(title).toUpperCase(Locale.getDefault()), true);
         ((TextView) p.getTag()).setText(getString(detail));
         p.setOnClickListener(click);
@@ -218,7 +218,7 @@ public class HorizonActivity extends Activity {
                 new String[]{"android.permission.BLUETOOTH_CONNECT", "android.permission.READ_TV_LISTINGS"},
                 PERMISSIONS_REQUEST)));
         steps.addView(onboardingStep(3, R.string.o_city, R.string.o_city_d, city, v -> showCityPicker()));
-        LinearLayout finish = pill(HorizonGlyph.CHECK, "", true);
+        LinearLayout finish = pill(Glyph.CHECK, "", true);
         ((View) ((ViewGroup) ((TextView) finish.getTag()).getParent()).getChildAt(0)).setVisibility(View.GONE);
         ((TextView) finish.getTag()).setText(getString(helper && perms && city ? R.string.o_done : R.string.o_start));
         finish.setOnClickListener(v -> {
@@ -269,7 +269,7 @@ public class HorizonActivity extends Activity {
         fieldBg.addState(new int[]{}, round(0x1AFFFFFF, 28, 1, 0x40FFFFFF));
         field.setBackground(fieldBg);
         search.addView(field, new LinearLayout.LayoutParams(px(820), px(72)));
-        LinearLayout go = pill(HorizonGlyph.SPARKLE, getString(R.string.h_weather_upper), true);
+        LinearLayout go = pill(Glyph.SPARKLE, getString(R.string.h_weather_upper), true);
         ((TextView) go.getTag()).setText(getString(R.string.h_search));
         search.addView(go, new LinearLayout.LayoutParams(-2, px(72)));
         body.addView(search, wrap());
@@ -289,7 +289,7 @@ public class HorizonActivity extends Activity {
                             : getString(R.string.h_choose_city));
                     View first = null;
                     for (Weather.Place p : found) {
-                        LinearLayout r = pill(HorizonGlyph.SPARKLE, p.detail.toUpperCase(Locale.getDefault()), true);
+                        LinearLayout r = pill(Glyph.SPARKLE, p.detail.toUpperCase(Locale.getDefault()), true);
                         ((TextView) r.getTag()).setText(p.name);
                         r.setOnClickListener(v -> {
                             Weather.save(this, p.latitude, p.longitude, p.name);
@@ -341,7 +341,7 @@ public class HorizonActivity extends Activity {
     private View build() {
         FrameLayout root = new FrameLayout(this);
         root.setClipChildren(false);
-        scene = new HorizonScene(this, text);
+        scene = new SkyScene(this, text);
         // Drawn at half resolution into its own layer and scaled up: soft gradients look the same, a quarter of the
         // pixels to fill on every frame.
         int sw = getResources().getDisplayMetrics().widthPixels, sh = getResources().getDisplayMetrics().heightPixels;
@@ -375,7 +375,7 @@ public class HorizonActivity extends Activity {
         top.addView(iconButton(R.drawable.ic_input, Color.WHITE, getString(R.string.h_sources), v -> showInputs()));
         top.addView(iconButton(R.drawable.ic_wifi, 0xFF5CF2A8, getString(R.string.h_wifi), v -> open(new Intent(Settings.ACTION_WIFI_SETTINGS))));
         View settings = iconButton(R.drawable.ic_settings, Color.WHITE, getString(R.string.h_settings),
-                v -> open(new Intent(this, HorizonPanelActivity.class)));
+                v -> open(new Intent(this, QuickPanelActivity.class)));
         settings.setOnLongClickListener(v -> {
             backToClassic();
             return true;
@@ -531,7 +531,7 @@ public class HorizonActivity extends Activity {
         LinearLayout chip = row(14);
         chip.setPadding(px(14), px(12), px(20), px(12));
         chip.setBackground(round(0x6B0C0E22, 22, 1, 0x24FFFFFF));
-        HorizonGlyph g = new HorizonGlyph(this, HorizonGlyph.SPARKLE);
+        Glyph g = new Glyph(this, Glyph.SPARKLE);
         g.setColor(0xFFC9D6FF);
         chip.addView(g, new LinearLayout.LayoutParams(px(30), px(30)));
         LinearLayout col = column(2);
@@ -550,7 +550,7 @@ public class HorizonActivity extends Activity {
         card.setPadding(px(24), px(20), px(24), px(20));
         card.setBackground(round(0x750C0E22, 28, 1, 0x24FFFFFF));
         LinearLayout top = row(16);
-        weatherIcon = new HorizonGlyph(this, HorizonGlyph.CLOUD);
+        weatherIcon = new Glyph(this, Glyph.CLOUD);
         weatherIcon.setColor(0xFFDDE3FF);
         weatherIcon.setAnimated(true);
         top.addView(weatherIcon, new LinearLayout.LayoutParams(px(52), px(52)));
@@ -567,7 +567,7 @@ public class HorizonActivity extends Activity {
         LinearLayout sun = row(10);
         weatherRise = label(text, 15, 0xB8FFFFFF);
         weatherSet = label(text, 15, 0xB8FFFFFF);
-        sunArc = new HorizonGlyph(this, HorizonGlyph.ARC);
+        sunArc = new Glyph(this, Glyph.ARC);
         sun.addView(weatherRise, wrap());
         sun.addView(sunArc, new LinearLayout.LayoutParams(0, px(30), 1));
         sun.addView(weatherSet, wrap());
@@ -581,7 +581,7 @@ public class HorizonActivity extends Activity {
             day.setGravity(Gravity.CENTER_HORIZONTAL);
             dayName[i] = label(textBold, 14, 0xB3FFFFFF);
             dayName[i].setLetterSpacing(0.08f);
-            dayIcon[i] = new HorizonGlyph(this, HorizonGlyph.CLOUD);
+            dayIcon[i] = new Glyph(this, Glyph.CLOUD);
             dayIcon[i].setColor(0xFFDDE3FF);
             dayTemp[i] = label(text, 15, Color.WHITE);
             day.addView(dayName[i], wrap());
@@ -596,13 +596,13 @@ public class HorizonActivity extends Activity {
 
     private final TextView[] dayName = new TextView[Weather.Reading.DAYS];
     private final TextView[] dayTemp = new TextView[Weather.Reading.DAYS];
-    private final HorizonGlyph[] dayIcon = new HorizonGlyph[Weather.Reading.DAYS];
+    private final Glyph[] dayIcon = new Glyph[Weather.Reading.DAYS];
 
     private static int glyphFor(int code, boolean day) {
-        if (Weather.isFog(code)) return HorizonGlyph.FOG;
-        if (Weather.isRain(code)) return HorizonGlyph.RAIN;
-        if (Weather.isSnow(code)) return HorizonGlyph.SNOW;
-        return code <= 1 ? (day ? HorizonGlyph.SUN : HorizonGlyph.NIGHT) : HorizonGlyph.CLOUD;
+        if (Weather.isFog(code)) return Glyph.FOG;
+        if (Weather.isRain(code)) return Glyph.RAIN;
+        if (Weather.isSnow(code)) return Glyph.SNOW;
+        return code <= 1 ? (day ? Glyph.SUN : Glyph.NIGHT) : Glyph.CLOUD;
     }
 
     private static LinearLayout.LayoutParams wrap() {
@@ -618,7 +618,7 @@ public class HorizonActivity extends Activity {
         p.setClickable(focusable);
         p.setDefaultFocusHighlightEnabled(false);
         if (focusable) focusScale(p);
-        HorizonGlyph g = new HorizonGlyph(this, glyph);
+        Glyph g = new Glyph(this, glyph);
         p.addView(g, new LinearLayout.LayoutParams(px(28), px(28)));
         LinearLayout col = column(2);
         TextView t = label(textBold, 15, 0xADFFFFFF);
@@ -637,19 +637,19 @@ public class HorizonActivity extends Activity {
         bar.setClipChildren(false);
         LinearLayout left = row(16);
         left.setClipChildren(false);
-        soirPill = pill(HorizonGlyph.MOON, getString(R.string.h_mode), true);
+        soirPill = pill(Glyph.MOON, getString(R.string.h_mode), true);
         soirLabel = (TextView) soirPill.getTag();
         soirLabel.setTypeface(textBold);
         soirLabel.setText(getString(R.string.h_tonight));
         soirPill.setOnClickListener(v -> toggleSoir());
-        speakerPill = pill(HorizonGlyph.SOUNDBAR, getString(R.string.h_soundbar), true);
+        speakerPill = pill(Glyph.SOUNDBAR, getString(R.string.h_soundbar), true);
         speakerValue = (TextView) speakerPill.getTag();
         speakerValue.setText("…");
         speakerPill.setOnClickListener(v -> open(new Intent(Settings.ACTION_BLUETOOTH_SETTINGS)));
-        castPill = pill(HorizonGlyph.CAST, "CHROMECAST", false);
+        castPill = pill(Glyph.CAST, "CHROMECAST", false);
         ((TextView) castPill.getTag()).setText(getString(R.string.h_cast_ready));
-        castPill.setVisibility(HorizonData.enabled(this, "com.google.android.apps.mediashell") ? View.VISIBLE : View.GONE);
-        sourcesPill = pill(HorizonGlyph.TV, getString(R.string.h_sources_upper), true);
+        castPill.setVisibility(HomeData.enabled(this, "com.google.android.apps.mediashell") ? View.VISIBLE : View.GONE);
+        sourcesPill = pill(Glyph.TV, getString(R.string.h_sources_upper), true);
         sourcesValue = (TextView) sourcesPill.getTag();
         sourcesValue.setText("HDMI");
         sourcesPill.setOnClickListener(v -> showInputs());
@@ -667,7 +667,7 @@ public class HorizonActivity extends Activity {
         memPill.setClickable(true);
         memPill.setDefaultFocusHighlightEnabled(false);
         focusScale(memPill);
-        memRing = new HorizonGlyph(this, HorizonGlyph.RING);
+        memRing = new Glyph(this, Glyph.RING);
         memPill.addView(memRing, new LinearLayout.LayoutParams(px(44), px(44)));
         LinearLayout col = column(2);
         memTitle = label(textBold, 15, 0xADFFFFFF);
@@ -677,7 +677,7 @@ public class HorizonActivity extends Activity {
         col.addView(memTitle, wrap());
         col.addView(memAction, wrap());
         memPill.addView(col);
-        HorizonGlyph refresh = new HorizonGlyph(this, HorizonGlyph.REFRESH);
+        Glyph refresh = new Glyph(this, Glyph.REFRESH);
         memPill.addView(refresh, new LinearLayout.LayoutParams(px(24), px(24)));
         memPill.setOnClickListener(v -> freeMemory());
         bar.addView(memPill, new FrameLayout.LayoutParams(-2, -1, Gravity.END));
@@ -699,7 +699,7 @@ public class HorizonActivity extends Activity {
         p.setClickable(true);
         p.setDefaultFocusHighlightEnabled(false);
         focusScale(p);
-        HorizonGlyph play = new HorizonGlyph(this, HorizonGlyph.PLAY);
+        Glyph play = new Glyph(this, Glyph.PLAY);
         p.addView(play, new LinearLayout.LayoutParams(px(22), px(22)));
         TextView t = label(textBold, 20, Color.WHITE);
         t.setText(getString(R.string.h_resume));
@@ -717,7 +717,7 @@ public class HorizonActivity extends Activity {
         p.addView(resumeLeft);
         p.setVisibility(View.GONE);
         p.setOnClickListener(v -> {
-            HorizonData.Resume r = resumes.get(currentPkg());
+            HomeData.Resume r = resumes.get(currentPkg());
             if (r != null) open(r.intent);
         });
         p.setNextFocusUpId(carousel.getId());
@@ -769,15 +769,15 @@ public class HorizonActivity extends Activity {
 
     private void loadDock() {
         dock.clear();
-        Set<String> hidden = HorizonData.hidden(this);
-        for (String pkg : HorizonData.dock(this)) {
+        Set<String> hidden = HomeData.hidden(this);
+        for (String pkg : HomeData.dock(this)) {
             if (hidden.contains(pkg)) continue;
-            HorizonData.App a = HorizonData.app(this, pkg);
+            HomeData.App a = HomeData.app(this, pkg);
             if (a != null) dock.add(a);
         }
         carousel.removeAllViews();
         cards.clear();
-        for (HorizonData.App a : dock) cards.add(card(a));
+        for (HomeData.App a : dock) cards.add(card(a));
         cards.add(allAppsCard());
         for (View c : cards) {
             FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(px(CARD_W + 2 * S), px(CARD_H + 2 * S + REFL),
@@ -789,7 +789,7 @@ public class HorizonActivity extends Activity {
         layoutCards(false);
     }
 
-    private View card(HorizonData.App a) {
+    private View card(HomeData.App a) {
         FrameLayout f = baseCard();
         ImageView img = new ImageView(this);
         img.setImageDrawable(a.banner);
@@ -806,7 +806,7 @@ public class HorizonActivity extends Activity {
         f.setBackground(g);
         LinearLayout col = column(14);
         col.setGravity(Gravity.CENTER_HORIZONTAL);
-        HorizonGlyph grid = new HorizonGlyph(this, HorizonGlyph.GRID);
+        Glyph grid = new Glyph(this, Glyph.GRID);
         col.addView(grid, new LinearLayout.LayoutParams(px(60), px(60)));
         TextView t = label(displayLight, 30, Color.WHITE);
         t.setText(getString(R.string.h_all_apps));
@@ -993,7 +993,7 @@ public class HorizonActivity extends Activity {
     }
 
     private void updateResume() {
-        HorizonData.Resume r = resumes.get(currentPkg());
+        HomeData.Resume r = resumes.get(currentPkg());
         boolean show = r != null;
         boolean had = resumePill.hasFocus();
         resumePill.setVisibility(show ? View.VISIBLE : View.GONE);
@@ -1015,10 +1015,10 @@ public class HorizonActivity extends Activity {
 
     private void refreshResumes() {
         bg.post(() -> {
-            List<HorizonData.Resume> list = HorizonData.watchNext(this);
+            List<HomeData.Resume> list = HomeData.watchNext(this);
             main.post(() -> {
                 resumes.clear();
-                for (HorizonData.Resume r : list) resumes.put(r.pkg, r);
+                for (HomeData.Resume r : list) resumes.put(r.pkg, r);
                 updateResume();
             });
         });
@@ -1036,8 +1036,8 @@ public class HorizonActivity extends Activity {
         if (!time.contentEquals(clock.getText())) clock.setText(time);
         String date = new SimpleDateFormat(android.text.format.DateFormat.getBestDateTimePattern(Locale.getDefault(), "EEEEdMMMM"), Locale.getDefault()).format(now.getTime());
         dateLine.setText(Character.toUpperCase(date.charAt(0)) + date.substring(1));
-        moonLine.setText(getString(HorizonData.moonPhase(now)));
-        chipLine.setText(getString(R.string.h_next_shower, HorizonData.nextShower(this, now)));
+        moonLine.setText(getString(HomeData.moonPhase(now)));
+        chipLine.setText(getString(R.string.h_next_shower, HomeData.nextShower(this, now)));
         chipTitle.setText(weather != null && !weather.place.isEmpty()
                 ? getString(R.string.h_real_sky_at, weather.place.toUpperCase()) : getString(R.string.h_real_sky));
         if (reading != null) {
@@ -1065,8 +1065,8 @@ public class HorizonActivity extends Activity {
                     dayIcon[i].setKind(glyphFor(r.nextCode[i], true));
                     dayTemp[i].setText(r.nextMax[i] + "° " + r.nextMin[i] + "°");
                 }
-                int kind = r.fog() ? HorizonScene.WEATHER_FOG : r.rain() ? HorizonScene.WEATHER_RAIN
-                        : r.snow() ? HorizonScene.WEATHER_SNOW : HorizonScene.WEATHER_CLEAR;
+                int kind = r.fog() ? SkyScene.WEATHER_FOG : r.rain() ? SkyScene.WEATHER_RAIN
+                        : r.snow() ? SkyScene.WEATHER_SNOW : SkyScene.WEATHER_CLEAR;
                 weatherIcon.setKind(glyphFor(r.code, r.day));
                 scene.setWeather(kind, r.sunriseHour, r.sunsetHour);
                 updateClock();
@@ -1075,29 +1075,29 @@ public class HorizonActivity extends Activity {
     }
 
     private void updateMemory() {
-        long[] m = HorizonData.memory(this);
-        memTitle.setText(getString(R.string.h_memory, HorizonData.gigabytes(m[0]), HorizonData.gigabytes(m[1])));
+        long[] m = HomeData.memory(this);
+        memTitle.setText(getString(R.string.h_memory, HomeData.gigabytes(m[0]), HomeData.gigabytes(m[1])));
         memRing.setValue(m[0] / (float) m[1]);
     }
 
     private void refreshSpeaker() {
-        HorizonData.connectedSpeaker(this, n -> main.post(() -> speakerValue.setText(n != null ? n : getString(R.string.h_not_connected))));
+        HomeData.connectedSpeaker(this, n -> main.post(() -> speakerValue.setText(n != null ? n : getString(R.string.h_not_connected))));
     }
 
     private void refreshInputs() {
         bg.post(() -> {
-            List<HorizonData.Input> list = HorizonData.inputs(this);
+            List<HomeData.Input> list = HomeData.inputs(this);
             main.post(() -> sourcesValue.setText(list.isEmpty() ? getString(R.string.h_none) : list.get(0).label));
         });
     }
 
     private void freeMemory() {
-        long before = HorizonData.memory(this)[0];
+        long before = HomeData.memory(this)[0];
         memAction.setText(getString(R.string.h_closing));
         bg.post(() -> {
-            int n = HorizonData.closeApps(this);
+            int n = HomeData.closeApps(this);
             main.postDelayed(() -> {
-                long after = HorizonData.memory(this)[0];
+                long after = HomeData.memory(this)[0];
                 long freed = Math.max(0, (before - after) / 1048576);
                 memAction.setText(getString(R.string.h_close_apps));
                 updateMemory();
@@ -1116,8 +1116,8 @@ public class HorizonActivity extends Activity {
             return;
         }
         bg.post(() -> {
-            HorizonData.closeApps(this);
-            HorizonData.connectedSpeaker(this, n -> main.post(() ->
+            HomeData.closeApps(this);
+            HomeData.connectedSpeaker(this, n -> main.post(() ->
                     showToast(getString(R.string.h_tonight_done, n != null ? getString(R.string.h_tonight_speaker, n) : getString(R.string.h_tonight_ambience)))));
         });
     }
@@ -1190,7 +1190,7 @@ public class HorizonActivity extends Activity {
 
     private List<String> dockPackages() {
         List<String> out = new ArrayList<>();
-        for (HorizonData.App a : dock) out.add(a.pkg);
+        for (HomeData.App a : dock) out.add(a.pkg);
         return out;
     }
 
@@ -1199,7 +1199,7 @@ public class HorizonActivity extends Activity {
         // The OK key that triggered this may still be down: its repeats and release reach the deck next, and
         // must neither open the app nor the dock menu.
         okHeld = true;
-        HorizonData.saveDock(this, pkgs);
+        HomeData.saveDock(this, pkgs);
         focus = Math.max(0, newFocus);
         loadDock();
         carousel.requestFocus();
@@ -1208,7 +1208,7 @@ public class HorizonActivity extends Activity {
 
     /** Hold OK on a deck card: move it left or right, or take it off the deck. */
     private void showDockMenu(int index) {
-        HorizonData.App app = dock.get(index);
+        HomeData.App app = dock.get(index);
         LinearLayout actions = row(18);
         List<String> pkgs = dockPackages();
         if (index > 0) actions.addView(dockAction(getString(R.string.h_move), getString(R.string.h_left), () -> {
@@ -1226,9 +1226,9 @@ public class HorizonActivity extends Activity {
             dismissPopup();
             applyDock(pkgs, Math.min(index, pkgs.size() - 1), getString(R.string.h_removed, app.label));
         }), new LinearLayout.LayoutParams(-2, px(72)));
-        if (HorizonData.dockChosen(this)) actions.addView(dockAction(getString(R.string.h_dock), getString(R.string.h_theme_dock), () -> {
+        if (HomeData.dockChosen(this)) actions.addView(dockAction(getString(R.string.h_dock), getString(R.string.h_theme_dock), () -> {
             dismissPopup();
-            HorizonData.resetDock(this);
+            HomeData.resetDock(this);
             okHeld = true;
             focus = 0;
             loadDock();
@@ -1245,7 +1245,7 @@ public class HorizonActivity extends Activity {
     private boolean refreshAfterUninstall;
 
     /** Hold OK on an app in Toutes les apps: add it to the dock, uninstall it, or open its info screen. */
-    private void showAppMenu(HorizonData.App app) {
+    private void showAppMenu(HomeData.App app) {
         LinearLayout actions = row(18);
         if (!dockPackages().contains(app.pkg)) actions.addView(dockAction(getString(R.string.h_dock), getString(R.string.h_add_dock), () -> {
             List<String> pkgs = dockPackages();
@@ -1273,7 +1273,7 @@ public class HorizonActivity extends Activity {
     }
 
     private View dockAction(String title, String value, Runnable run) {
-        LinearLayout p = pill(HorizonGlyph.GRID, title, true);
+        LinearLayout p = pill(Glyph.GRID, title, true);
         ((TextView) p.getTag()).setText(value);
         p.setOnClickListener(v -> run.run());
         // The menu opens while OK is still held: only a press that starts here counts, never that release.
@@ -1337,10 +1337,10 @@ public class HorizonActivity extends Activity {
     }
 
     private void showAllApps() {
-        Set<String> skip = HorizonData.hidden(this);
-        for (HorizonData.App a : dock) skip.add(a.pkg);
-        List<HorizonData.App> others = new ArrayList<>();
-        for (HorizonData.App a : HorizonData.allApps(this)) if (!skip.contains(a.pkg)) others.add(a);
+        Set<String> skip = HomeData.hidden(this);
+        for (HomeData.App a : dock) skip.add(a.pkg);
+        List<HomeData.App> others = new ArrayList<>();
+        for (HomeData.App a : HomeData.allApps(this)) if (!skip.contains(a.pkg)) others.add(a);
         LinearLayout grid = column(28);
         LinearLayout row = null;
         for (int i = 0; i < others.size(); i++) {
@@ -1348,7 +1348,7 @@ public class HorizonActivity extends Activity {
                 row = row(18);
                 grid.addView(row);
             }
-            HorizonData.App a = others.get(i);
+            HomeData.App a = others.get(i);
             row.addView(tile(a.banner, a.label, a.color, v -> {
                 dismissPopup();
                 open(a.launch);
@@ -1381,17 +1381,17 @@ public class HorizonActivity extends Activity {
     }
 
     private void showInputs() {
-        List<HorizonData.Input> list = HorizonData.inputs(this);
+        List<HomeData.Input> list = HomeData.inputs(this);
         LinearLayout rowView = row(24);
-        for (HorizonData.Input in : list) {
-            LinearLayout p = pill(HorizonGlyph.TV, getString(R.string.h_input), true);
+        for (HomeData.Input in : list) {
+            LinearLayout p = pill(Glyph.TV, getString(R.string.h_input), true);
             ((TextView) p.getTag()).setText(in.label);
             p.setOnClickListener(v -> {
                 dismissPopup();
                 try {
-                    startActivity(HorizonData.inputIntent(in.id, liveTvPkg));
+                    startActivity(HomeData.inputIntent(in.id, liveTvPkg));
                 } catch (ActivityNotFoundException | SecurityException e) {
-                    open(HorizonData.inputIntent(in.id, null));
+                    open(HomeData.inputIntent(in.id, null));
                 }
             });
             rowView.addView(p, new LinearLayout.LayoutParams(-2, px(72)));
@@ -1461,7 +1461,7 @@ public class HorizonActivity extends Activity {
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
         dismissPopup();
-        if (intent.getBooleanExtra(HorizonPanelActivity.EXTRA_INPUTS, false)) {
+        if (intent.getBooleanExtra(QuickPanelActivity.EXTRA_INPUTS, false)) {
             main.post(this::showInputs);
             return;
         }

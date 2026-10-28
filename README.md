@@ -13,7 +13,7 @@ that is yours. From the remote, no computer needed.</p>
 - **Tracking**: telemetry, advertising IDs and usage reports.
 - **Clutter**: leftovers nobody uses on a TV.
 - **Preinstalled apps**: keep the ones you use, switch off the rest.
-- **Horizon**: a living home screen. A night sky with shooting stars, an aurora that takes the colour of the app you
+- **A home screen of its own**: A night sky with shooting stars, an aurora that takes the colour of the app you
   pick, your apps as a 3D deck of cards, the weather, quick settings on the remote's gear button.
 - **One button puts everything back.** Apps are switched off, never deleted.
 
@@ -57,5 +57,5 @@ MIT, see [LICENSE](LICENSE). Third-party components are listed in [NOTICE.md](NO
 ### En français
 
 **Tu l'as payée. Elle est à toi.** OwnYourTV coupe les pubs et le pistage installés d'usine sur ta TV Android TV ou
-Google TV, et lui donne un accueil vivant, Horizon. Tout se fait à la télécommande, sans ordinateur, et un bouton
+Google TV, et lui donne un accueil vivant. Tout se fait à la télécommande, sans ordinateur, et un bouton
 remet tout comme avant. Les applis sont désactivées, jamais supprimées.
