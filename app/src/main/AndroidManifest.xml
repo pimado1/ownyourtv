@@ -25,7 +25,9 @@
         android:theme="@android:style/Theme.DeviceDefault.NoActionBar">
 
         <!-- OwnYourTV: unlock, choose, apply, undo. -->
+        <!-- Its own task: sharing the home screen's would bring the home back to the front instead of the app. -->
         <activity android:name=".MainActivity" android:exported="true" android:screenOrientation="landscape"
+            android:taskAffinity="app.ownyourtv.manage"
             android:configChanges="keyboard|keyboardHidden|navigation|orientation|screenSize|uiMode">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
