@@ -1,0 +1,220 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>OwnYourTV: take back your Android TV</title>
+<meta name="description" content="Switch off the ads and tracking your Android TV or Google TV came with, and get a home screen that is yours. From the remote, no computer needed. Free and open source.">
+<meta property="og:title" content="OwnYourTV: you paid for it. Own it.">
+<meta property="og:description" content="No ads, no tracking, a living home screen. On your Android TV or Google TV, from the remote. Free and open source.">
+<meta property="og:image" content="https://pimado1.github.io/ownyourtv/site/img/before-after.webp">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#0b0d12">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect x='3' y='11' width='26' height='14' rx='4' fill='%23c6f432'/%3E%3Cpath d='M12 11V7.5a4 4 0 0 1 8 0' fill='none' stroke='%23f4f4f0' stroke-width='3' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="apple-touch-icon" href="site/img/apple-touch-icon.png">
+<link rel="stylesheet" href="site/style.css">
+</head>
+<body>
+
+<header class="bar">
+  <div class="wrap">
+    <a class="brand" href="#top" aria-label="OwnYourTV">
+      <svg viewBox="0 0 32 32" aria-hidden="true"><rect x="3" y="12" width="26" height="14" rx="4" fill="#c6f432"/><path d="M11.5 12V8a4.5 4.5 0 0 1 9 0v1" fill="none" stroke="#f4f4f0" stroke-width="3" stroke-linecap="round"/><circle cx="16" cy="17.5" r="2" fill="#0b0d12"/><path d="M15.2 18.5h1.6l.5 4h-2.6z" fill="#0b0d12"/><rect x="11" y="28" width="10" height="2" rx="1" fill="#f4f4f0"/></svg>
+      <span>Own<b>Your</b>TV</span>
+    </a>
+    <nav>
+      <a href="#how" data-i18n="nav_how">How it works</a>
+      <a href="#tvs" data-i18n="nav_tvs">Which TVs</a>
+      <a href="#faq" data-i18n="nav_faq">Questions</a>
+      <a href="https://github.com/pimado1/ownyourtv">GitHub</a>
+    </nav>
+    <button class="lang" id="lang" type="button" aria-label="Français">FR</button>
+  </div>
+</header>
+
+<main id="top">
+  <div class="hero">
+    <div class="wrap hero-grid">
+      <div>
+        <h1 data-i18n="h1">You paid for it. <em>Own it.</em></h1>
+        <p class="lead" data-i18n="lead">Switch off the ads and tracking your Android TV or Google TV came with, and give it a home screen that is yours. From the remote, no computer needed.</p>
+      </div>
+      <div class="hero-side">
+        <div class="code">
+          <small data-i18n="code_label">On your TV, in the Downloader app, type</small>
+          <div class="code-row">
+            <span class="code-num" id="code">8225348</span>
+            <button class="btn btn-ghost" id="copy" type="button" data-i18n="copy">Copy</button>
+          </div>
+        </div>
+        <div class="hero-links">
+          <a class="btn btn-lime" href="#how" data-i18n="cta_how">See the 3 steps</a>
+          <a class="btn btn-ghost" href="https://github.com/pimado1/ownyourtv/releases/latest" data-i18n="cta_apk">Download the APK</a>
+        </div>
+        <div class="facts">
+          <div><strong>345</strong><span data-i18n="f_models">TV models recognised</span></div>
+          <div><strong>6</strong><span data-i18n="f_langs">languages</span></div>
+          <div><strong>1</strong><span data-i18n="f_undo">button puts it all back</span></div>
+        </div>
+      </div>
+      <figure class="ba">
+        <div class="shot"><img src="site/img/before-after.webp" width="1600" height="516" alt="Before: the stock Google TV home with a full-screen ad. After: the OwnYourTV home with a night sky, the weather and the apps as a 3D deck." data-i18n-alt="ba_alt"></div>
+        <div class="ba-labels"><span data-i18n="before">Before: the stock home, ads first</span><span data-i18n="after">After: OwnYourTV</span></div>
+      </figure>
+    </div>
+  </div>
+
+  <section id="how">
+    <div class="wrap">
+      <p class="eyebrow" data-i18n="how_eye">How it works</p>
+      <h2 data-i18n="how_h">Three steps, all from the remote</h2>
+      <p class="sub" data-i18n="how_sub">About ten minutes. Nothing is deleted: apps are switched off, and one button switches them back on.</p>
+      <ol class="steps">
+        <li>
+          <h3 data-i18n="s1_h">Turn on developer mode</h3>
+          <p data-i18n="s1_p">Settings › System › About: click <kbd>Android TV OS build</kbd> 7 times. Then Settings › System › Developer options: turn on <kbd>USB debugging</kbd>.</p>
+        </li>
+        <li>
+          <h3 data-i18n="s2_h">Install with Downloader</h3>
+          <p data-i18n="s2_p">Install the free <kbd>Downloader</kbd> app from your TV's Play Store, type the code <kbd>8225348</kbd>, then install OwnYourTV.</p>
+        </li>
+        <li>
+          <h3 data-i18n="s3_h">Follow the assistant</h3>
+          <p data-i18n="s3_p">Accept the debugging prompt once. The assistant recognises your TV, offers the recommended clean-up, the new home screen and your dock. Then one press: done.</p>
+        </li>
+      </ol>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <div class="split">
+        <div>
+          <p class="eyebrow" data-i18n="off_eye">What it switches off</p>
+          <h2 data-i18n="off_h">Everything you never asked for</h2>
+          <ul class="ticks">
+            <li><div><b data-i18n="t1_b">Ads</b><span data-i18n="t1_s">Promos, sponsored rows and store demos the maker put on your TV.</span></div></li>
+            <li><div><b data-i18n="t2_b">Tracking</b><span data-i18n="t2_s">Telemetry, advertising IDs and usage reports.</span></div></li>
+            <li><div><b data-i18n="t3_b">Clutter</b><span data-i18n="t3_s">Leftovers nobody uses on a TV.</span></div></li>
+            <li><div><b data-i18n="t4_b">Never your apps</b><span data-i18n="t4_s">Netflix, YouTube, Prime Video and the rest are never touched. What the TV needs to start, play a channel or an HDMI input is never offered.</span></div></li>
+          </ul>
+        </div>
+        <figure>
+          <div class="shot"><img src="site/img/step-clean.webp" width="1280" height="688" loading="lazy" alt="The assistant's clean-up step: Recommended, or choose yourself" data-i18n-alt="clean_alt"></div>
+          <figcaption data-i18n="clean_cap">Recommended, in one press, or go through the lists one at a time.</figcaption>
+        </figure>
+      </div>
+
+      <div class="split flip">
+        <div>
+          <p class="eyebrow" data-i18n="home_eye">A home screen of its own</p>
+          <h2 data-i18n="home_h">A living night sky, your apps up front</h2>
+          <ul class="ticks">
+            <li><div><b data-i18n="h1_b">An aurora in your app's colour</b><span data-i18n="h1_s">Pick Netflix and the sky turns red. Shooting stars on real meteor-shower nights.</span></div></li>
+            <li><div><b data-i18n="h2_b">Your dock, your order</b><span data-i18n="h2_s">Choose the apps on the home screen during the assistant, change them any time.</span></div></li>
+            <li><div><b data-i18n="h3_b">Quick settings on the gear key</b><span data-i18n="h3_s">Volume, picture, sound, sources, Wi-Fi and Bluetooth without leaving the home screen.</span></div></li>
+          </ul>
+        </div>
+        <figure>
+          <div class="shot"><img src="site/img/home.webp" width="1280" height="720" loading="lazy" alt="The OwnYourTV home screen with Netflix selected and a red aurora" data-i18n-alt="home_alt"></div>
+          <div class="pair">
+            <div class="shot"><img src="site/img/quick.webp" width="1280" height="720" loading="lazy" alt="Quick settings" data-i18n-alt="quick_alt"></div>
+            <div class="shot"><img src="site/img/dock.webp" width="1280" height="720" loading="lazy" alt="Choosing the dock's apps" data-i18n-alt="dock_alt"></div>
+          </div>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <section id="tvs">
+    <div class="wrap">
+      <p class="eyebrow" data-i18n="tvs_eye">Which TVs</p>
+      <h2 data-i18n="tvs_h">Android TV and Google TV, from 93 brands</h2>
+      <p class="sub" data-i18n="tvs_sub">OwnYourTV knows 345 models from lists tested on real sets (TCL, Sony, Xiaomi, Philips, Hisense, Chromecast…), and changes the home screen the way each model needs, or leaves it alone when a model cannot safely take another one. Below, the TVs owners reported from the app.</p>
+      <div class="tv-stats">
+        <div><strong>345</strong><span data-i18n="st_models">models recognised</span></div>
+        <div><strong>93</strong><span data-i18n="st_brands">brands</span></div>
+        <div><strong id="n-reports">·</strong><span data-i18n="st_reports">reported by owners</span></div>
+      </div>
+      <ul class="reports" id="reports" aria-live="polite"></ul>
+      <p class="empty" id="reports-note" hidden></p>
+    </div>
+  </section>
+
+  <section id="faq">
+    <div class="wrap faq">
+      <p class="eyebrow" data-i18n="faq_eye">Questions</p>
+      <h2 data-i18n="faq_h">Before you start</h2>
+      <details>
+        <summary data-i18n="q1">Is it safe for my TV?</summary>
+        <p data-i18n="a1">Apps are switched off, never deleted, and only apps that were checked on a real TV are ticked. On a recognised model, OwnYourTV keeps what that model needs. "Put everything back" in the app turns every switched-off app back on and brings your original home screen back.</p>
+      </details>
+      <details>
+        <summary data-i18n="q2">Google Play Protect says the app is blocked</summary>
+        <p data-i18n="a2">Play Protect warns about every app installed outside the Play Store. Choose "More details", then "Install anyway". OwnYourTV is open source: anyone can read what it does on GitHub.</p>
+      </details>
+      <details>
+        <summary data-i18n="q3">The app asks me to reconnect the Wi-Fi</summary>
+        <p data-i18n="a3">On some Google TV sets (Xiaomi, among others), the Wi-Fi network is saved by the TV's first-setup app. Changing the home screen switches that app off, which would forget the network. The assistant guides you: forget the network, join it again, and the home screen can change without cutting the Internet.</p>
+      </details>
+      <details>
+        <summary data-i18n="q4">My TV does not want another home screen</summary>
+        <p data-i18n="a4">Some models only accept their own home screen. OwnYourTV knows them and says so: the ads and tracking are still switched off, and your current home stays.</p>
+      </details>
+      <details>
+        <summary data-i18n="q5">Can I do it from a computer?</summary>
+        <p data-i18n="a5">Yes: <code>ownyourtv.py</code> does the same from Windows, macOS or Linux, with adb. See <a href="https://github.com/pimado1/ownyourtv#from-a-computer">From a computer</a> on GitHub.</p>
+      </details>
+      <details>
+        <summary data-i18n="q6">Does OwnYourTV collect data?</summary>
+        <p data-i18n="a6">No. Everything happens on the TV. At the end, the app offers to share which TV it ran on and what worked, anonymously, only if you press Share. Details in the <a href="privacy.html">privacy page</a>.</p>
+      </details>
+      <details>
+        <summary data-i18n="q7">How much does it cost?</summary>
+        <p data-i18n="a7">Nothing. OwnYourTV is free and open source, under the MIT licence.</p>
+      </details>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <a class="brand" href="#top"><span>Own<b>Your</b>TV</span></a>
+    <a href="https://github.com/pimado1/ownyourtv">GitHub</a>
+    <a href="https://github.com/pimado1/ownyourtv/releases/latest" data-i18n="ft_dl">Download</a>
+    <a href="privacy.html" data-i18n="ft_privacy">Privacy</a>
+    <a href="https://github.com/pimado1/ownyourtv/blob/main/NOTICE.md" data-i18n="ft_credits">Credits</a>
+    <span data-i18n="ft_mit">Free and open source, MIT licence</span>
+  </div>
+</footer>
+
+<script src="site/i18n.js"></script>
+<script>
+  // The TVs owners reported from the app: one GitHub issue per model, labelled with what happened.
+  (function () {
+    var list = document.getElementById("reports"), note = document.getElementById("reports-note"), count = document.getElementById("n-reports");
+    function esc(s) { return s.replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); }
+    fetch("https://api.github.com/repos/pimado1/ownyourtv/issues?labels=tv-report&state=open&per_page=100")
+      .then(function (r) { if (!r.ok) throw 0; return r.json(); })
+      .then(function (issues) {
+        count.textContent = issues.length;
+        if (!issues.length) { note.hidden = false; note.textContent = t("rep_none"); return; }
+        list.innerHTML = issues.map(function (i) {
+          var m = /^TV: (.+?)(?: \(([^)]+)\))?$/.exec(i.title) || [0, i.title, ""];
+          var labels = i.labels.map(function (l) { return l.name; });
+          var tag = labels.indexOf("home-blocked") >= 0 ? ["block", "tag_block"] : labels.indexOf("home-refused") >= 0 ? ["no", "tag_no"] : ["ok", "tag_ok"];
+          return '<li><a href="' + esc(i.html_url) + '">' + esc(m[1]) + (m[2] ? ' <span class="dev">' + esc(m[2]) + "</span>" : "") +
+            '</a><span class="tag ' + tag[0] + '" data-i18n="' + tag[1] + '">' + t(tag[1]) + "</span></li>";
+        }).join("");
+      })
+      .catch(function () { count.textContent = "?"; note.hidden = false; note.innerHTML = t("rep_err"); });
+  })();
+
+  document.getElementById("copy").addEventListener("click", function () {
+    var b = this;
+    navigator.clipboard.writeText("8225348").then(function () { b.textContent = t("copied"); setTimeout(function () { b.textContent = t("copy"); }, 1600); });
+  });
+</script>
+</body>
+</html>

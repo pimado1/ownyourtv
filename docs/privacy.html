@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Privacy · OwnYourTV</title>
+<meta name="description" content="What OwnYourTV sends, and when: nothing, unless you choose a weather city or press Share.">
+<meta name="theme-color" content="#0b0d12">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect x='3' y='11' width='26' height='14' rx='4' fill='%23c6f432'/%3E%3Cpath d='M12 11V7.5a4 4 0 0 1 8 0' fill='none' stroke='%23f4f4f0' stroke-width='3' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="site/style.css">
+</head>
+<body>
+
+<header class="bar">
+  <div class="wrap">
+    <a class="brand" href="./" aria-label="OwnYourTV">
+      <svg viewBox="0 0 32 32" aria-hidden="true"><rect x="3" y="12" width="26" height="14" rx="4" fill="#c6f432"/><path d="M11.5 12V8a4.5 4.5 0 0 1 9 0v1" fill="none" stroke="#f4f4f0" stroke-width="3" stroke-linecap="round"/><circle cx="16" cy="17.5" r="2" fill="#0b0d12"/><path d="M15.2 18.5h1.6l.5 4h-2.6z" fill="#0b0d12"/><rect x="11" y="28" width="10" height="2" rx="1" fill="#f4f4f0"/></svg>
+      <span>Own<b>Your</b>TV</span>
+    </a>
+    <nav><a href="./" data-i18n="p_back">← Back to the home page</a></nav>
+    <button class="lang" id="lang" type="button" aria-label="Français">FR</button>
+  </div>
+</header>
+
+<main class="wrap doc">
+  <h1 data-i18n="p_title">Privacy</h1>
+  <p data-i18n="p_lead">OwnYourTV collects nothing. Here is exactly what leaves your TV, and when.</p>
+
+  <h2 data-i18n="p_h1">On your TV</h2>
+  <p data-i18n="p_t1">The app connects to your own TV's debugging port (127.0.0.1) to switch apps off and change the home screen. Nothing from that connection leaves the TV. No account, no advertising, no analytics.</p>
+
+  <h2 data-i18n="p_h2">The weather</h2>
+  <p data-i18n="p_t2">If you pick a city for the weather, its name (to find it) and then its coordinates are sent to <a href="https://open-meteo.com">Open-Meteo</a>, a free weather service with no account. With no city picked, nothing is sent.</p>
+
+  <h2 data-i18n="p_h3">Sharing, only if you press Share</h2>
+  <p data-i18n="p_t3">On the last screen, the Share button sends an anonymous report. The screen shows the line that is sent before you press it.</p>
+  <table>
+    <thead><tr><th data-i18n="p_c1">What is sent</th><th data-i18n="p_c2">What is never sent</th></tr></thead>
+    <tbody>
+      <tr><td data-i18n="p_r1">Brand and model names Android reports (e.g. TCL Smart TV Pro, G08)</td><td data-i18n="p_n1">Your name, your Google account, your e-mail address</td></tr>
+      <tr><td data-i18n="p_r2">Android and OwnYourTV versions</td><td data-i18n="p_n2">The list of your apps</td></tr>
+      <tr><td data-i18n="p_r3">Whether the TV was recognised, what happened to the home screen, whether the Wi-Fi step was needed</td><td data-i18n="p_n3">Your serial number, your location, your city</td></tr>
+      <tr><td data-i18n="p_r4">How many apps were switched off, and which apps from OwnYourTV's list could not be</td><td data-i18n="p_n4">What you watch</td></tr>
+    </tbody>
+  </table>
+
+  <h2 data-i18n="p_h4">Where the report goes</h2>
+  <p data-i18n="p_t4">It goes through a small relay hosted by Cloudflare, which keeps nothing: it checks the report and adds it to a public page on GitHub, one per TV model. Like any server, the relay sees the request's IP address, and only uses it to allow 5 reports a minute, without storing it. The report becomes public: it is the list of TVs OwnYourTV works on.</p>
+
+  <h2 data-i18n="p_h5">Removing a report</h2>
+  <p data-i18n="p_t5">A report holds nothing that points to you. If you still want one removed, open an issue on GitHub naming the model.</p>
+
+  <h2 data-i18n="p_h6">The code is public</h2>
+  <p data-i18n="p_t6">Everything described here can be checked in the code: <a href="https://github.com/pimado1/ownyourtv/blob/main/app/src/main/java/app/ownyourtv/Report.kt">what the app sends</a> and <a href="https://github.com/pimado1/ownyourtv/blob/main/relay/worker.js">what the relay does</a>.</p>
+
+  <p data-i18n="p_updated">Updated 28 October 2026.</p>
+</main>
+
+<footer>
+  <div class="wrap">
+    <a class="brand" href="./"><span>Own<b>Your</b>TV</span></a>
+    <a href="https://github.com/pimado1/ownyourtv">GitHub</a>
+    <span data-i18n="ft_mit">Free and open source, MIT licence</span>
+  </div>
+</footer>
+
+<script src="site/i18n.js"></script>
+</body>
+</html>
