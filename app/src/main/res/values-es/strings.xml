@@ -94,4 +94,17 @@
     <string name="opt_speed_back">Restaurar las animaciones</string>
     <string name="p_perms_done">Limpiar una versión anterior</string>
     <string name="f_home_refused">Esta TV no deja que otra app sea su inicio, así que conserva el suyo. Todo lo demás se aplicó.</string>
+    <string name="h_tv_known">TV reconocida</string>
+    <string name="h_tv_unknown">TV aún no registrada</string>
+    <string name="h_home_no">No es posible en esta TV</string>
+    <string name="h_home_cast">Enviar desde un móvil puede dejar de funcionar en esta TV</string>
+    <string name="wf_title">Un paso antes del inicio</string>
+    <string name="wf_lead">Tu Wi-Fi se guardó durante la configuración de la TV. Para cambiar el inicio sin perder Internet, vuelve a conectarlo desde Ajustes:</string>
+    <string name="wf_1">Abre los ajustes de Wi-Fi</string>
+    <string name="wf_2">Elige tu red y luego Olvidar</string>
+    <string name="wf_3">Vuelve a conectarte a la misma red con su contraseña</string>
+    <string name="wf_open">Abrir Wi-Fi</string>
+    <string name="wf_check">Hecho, continuar</string>
+    <string name="wf_skip">Mantener el inicio original</string>
+    <string name="wf_still">El Wi-Fi sigue ligado a la configuración de la TV: olvida primero la red y luego vuelve a conectarte.</string>
 </resources>

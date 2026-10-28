@@ -25,6 +25,7 @@ from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
 CATALOG = HERE / "data" / "catalog.json"
+TVS = HERE / "app" / "src" / "main" / "assets" / "tvs.json"
 STATE_DIR = Path.home() / ".ownyourtv"
 APK_URL = "https://github.com/pimado1/ownyourtv/releases/latest/download/OwnYourTV.apk"
 PKG = "app.ownyourtv"
@@ -96,16 +97,50 @@ class Tv:
         return out.splitlines()[-1].strip() if out else ""
 
 
+def detect(tv):
+    """The database TV this set is, matched on what getprop reports, as the app does; and its brand's lists."""
+    db = json.loads(TVS.read_text())
+    props = " ".join(tv.sh(f"getprop {k}") for k in ("ro.product.model", "ro.product.device", "ro.product.name",
+                                                      "ro.product.board", "ro.hardware", "ro.build.fingerprint")).lower()
+    brand = (tv.sh("getprop ro.product.brand") or tv.sh("getprop ro.product.manufacturer")).strip().lower()
+    best, score = None, 0
+    for t in db["tvs"]:
+        sc = sum(len(k) for k in t["m"] if re.search(r"(^|[^a-z0-9])" + re.escape(k) + r"($|[^a-z0-9])", props))
+        if sc and brand and brand in t["b"]:
+            sc += 2
+        if sc > score:
+            best, score = t, sc
+    names = db["pkgs"]
+    known = None
+    if best and score >= 5:
+        known = {"name": best["n"], "flags": set(best["f"]), "home": best["home"],
+                 "off": {names[i] for i in best["off"]}, "rec": {names[i] for i in best["rec"]}, "keep": {names[i] for i in best["keep"]}}
+    b = next((v for k, v in db["brands"].items() if brand and (k == brand or k.startswith(brand + " "))), None)
+    group = None
+    if b:
+        group = {"seen": {names[i] for i in b["seen"]}, "rec": {names[i] for i in b["rec"]}, "keep": {names[i] for i in b["keep"]}}
+    kinds = dict(zip(names, db["kinds"]))
+    return known, group, kinds
+
+
 def items(tv):
     cat = json.loads(CATALOG.read_text())["packages"]
+    known, group, kinds = detect(tv)
     installed, off = tv.packages(), tv.packages("-d")
+    keep = (known or {}).get("keep", set()) | (set() if known else (group or {}).get("keep", set()))
     out = []
     for p in sorted(installed):
-        if p == PKG:
+        if p == PKG or p in keep or p in STOCK_HOMES or p == WIZARD:
             continue
-        if p in cat:
+        if known and p in known["off"]:
+            k = cat.get(p, {}).get("k") or kinds.get(p, "extras")
+            out.append({"pkg": p, "kind": k, "rec": p in known["rec"] and k != "apps", "verified": True, "off": p in off})
+        elif p in cat:
             e = cat[p]
             out.append({"pkg": p, "kind": e["k"], "rec": e["r"], "verified": bool(e.get("v")), "off": p in off})
+        elif group and p in group["seen"] and not PROTECTED.match(p):
+            k = kinds.get(p, "extras")
+            out.append({"pkg": p, "kind": k, "rec": not known and p in group["rec"] and k != "apps", "verified": False, "off": p in off})
         elif not PROTECTED.match(p):
             for kind, rx in GUESS:
                 if rx.search(p):
@@ -203,17 +238,27 @@ def make_home(tv, apk=None):
         tv.sh("settings put secure enabled_accessibility_services " + ":".join(kept) if kept else "settings delete secure enabled_accessibility_services")
     tv.sh(f"cmd package set-home-activity --user 0 {HOME}")
     if not home_opens(tv):
-        # Google TV keeps its own home on the Home button: switch the stock homes off, never the setup wizard that
-        # owns the Wi-Fi network.
+        known, _, _ = detect(tv)
+        flags = known["flags"] if known else set()
+        homes = tv.sh("cmd package query-activities --brief -a android.intent.action.MAIN -c android.intent.category.HOME")
+        if "home_allowlist" in flags or "wizard_returns" in flags or ("FallbackHome" not in homes and ".settings" not in homes):
+            tv.sh(f"am start -f 0x20000000 -n {PKG}/.MainActivity --ez computer_home true --ez on false")
+            print("This TV cannot safely take another home: it keeps its own. Everything else still works.")
+            return False
         enabled = tv.packages("-e")
-        offs = [p for p in STOCK_HOMES if p in enabled]
-        if WIZARD in enabled and "setupwraith" not in tv.sh("dumpsys wifi | grep -o 'cname=[^ ]*'"):
-            offs.append(WIZARD)
-        done = [p for p in offs if "disabled" in tv.sh(f"pm disable-user --user 0 {p}")]
+        if WIZARD in enabled and "setupwraith" in tv.sh("dumpsys wifi | grep -o 'cname=[^ ]*'"):
+            tv.sh(f"am start -f 0x20000000 -n {PKG}/.MainActivity --ez computer_home true --ez on false")
+            print("The TV's Wi-Fi was saved by its setup wizard, which the home step has to switch off (Android would")
+            print("delete the network with it). On the TV: Settings > Network > your Wi-Fi > Forget, join it again,")
+            print("then run this again. Or use Ethernet.")
+            return False
+        # The wizard goes before the stock home: with the launcher off and the wizard on, the TV lands on the
+        # wizard's recovery screen.
+        order = ([WIZARD] if WIZARD in enabled else []) + [p for p in dict.fromkeys(STOCK_HOMES + ([known["home"]] if known else [])) if p in enabled]
+        done = [p for p in order if "disabled" in tv.sh(f"pm disable-user --user 0 {p}")]
         tv.sh(f"cmd package set-home-activity --user 0 {HOME}")
         if not home_opens(tv):
-            # Some firmware (Xiaomi among others) only lets its own list of apps be the home: put it all back.
-            for p in done:
+            for p in sorted(done, key=lambda x: x == WIZARD):
                 tv.sh(f"pm enable {p}")
             tv.sh(f"am start -f 0x20000000 -n {PKG}/.MainActivity --ez computer_home true --ez on false")
             tv.sh("input keyevent HOME")
@@ -237,7 +282,7 @@ def home_opens(tv):
 
 
 def undo_home(tv):
-    for p in tv.state.get("home_off", []):
+    for p in sorted(tv.state.get("home_off", []), key=lambda x: x == WIZARD):
         tv.sh(f"pm enable {p}")
     off = tv.packages("-d")
     for p in STOCK_HOMES:
@@ -294,6 +339,8 @@ def undo(tv, yes):
 
 
 def choose(tv):
+    known, _, _ = detect(tv)
+    print(f"TV recognised: {known['name']}" if known else "TV not in the database yet: only checked and spotted apps are offered.")
     found = items(tv)
     show(found)
     print("\nType the numbers to switch, separated by spaces (an app that is off comes back on), or press Enter.")
@@ -345,6 +392,8 @@ def main(argv):
     elif cmd == "optimise":
         optimise(tv, yes)
     elif cmd == "list":
+        known, _, _ = detect(tv)
+        print(f"TV recognised: {known['name']}" if known else "TV not in the database yet.")
         show(items(tv))
     elif cmd == "off":
         switch_off(tv, rest)

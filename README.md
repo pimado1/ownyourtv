@@ -36,6 +36,15 @@ Taken on a TCL C89B, Google TV 14.
 | <img src="docs/screenshots/app-ads.jpg" alt="The Ads list: each maker ad app with a tick box"> | <img src="docs/screenshots/app-dock.jpg" alt="Your dock: reorder, remove and add apps"> |
 | **App by app**, with a tick box each; untick one to switch it back on | **Your dock**: pick the home screen's apps and their order |
 
+## Which TVs
+
+OwnYourTV recognises **345 TV models from 93 brands** (TCL, Sony, Xiaomi, Philips, Skyworth, Hisense, Chromecast,
+Fire TV…), from lists tested on real sets. On a recognised TV it ticks what was checked on that very model, keeps
+what that model needs, and changes the home screen in the order that model needs, or leaves it alone when that
+model cannot safely take another home. On any other Android TV or Google TV it offers what lists of the same brand
+switch off, unticked unless several of them agree. The database is built by `tools/build_tvs.py`
+([NOTICE.md](NOTICE.md)).
+
 ## Three ways to install
 
 | | How | You need |

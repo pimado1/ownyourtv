@@ -94,4 +94,17 @@
     <string name="opt_speed_back">Restaurar as animações</string>
     <string name="p_perms_done">Limpar uma versão anterior</string>
     <string name="f_home_refused">Esta TV não deixa outro app ser a tela inicial, então mantém a sua. Todo o resto foi aplicado.</string>
+    <string name="h_tv_known">TV reconhecida</string>
+    <string name="h_tv_unknown">TV ainda não registrada</string>
+    <string name="h_home_no">Não é possível nesta TV</string>
+    <string name="h_home_cast">Transmitir do celular pode parar de funcionar nesta TV</string>
+    <string name="wf_title">Um passo antes da tela inicial</string>
+    <string name="wf_lead">Seu Wi-Fi foi salvo durante a configuração da TV. Para trocar a tela inicial sem perder a internet, reconecte-o pelas Configurações:</string>
+    <string name="wf_1">Abra as configurações de Wi-Fi</string>
+    <string name="wf_2">Escolha sua rede e depois Esquecer</string>
+    <string name="wf_3">Conecte-se de novo à mesma rede com a senha</string>
+    <string name="wf_open">Abrir Wi-Fi</string>
+    <string name="wf_check">Feito, continuar</string>
+    <string name="wf_skip">Manter a tela inicial original</string>
+    <string name="wf_still">O Wi-Fi ainda está ligado à configuração da TV: esqueça a rede primeiro e depois conecte-se de novo.</string>
 </resources>

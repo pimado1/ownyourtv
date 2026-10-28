@@ -33,6 +33,11 @@ class MainActivity : Activity() {
     private var fastNow = false
     private var wantFast = false
     private var homeRefused = false
+    private var knownTv: TvDb.Tv? = null
+    private var wizardOn = false
+    private var wizardOwnsWifi = false
+    /** Why the OwnYourTV home cannot be this TV's home, or null when it can. */
+    private var homeBlock: Int? = null
     private var screen = ""
     private var poll: Runnable? = null
     private var still = false
@@ -57,6 +62,7 @@ class MainActivity : Activity() {
             "done" -> finished(17, 2, 0)
             "restore" -> restore()
             "list" -> connect()
+            "wifi" -> wifiStep()
             else -> welcome()
         }
     }
@@ -220,9 +226,23 @@ class MainActivity : Activity() {
     private fun load() {
         val installed = pkgs("")
         val disabled = pkgs("-d")
-        items = Catalog.forTv(this, installed, disabled)
+        val db = TvDb.load(this)
+        knownTv = db.detect()
+        items = Catalog.forTv(this, installed, disabled, knownTv, db.brand())
         ourHome = homeNow() == HOME_ACTIVITY
-        wantHome = true
+        wizardOn = WIZARD in installed && WIZARD !in disabled
+        wizardOwnsWifi = wizardOn && tv!!.sh("dumpsys wifi | grep -o 'cname=[^ ]*'").out.contains("setupwraith")
+        val flags = knownTv?.flags ?: emptySet()
+        val homes = tv!!.sh("cmd package query-activities --brief -a android.intent.action.MAIN -c android.intent.category.HOME").out
+        homeBlock = when {
+            ourHome -> null
+            // Firmware that only lets its own list of apps be the home, or turns the setup wizard back on at boot.
+            "home_allowlist" in flags || "wizard_returns" in flags -> R.string.h_home_no
+            // Without a fallback home, a TV whose stock home is off has nothing to start before the first unlock.
+            !homes.contains("FallbackHome") && !homes.contains(".settings") -> R.string.h_home_no
+            else -> null
+        }
+        wantHome = ourHome || homeBlock == null
         fastNow = prefs.contains(ANIM)
         wantFast = fastNow
     }
@@ -237,15 +257,18 @@ class MainActivity : Activity() {
         val head = ui.row(16)
         head.addView(ui.chip("3 / 3"))
         head.addView(ui.text("${Build.MANUFACTURER.replaceFirstChar { it.uppercase() }} ${Build.MODEL} · Android ${Build.VERSION.RELEASE}", 14, Ui.GREY, ui.mono))
+        head.addView(ui.chip(getString(if (knownTv != null) R.string.h_tv_known else R.string.h_tv_unknown), if (knownTv != null) Ui.LIME else Ui.GREY))
         p.addView(head)
         p.addView(ui.title(getString(R.string.h_title), 30), ui.lp().apply { topMargin = ui.dp(4) })
 
         val body = ui.row(28).apply { gravity = Gravity.TOP; clipChildren = false }
         val grid = ui.col(12).apply { clipChildren = false }
-        val homeCard = card(getString(R.string.h_home), getString(R.string.h_home_b),
-            when { ourHome && wantHome -> getString(R.string.h_home_on); wantHome -> getString(R.string.h_home_will); ourHome -> getString(R.string.h_home_back); else -> getString(R.string.h_home_skip) },
+        val block = homeBlock
+        val homeSub = if ("cast_needs_wizard" in (knownTv?.flags ?: emptySet()) && !ourHome) getString(R.string.h_home_cast) else getString(R.string.h_home_b)
+        val homeCard = card(getString(R.string.h_home), homeSub,
+            when { block != null -> getString(block); ourHome && wantHome -> getString(R.string.h_home_on); wantHome -> getString(R.string.h_home_will); ourHome -> getString(R.string.h_home_back); else -> getString(R.string.h_home_skip) },
             if (wantHome) 1f else 0f, wide = true, check = wantHome)
-        homeCard.setOnClickListener { wantHome = !wantHome; home() }
+        homeCard.setOnClickListener { if (block == null) { wantHome = !wantHome; home() } }
         val dock = app.ownyourtv.home.Dock.current(this)
         val dockCard = card(getString(R.string.dk_title), dock.take(4).joinToString(", ") { it.label }.ifEmpty { getString(R.string.dk_empty) },
             resources.getQuantityString(R.plurals.dk_count, dock.size, dock.size), if (dock.isEmpty()) 0f else 1f)
@@ -425,7 +448,42 @@ class MainActivity : Activity() {
     // 6. Applying, step by step, in plain words.
     private class Step(val label: String, val run: () -> Boolean) { var view: TextView? = null }
 
-    private fun apply() = runSteps(buildSteps())
+    private fun apply() {
+        if (wantHome && !ourHome && wizardOwnsWifi) wifiStep() else runSteps(buildSteps())
+    }
+
+    /**
+     * The Wi-Fi network saved while the TV was first set up belongs to the setup wizard, and Android deletes it when
+     * the wizard is switched off, which the home step has to do. Joining the network again from Settings moves it
+     * to the system, so the wizard can go without taking Internet with it.
+     */
+    private fun wifiStep(still: Boolean = false) {
+        val p = page()
+        p.addView(ui.title(getString(R.string.wf_title), 40))
+        p.addView(ui.text(getString(R.string.wf_lead), 18, Ui.GREY).apply { maxWidth = ui.dp(760) }, ui.lp().apply { topMargin = ui.dp(12) })
+        val steps = ui.col(12)
+        listOf(R.string.wf_1, R.string.wf_2, R.string.wf_3).forEachIndexed { i, id ->
+            steps.addView(ui.row(16).apply {
+                addView(ui.text("${i + 1}", 24, Ui.LIME, ui.display))
+                addView(ui.text(getString(id), 19))
+            })
+        }
+        p.addView(steps, ui.lp().apply { topMargin = ui.dp(22) })
+        if (still) p.addView(ui.text(getString(R.string.wf_still), 16, Ui.RED).apply { maxWidth = ui.dp(760) }, ui.lp().apply { topMargin = ui.dp(16) })
+        val r = ui.row(16)
+        val open = ui.button(getString(R.string.wf_open), false) { openSettings(Settings.ACTION_WIFI_SETTINGS) }
+        val done = ui.button(getString(R.string.wf_check), true) {
+            thread {
+                val owned = runCatching { tv!!.sh("dumpsys wifi | grep -o 'cname=[^ ]*'").out.contains("setupwraith") }
+                    .getOrElse { tv = runCatching { Tv.connect(this) }.getOrNull(); tv?.sh("dumpsys wifi | grep -o 'cname=[^ ]*'")?.out?.contains("setupwraith") ?: true }
+                main.post { wizardOwnsWifi = owned; if (owned) wifiStep(still = true) else runSteps(buildSteps()) }
+            }
+        }
+        r.addView(open); r.addView(done)
+        r.addView(ui.button(getString(R.string.wf_skip), false) { wantHome = false; runSteps(buildSteps()) })
+        p.addView(r, ui.lp().apply { topMargin = ui.dp(30) })
+        show("wifi", p, open)
+    }
 
     /** The best settings in one press: verified ads, tracking and clutter off, the home screen on, faster animations. */
     private fun optimise() {
@@ -484,7 +542,8 @@ class MainActivity : Activity() {
 
     /** The original home comes back: what OwnYourTV switched off for the home screen comes back on, the home screen steps aside. */
     private fun undoHome(t: Tv): Boolean {
-        prefs.getStringSet(OURS_HOME, emptySet())!!.forEach { if (t.sh("pm enable $it").out.contains("enabled")) forget(OURS_HOME, it) }
+        prefs.getStringSet(OURS_HOME, emptySet())!!.sortedBy { if (it == WIZARD) 1 else 0 }
+            .forEach { if (t.sh("pm enable $it").out.contains("enabled")) forget(OURS_HOME, it) }
         // The original home may have been switched off before OwnYourTV, by hand or by another tool: bring every
         // stock home back, so stepping aside never leaves the TV without one.
         val off = pkgs("-d")
@@ -504,23 +563,24 @@ class MainActivity : Activity() {
     private fun makeHome(t: Tv): Boolean {
         t.sh("cmd package set-home-activity --user 0 $HOME_ACTIVITY")
         if (homeOpens(t)) return true
-        // Google TV keeps its own home on the Home button: switch the stock homes off, never the setup wizard
-        // that owns the Wi-Fi network.
+        // Google TV answers Home with its own launcher, then the setup wizard's recovery screen, then a sideloaded
+        // home. The wizard goes first: with the launcher off and the wizard on, the TV lands on that recovery
+        // screen, which crash-loops on some sets and can even factory-reset one on reboot.
         val enabled = pkgs("-e")
         val offNow = mutableListOf<String>()
-        STOCK_HOMES.filter { it in enabled }.forEach { if (t.sh("pm disable-user --user 0 $it").out.contains("disabled")) offNow += it }
-        val wizard = "com.google.android.tungsten.setupwraith"
-        if (wizard in enabled && !t.sh("dumpsys wifi | grep -o 'cname=[^ ]*'").out.contains("setupwraith")) {
-            if (t.sh("pm disable-user --user 0 $wizard").out.contains("disabled")) offNow += wizard
+        if (WIZARD in enabled) {
+            if (t.sh("dumpsys wifi | grep -o 'cname=[^ ]*'").out.contains("setupwraith")) return false
+            if (t.sh("pm disable-user --user 0 $WIZARD").out.contains("disabled")) offNow += WIZARD
         }
+        (STOCK_HOMES + listOfNotNull(knownTv?.home)).distinct().filter { it in enabled }
+            .forEach { if (t.sh("pm disable-user --user 0 $it").out.contains("disabled")) offNow += it }
         t.sh("cmd package set-home-activity --user 0 $HOME_ACTIVITY")
         if (homeOpens(t)) {
             offNow.forEach { remember(OURS_HOME, it) }
             return true
         }
-        // Some firmware (Xiaomi among others) only lets its own list of apps be the home. Put everything back at
-        // once, so the TV is never left without a home.
-        offNow.forEach { t.sh("pm enable $it") }
+        // Not taken: the stock homes come back first, then the wizard, so the TV never sits on its recovery screen.
+        offNow.sortedBy { if (it == WIZARD) 1 else 0 }.forEach { t.sh("pm enable $it") }
         setOurHome(false)
         homeRefused = true
         t.sh("input keyevent HOME")
@@ -628,6 +688,7 @@ class MainActivity : Activity() {
         const val EXTRA_HOME = "computer_home"
         const val EXTRA_HOME_ON = "on"
         val ANIM_KEYS = listOf("window_animation_scale", "transition_animation_scale", "animator_duration_scale")
+        const val WIZARD = "com.google.android.tungsten.setupwraith"
         val STOCK_HOMES = listOf("com.google.android.apps.tv.launcherx", "com.google.android.tvlauncher", "com.google.android.leanbacklauncher")
     }
 }

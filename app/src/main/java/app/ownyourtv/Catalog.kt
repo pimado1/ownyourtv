@@ -38,26 +38,43 @@ object Catalog {
 
     fun protectedPkg(pkg: String) = PROTECTED.matches(pkg)
 
-    /** Catalogue entries installed on this TV, then the unknown ones whose name gives them away. */
-    fun forTv(ctx: Context, installed: Set<String>, disabled: Set<String>): List<Item> {
+    /**
+     * What OwnYourTV offers on this TV, in order of trust: what a list switched off on this very model, then
+     * OwnYourTV's own catalogue, then what lists of the same brand switch off, then unknown apps whose name gives
+     * them away. Never what this model's list kept on purpose, and only ticked when checked.
+     */
+    fun forTv(ctx: Context, installed: Set<String>, disabled: Set<String>, tv: TvDb.Tv?, brand: TvDb.Brand?): List<Item> {
         val json = ctx.assets.open("catalog.json").bufferedReader().use { JSONObject(it.readText()) }.getJSONObject("packages")
+        val db = TvDb.load(ctx)
         val pm = ctx.packageManager
         val kinds = Kind.entries.associateBy { it.key }
+        val keep = (tv?.keep ?: emptySet()) + (if (tv == null) brand?.keep ?: emptySet() else emptySet())
         val out = mutableListOf<Item>()
         for (pkg in installed) {
-            if (pkg == ctx.packageName) continue
-            if (json.has(pkg)) {
-                val e = json.getJSONObject(pkg)
-                out += Item(pkg, label(pm, pkg), kinds[e.optString("k")] ?: Kind.EXTRAS, e.optBoolean("r"),
-                    (e.optJSONArray("v")?.length() ?: 0) > 0, pkg in disabled)
-            } else if (!protectedPkg(pkg)) {
-                GUESS.firstOrNull { it.second.containsMatchIn(pkg) }?.let { (kind, _) ->
-                    out += Item(pkg, label(pm, pkg), kind, rec = false, verified = false, offNow = pkg in disabled, guessed = true)
+            if (pkg == ctx.packageName || pkg in keep || HOME_STEP.contains(pkg)) continue
+            val own = json.optJSONObject(pkg)
+            val onModel = tv != null && pkg in tv.off
+            val onBrand = brand != null && pkg in brand.seen
+            val kind = kinds[own?.optString("k") ?: db.kindOf(pkg) ?: ""]
+            when {
+                onModel -> out += Item(pkg, label(pm, pkg), kind ?: Kind.EXTRAS, rec = pkg in tv!!.rec, verified = true, offNow = pkg in disabled)
+                own != null -> out += Item(pkg, label(pm, pkg), kind ?: Kind.EXTRAS, own.optBoolean("r"),
+                    (own.optJSONArray("v")?.length() ?: 0) > 0, pkg in disabled)
+                onBrand && !protectedPkg(pkg) -> out += Item(pkg, label(pm, pkg), kind ?: Kind.EXTRAS,
+                    rec = tv == null && pkg in brand!!.rec, verified = false, offNow = pkg in disabled, guessed = false)
+                !protectedPkg(pkg) -> GUESS.firstOrNull { it.second.containsMatchIn(pkg) }?.let { (k, _) ->
+                    out += Item(pkg, label(pm, pkg), k, rec = false, verified = false, offNow = pkg in disabled, guessed = true)
                 }
             }
         }
+        // A list that switches off an app people use (a streaming app, voice, casting) did it by choice: never ticked.
+        out.filter { it.kind == Kind.APPS && !it.offNow }.forEach { it.want = false }
         return out.sortedWith(compareByDescending<Item> { it.rec }.thenByDescending { it.verified }.thenBy { it.label.lowercase() })
     }
+
+    /** The home step handles these itself, in the right order and only when it is safe. */
+    private val HOME_STEP = setOf("com.google.android.tungsten.setupwraith", "com.google.android.apps.tv.launcherx",
+        "com.google.android.tvlauncher", "com.google.android.leanbacklauncher", "com.amazon.tv.launcher")
 
     private fun label(pm: PackageManager, pkg: String): String = runCatching {
         val ai = pm.getApplicationInfo(pkg, PackageManager.MATCH_DISABLED_COMPONENTS)

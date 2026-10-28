@@ -94,4 +94,17 @@
     <string name="opt_speed_back">Animationen zurücksetzen</string>
     <string name="p_perms_done">Ältere Version aufräumen</string>
     <string name="f_home_refused">Dieser Fernseher lässt keine andere App als Start zu und behält seinen eigenen. Alles andere wurde angewendet.</string>
+    <string name="h_tv_known">Fernseher erkannt</string>
+    <string name="h_tv_unknown">Fernseher noch nicht erfasst</string>
+    <string name="h_home_no">Auf diesem Fernseher nicht möglich</string>
+    <string name="h_home_cast">Streamen vom Handy kann auf diesem Fernseher aufhören</string>
+    <string name="wf_title">Ein Schritt vor dem Startbildschirm</string>
+    <string name="wf_lead">Dein WLAN wurde bei der Einrichtung des Fernsehers gespeichert. Damit sich der Start ohne Internetverlust ändern lässt, verbinde es in den Einstellungen neu:</string>
+    <string name="wf_1">Öffne die WLAN-Einstellungen</string>
+    <string name="wf_2">Wähle dein Netzwerk, dann Entfernen</string>
+    <string name="wf_3">Verbinde dich mit Passwort erneut mit demselben Netzwerk</string>
+    <string name="wf_open">WLAN öffnen</string>
+    <string name="wf_check">Erledigt, weiter</string>
+    <string name="wf_skip">Ursprünglichen Start behalten</string>
+    <string name="wf_still">Das WLAN gehört noch zur Einrichtung: Entferne zuerst das Netzwerk und verbinde dich dann neu.</string>
 </resources>

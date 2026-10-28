@@ -94,4 +94,17 @@
     <string name="opt_speed_back">Rimetti le animazioni originali</string>
     <string name="p_perms_done">Pulire una versione precedente</string>
     <string name="f_home_refused">Questa TV non permette a un\'altra app di diventare la sua home, quindi tiene la sua. Tutto il resto è applicato.</string>
+    <string name="h_tv_known">TV riconosciuta</string>
+    <string name="h_tv_unknown">TV non ancora censita</string>
+    <string name="h_home_no">Non possibile su questa TV</string>
+    <string name="h_home_cast">La trasmissione dal telefono potrebbe smettere di funzionare su questa TV</string>
+    <string name="wf_title">Un passo prima della home</string>
+    <string name="wf_lead">Il tuo Wi-Fi è stato salvato durante la configurazione della TV. Per cambiare la home senza perdere Internet, ricollegalo dalle Impostazioni:</string>
+    <string name="wf_1">Apri le impostazioni Wi-Fi</string>
+    <string name="wf_2">Scegli la tua rete, poi Elimina</string>
+    <string name="wf_3">Ricollegati alla stessa rete con la password</string>
+    <string name="wf_open">Apri Wi-Fi</string>
+    <string name="wf_check">Fatto, continua</string>
+    <string name="wf_skip">Tieni la home originale</string>
+    <string name="wf_still">Il Wi-Fi è ancora legato alla configurazione della TV: elimina prima la rete, poi ricollegati.</string>
 </resources>

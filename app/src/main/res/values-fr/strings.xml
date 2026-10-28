@@ -94,4 +94,17 @@
     <string name="opt_speed_back">Remettre les animations d\'origine</string>
     <string name="p_perms_done">Nettoyer une ancienne version</string>
     <string name="f_home_refused">Cette TV ne laisse pas une autre appli devenir son accueil : elle garde le sien. Tout le reste est appliqué.</string>
+    <string name="h_tv_known">TV reconnue</string>
+    <string name="h_tv_unknown">TV pas encore répertoriée</string>
+    <string name="h_home_no">Pas possible sur cette TV</string>
+    <string name="h_home_cast">Le cast depuis un téléphone peut s\'arrêter sur cette TV</string>
+    <string name="wf_title">Une étape avant l\'accueil</string>
+    <string name="wf_lead">Ton Wi-Fi a été enregistré pendant l\'installation de la TV. Pour changer l\'accueil sans perdre Internet, reconnecte-le depuis les paramètres :</string>
+    <string name="wf_1">Ouvre les réglages Wi-Fi</string>
+    <string name="wf_2">Choisis ton réseau, puis Oublier</string>
+    <string name="wf_3">Reconnecte-toi au même réseau avec son mot de passe</string>
+    <string name="wf_open">Ouvrir le Wi-Fi</string>
+    <string name="wf_check">C\'est fait, continuer</string>
+    <string name="wf_skip">Garder l\'accueil d\'origine</string>
+    <string name="wf_still">Le Wi-Fi est encore lié à l\'installation de la TV : oublie d\'abord le réseau, puis reconnecte-toi.</string>
 </resources>

@@ -95,4 +95,17 @@
     <string name="opt_speed_back">Put the animations back</string>
     <string name="p_perms_done">Clean up an older version</string>
     <string name="f_home_refused">This TV does not let another app be its home, so it keeps its own. Everything else went through.</string>
+    <string name="h_tv_known">TV recognised</string>
+    <string name="h_tv_unknown">TV not listed yet</string>
+    <string name="h_home_no">Not possible on this TV</string>
+    <string name="h_home_cast">Casting from a phone may stop working on this TV</string>
+    <string name="wf_title">One step before the home screen</string>
+    <string name="wf_lead">Your Wi-Fi was saved while the TV was being set up. To change the home screen without losing Internet, join it again from Settings:</string>
+    <string name="wf_1">Open the Wi-Fi settings</string>
+    <string name="wf_2">Choose your network, then Forget</string>
+    <string name="wf_3">Join the same network again with its password</string>
+    <string name="wf_open">Open Wi-Fi</string>
+    <string name="wf_check">Done, carry on</string>
+    <string name="wf_skip">Keep the original home</string>
+    <string name="wf_still">The Wi-Fi still belongs to the TV\'s setup: forget the network first, then join it again.</string>
 </resources>
