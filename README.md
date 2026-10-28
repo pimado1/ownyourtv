@@ -81,8 +81,9 @@ keeps its own record of what it changed, so undo each from where you made the ch
 
 ### Updating from 1.0 or 1.1
 
-Version 1.2 is signed with OwnYourTV's own key, so it cannot update a 1.0 or 1.1 install: uninstall OwnYourTV
-first (Settings › Apps), then install 1.2. `ownyourtv.py` does it for you when you agree.
+Version 1.2 is signed with OwnYourTV's own key, so it cannot update a 1.0 or 1.1 install. In OwnYourTV, press
+**Put everything back** first (so the TV gets its original home back), then uninstall OwnYourTV (Settings › Apps)
+and install 1.2. `ownyourtv.py <tv ip> home` does all of it for you when you agree.
 
 ## How the TV app works without a computer
 

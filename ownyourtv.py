@@ -175,6 +175,12 @@ def install_app(tv, apk=None):
         print("An earlier OwnYourTV, signed with another key, is on the TV: it has to be uninstalled first.")
         if not ask("Uninstall it and install the new one?", False):
             return False
+        # Bring a stock home back first: with the old OwnYourTV as the only home, uninstalling it would leave the
+        # TV on a black screen until the new one is set up.
+        off = tv.packages("-d")
+        for p in STOCK_HOMES:
+            if p in off:
+                tv.sh(f"pm enable {p}")
         tv.adb("uninstall", PKG)
         out = tv.adb("install", str(apk), timeout=300)
     print(out.splitlines()[-1] if out else "")
