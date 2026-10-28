@@ -11,7 +11,7 @@ import java.net.URL
  * database grows from real sets. Only names Android reports for the model, never anything about the person.
  */
 object Report {
-    const val URL_REPORT = "https://ownyourtv-reports.WORKERS_SUBDOMAIN.workers.dev/report"
+    const val URL_REPORT = "https://ownyourtv-reports.ownyourtv.workers.dev/report"
 
     private fun name(s: String?) = (s ?: "").replace(Regex("[^A-Za-z0-9 ._+\\-()]"), "").trim().take(64).ifEmpty { "unknown" }
 
