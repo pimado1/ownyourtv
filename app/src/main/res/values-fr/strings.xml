@@ -55,7 +55,6 @@
     <string name="p_on">Rallumer %s</string>
     <string name="p_install">Installer OwnYourTV</string>
     <string name="p_perms">Donner ses permissions à OwnYourTV</string>
-    <string name="p_keys">Touches de la télécommande</string>
     <string name="p_home">En faire ton accueil</string>
     <string name="p_restore_home">Remettre l\'accueil d\'origine</string>
     <string name="f_title">Ta TV est à toi.</string>
@@ -76,8 +75,6 @@
     <string name="k_apps">Appli préinstallée</string>
     <string name="h_changes">changements</string>
     <string name="h_apply_short">Appliquer</string>
-    <string name="key_service_name">Touches de la télécommande pour OwnYourTV</string>
-    <string name="key_service_desc">Permet à la roue crantée d\'ouvrir les réglages rapides d\'OwnYourTV et garde OwnYourTV comme accueil.</string>
     <string name="l_verified">vérifiée sur une TV de test</string>
     <string name="l_detected">repérée à son nom : à toi de voir</string>
     <string name="h_home_back">Accueil d\'origine</string>
@@ -95,4 +92,5 @@
     <string name="opt_sub">Pubs, pistage et superflu vérifiés coupés, l\'accueil OwnYourTV, des menus plus rapides</string>
     <string name="opt_speed">Accélérer les animations</string>
     <string name="opt_speed_back">Remettre les animations d\'origine</string>
+    <string name="p_perms_done">Nettoyer une ancienne version</string>
 </resources>

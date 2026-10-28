@@ -55,7 +55,6 @@
     <string name="p_on">%s einschalten</string>
     <string name="p_install">OwnYourTV installieren</string>
     <string name="p_perms">OwnYourTV seine Berechtigungen geben</string>
-    <string name="p_keys">Tasten der Fernbedienung</string>
     <string name="p_home">Als Start festlegen</string>
     <string name="p_restore_home">Ursprünglichen Start zurückholen</string>
     <string name="f_title">Dein Fernseher gehört dir.</string>
@@ -76,8 +75,6 @@
     <string name="k_apps">Vorinstallierte App</string>
     <string name="h_changes">Änderungen</string>
     <string name="h_apply_short">Anwenden</string>
-    <string name="key_service_name">Fernbedienungstasten für OwnYourTV</string>
-    <string name="key_service_desc">Lässt die Zahnradtaste die Schnelleinstellungen von OwnYourTV öffnen und behält OwnYourTV als Start.</string>
     <string name="l_verified">auf einem Testgerät geprüft</string>
     <string name="l_detected">am Namen erkannt: du entscheidest</string>
     <string name="h_home_back">Ursprünglicher Start</string>
@@ -95,4 +92,5 @@
     <string name="opt_sub">Geprüfte Werbung, Tracking und Überflüssiges aus, der OwnYourTV-Start, schnellere Menüs</string>
     <string name="opt_speed">Animationen beschleunigen</string>
     <string name="opt_speed_back">Animationen zurücksetzen</string>
+    <string name="p_perms_done">Ältere Version aufräumen</string>
 </resources>

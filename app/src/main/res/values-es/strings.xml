@@ -55,7 +55,6 @@
     <string name="p_on">Activar %s</string>
     <string name="p_install">Instalar OwnYourTV</string>
     <string name="p_perms">Dar sus permisos a OwnYourTV</string>
-    <string name="p_keys">Botones del mando</string>
     <string name="p_home">Ponerlo como inicio</string>
     <string name="p_restore_home">Volver al inicio original</string>
     <string name="f_title">Tu TV es tuya.</string>
@@ -76,8 +75,6 @@
     <string name="k_apps">App preinstalada</string>
     <string name="h_changes">cambios</string>
     <string name="h_apply_short">Aplicar</string>
-    <string name="key_service_name">Botones del mando para OwnYourTV</string>
-    <string name="key_service_desc">Hace que el botón de engranaje abra los ajustes rápidos de OwnYourTV y mantiene OwnYourTV como inicio.</string>
     <string name="l_verified">comprobada en una TV de prueba</string>
     <string name="l_detected">detectada por su nombre: tú decides</string>
     <string name="h_home_back">Inicio original</string>
@@ -95,4 +92,5 @@
     <string name="opt_sub">Anuncios, rastreo y sobrante verificados fuera, el inicio OwnYourTV, menús más rápidos</string>
     <string name="opt_speed">Acelerar las animaciones</string>
     <string name="opt_speed_back">Restaurar las animaciones</string>
+    <string name="p_perms_done">Limpiar una versión anterior</string>
 </resources>

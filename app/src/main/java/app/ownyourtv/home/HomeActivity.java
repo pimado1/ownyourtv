@@ -170,6 +170,8 @@ public class HomeActivity extends Activity {
     /** Installed from the TV (Downloader and the like): the stock home still owns Home, so the steps that ADB does
      *  OwnYourTV runs are walked through on screen instead. */
     private boolean needsOnboarding() {
+        // OwnYourTV's own screens set the home up; this first-run guide is kept for an older install only.
+        if (true) return false;
         if (getSharedPreferences(ONBOARD_PREFS, MODE_PRIVATE).getBoolean("done", false)) return false;
         android.content.pm.ResolveInfo home = getPackageManager().resolveActivity(
                 new Intent(Intent.ACTION_MAIN).addCategory(Intent.CATEGORY_HOME),

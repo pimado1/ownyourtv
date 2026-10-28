@@ -2,6 +2,12 @@ plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
 }
+// The release key lives outside the repository, in ~/.ownyourtv-signing/keystore.properties. Without it (a
+// contributor's machine), release builds fall back to the debug key and cannot update a published install.
+def signingProps = new Properties()
+def signingFile = new File(System.getProperty('user.home'), '.ownyourtv-signing/keystore.properties')
+if (signingFile.exists()) signingFile.withInputStream { signingProps.load(it) }
+
 android {
     namespace 'app.ownyourtv'
     compileSdk 34
@@ -9,15 +15,25 @@ android {
         applicationId 'app.ownyourtv'
         minSdk 26
         targetSdk 34
-        versionCode 3
-        versionName '1.1'
+        versionCode 4
+        versionName '1.2'
+    }
+    signingConfigs {
+        release {
+            if (signingFile.exists()) {
+                storeFile file(signingProps['storeFile'])
+                storePassword signingProps['storePassword']
+                keyAlias signingProps['keyAlias']
+                keyPassword signingProps['keyPassword']
+            }
+        }
     }
     buildTypes {
         release {
             minifyEnabled true
             shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-            signingConfig signingConfigs.debug
+            signingConfig signingFile.exists() ? signingConfigs.release : signingConfigs.debug
         }
     }
     compileOptions { sourceCompatibility JavaVersion.VERSION_17; targetCompatibility JavaVersion.VERSION_17 }

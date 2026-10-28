@@ -79,6 +79,11 @@ The same, without the menu:
 Add `--yes` to skip the questions. The script and the TV app share the catalogue and the safety rules; each
 keeps its own record of what it changed, so undo each from where you made the change.
 
+### Updating from 1.0 or 1.1
+
+Version 1.2 is signed with OwnYourTV's own key, so it cannot update a 1.0 or 1.1 install: uninstall OwnYourTV
+first (Settings › Apps), then install 1.2. `ownyourtv.py` does it for you when you agree.
+
 ## How the TV app works without a computer
 
 Android lets the owner turn on USB debugging. When it is on, OwnYourTV connects to the TV's own debugging port,

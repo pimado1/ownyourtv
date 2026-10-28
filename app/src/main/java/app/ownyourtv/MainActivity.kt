@@ -39,7 +39,7 @@ class MainActivity : Activity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         ui = Ui(this)
-        app.ownyourtv.home.HomeKeyService.keepHomeOn(this)
+        app.ownyourtv.home.HomeKeeper.keepHomeOn(this)
         root = FrameLayout(this).apply {
             background = GradientDrawable(GradientDrawable.Orientation.TL_BR, intArrayOf(Color.rgb(20, 26, 18), Ui.INK, Ui.INK))
         }
@@ -440,10 +440,12 @@ class MainActivity : Activity() {
                 t.sh("pm grant $packageName android.permission.BLUETOOTH_CONNECT 2>/dev/null; pm grant $packageName android.permission.READ_TV_LISTINGS 2>/dev/null; " +
                     "cmd appops set $packageName ACCESS_RESTRICTED_SETTINGS allow 2>/dev/null; cmd appops set $packageName AUTO_START allow 2>/dev/null; true").ok
             }
-            steps += Step(getString(R.string.p_keys)) {
+            // Earlier versions had a remote-key service; it is gone, so its entry in the TV's settings goes too.
+            steps += Step(getString(R.string.p_perms_done)) {
                 val s = t.sh("settings get secure enabled_accessibility_services").out.trim()
-                val next = when { s.contains(KEY_SERVICE) -> s; s.isEmpty() || s == "null" -> KEY_SERVICE; else -> "$s:$KEY_SERVICE" }
-                t.sh("settings put secure enabled_accessibility_services $next; settings put secure accessibility_enabled 1").ok
+                val next = s.split(':').filter { it.isNotBlank() && it != "null" && it != KEY_SERVICE }.joinToString(":")
+                if (next != s) t.sh(if (next.isEmpty()) "settings delete secure enabled_accessibility_services" else "settings put secure enabled_accessibility_services $next")
+                true
             }
             steps += Step(getString(R.string.p_home)) { makeHome(t) }
         } else if (!wantHome && ourHome) {
@@ -463,8 +465,8 @@ class MainActivity : Activity() {
         packageManager.setComponentEnabledSetting(android.content.ComponentName(this, app.ownyourtv.home.HomeActivity::class.java),
             if (on) android.content.pm.PackageManager.COMPONENT_ENABLED_STATE_ENABLED else android.content.pm.PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
             android.content.pm.PackageManager.DONT_KILL_APP)
-        getSharedPreferences(app.ownyourtv.home.HomeKeyService.PREFS, MODE_PRIVATE).edit()
-            .putBoolean(app.ownyourtv.home.HomeKeyService.KEY_CHOSEN, on).apply()
+        getSharedPreferences(app.ownyourtv.home.HomeKeeper.PREFS, MODE_PRIVATE).edit()
+            .putBoolean(app.ownyourtv.home.HomeKeeper.KEY_CHOSEN, on).apply()
         // OwnYourTV has already done what the home screen's own first-run steps would ask for.
         if (on) getSharedPreferences("horizon_onboarding", MODE_PRIVATE).edit().putBoolean("done", true).apply()
     }
@@ -584,6 +586,7 @@ class MainActivity : Activity() {
 
     companion object {
         const val HOME_ACTIVITY = "app.ownyourtv/.home.HomeActivity"
+        /** The remote-key service of versions before 1.2, cleaned out of the TV's settings. */
         const val KEY_SERVICE = "app.ownyourtv/.home.HomeKeyService"
         const val OURS = "ours"
         const val OURS_HOME = "ours_home"

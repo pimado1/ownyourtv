@@ -29,7 +29,7 @@ STATE_DIR = Path.home() / ".ownyourtv"
 APK_URL = "https://github.com/pimado1/ownyourtv/releases/latest/download/OwnYourTV.apk"
 PKG = "app.ownyourtv"
 HOME = f"{PKG}/.home.HomeActivity"
-KEY_SERVICE = f"{PKG}/.home.HomeKeyService"
+KEY_SERVICE = f"{PKG}/.home.HomeKeyService"  # versions before 1.2 only
 STOCK_HOMES = ["com.google.android.apps.tv.launcherx", "com.google.android.tvlauncher", "com.google.android.leanbacklauncher"]
 WIZARD = "com.google.android.tungsten.setupwraith"
 ANIM_KEYS = ["window_animation_scale", "transition_animation_scale", "animator_duration_scale"]
@@ -169,7 +169,15 @@ def install_app(tv, apk=None):
         print("Downloading OwnYourTV…")
         apk = Path(tempfile.gettempdir()) / "OwnYourTV.apk"
         urllib.request.urlretrieve(APK_URL, apk)
-    print(tv.adb("install", "-r", str(apk), timeout=300).splitlines()[-1])
+    out = tv.adb("install", "-r", str(apk), timeout=300)
+    if "UPDATE_INCOMPATIBLE" in out:
+        # 1.2 is signed with OwnYourTV's own key; an earlier test build can only be replaced, not updated.
+        print("An earlier OwnYourTV, signed with another key, is on the TV: it has to be uninstalled first.")
+        if not ask("Uninstall it and install the new one?", False):
+            return False
+        tv.adb("uninstall", PKG)
+        out = tv.adb("install", str(apk), timeout=300)
+    print(out.splitlines()[-1] if out else "")
     return PKG in tv.packages()
 
 
@@ -182,10 +190,11 @@ def make_home(tv, apk=None):
     time.sleep(2)
     tv.sh(f"pm grant {PKG} android.permission.BLUETOOTH_CONNECT; pm grant {PKG} android.permission.READ_TV_LISTINGS; "
           f"cmd appops set {PKG} ACCESS_RESTRICTED_SETTINGS allow")
-    services = tv.sh("settings get secure enabled_accessibility_services").strip()
-    if KEY_SERVICE not in services:
-        services = KEY_SERVICE if services in ("", "null") else f"{services}:{KEY_SERVICE}"
-        tv.sh(f"settings put secure enabled_accessibility_services {services}; settings put secure accessibility_enabled 1")
+    # Versions before 1.2 had a remote-key service; it is gone, so its entry in the TV's settings goes too.
+    old = tv.sh("settings get secure enabled_accessibility_services").strip()
+    kept = [s for s in old.split(":") if s and s != "null" and s != KEY_SERVICE]
+    if ":".join(kept) != old and old not in ("", "null"):
+        tv.sh("settings put secure enabled_accessibility_services " + ":".join(kept) if kept else "settings delete secure enabled_accessibility_services")
     tv.sh(f"cmd package set-home-activity --user 0 {HOME}")
     if tv.home_now() != HOME:
         # Google TV keeps its own home on the Home button: switch the stock homes off, never the setup wizard that
