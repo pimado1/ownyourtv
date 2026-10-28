@@ -127,4 +127,6 @@
     <string name="o_start">Los geht\'s</string>
     <string name="o_ok">✓</string>
     <string name="o_home_blocked">Bleibt der Schalter aus, blockiert Android 13+ Apps aus einer Datei: Nutze OwnYourTV dann vom Computer aus (ownyourtv.py).</string>
+    <string name="h_audio">TON</string>
+    <string name="h_sound_settings">Toneinstellungen</string>
 </resources>

@@ -127,4 +127,6 @@
     <string name="o_start">Empezar</string>
     <string name="o_ok">✓</string>
     <string name="o_home_blocked">Si el interruptor sigue apagado, Android 13+ bloquea las apps instaladas desde un archivo: usa OwnYourTV desde un ordenador (ownyourtv.py).</string>
+    <string name="h_audio">SONIDO</string>
+    <string name="h_sound_settings">Ajustes de sonido</string>
 </resources>

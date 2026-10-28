@@ -128,4 +128,6 @@
     <string name="o_start">Start</string>
     <string name="o_ok">✓</string>
     <string name="o_home_blocked">If the switch stays off, Android 13+ blocks apps installed from a file: run OwnYourTV from a computer instead (ownyourtv.py).</string>
+    <string name="h_audio">SOUND</string>
+    <string name="h_sound_settings">Sound settings</string>
 </resources>

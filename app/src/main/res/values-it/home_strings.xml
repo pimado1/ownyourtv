@@ -127,4 +127,6 @@
     <string name="o_start">Inizia</string>
     <string name="o_ok">✓</string>
     <string name="o_home_blocked">Se l\'interruttore resta spento, Android 13+ blocca le app installate da un file: usa OwnYourTV da un computer (ownyourtv.py).</string>
+    <string name="h_audio">AUDIO</string>
+    <string name="h_sound_settings">Impostazioni audio</string>
 </resources>

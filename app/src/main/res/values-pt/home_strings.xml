@@ -127,4 +127,6 @@
     <string name="o_start">Começar</string>
     <string name="o_ok">✓</string>
     <string name="o_home_blocked">Se o botão continuar desligado, o Android 13+ bloqueia apps instalados por arquivo: use o OwnYourTV a partir de um computador (ownyourtv.py).</string>
+    <string name="h_audio">SOM</string>
+    <string name="h_sound_settings">Configurações de som</string>
 </resources>

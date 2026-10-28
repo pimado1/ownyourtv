@@ -96,6 +96,9 @@ public class HomeActivity extends Activity {
     private long weatherAt;
 
     private LinearLayout soirPill, speakerPill, castPill, sourcesPill, memPill;
+    private View inputsButton;
+    /** The connected Bluetooth speaker, or null. */
+    private String speakerName;
     private TextView soirLabel, speakerValue, sourcesValue, memTitle, memAction;
     private Glyph memRing;
     private boolean soir;
@@ -380,7 +383,8 @@ public class HomeActivity extends Activity {
         root.addView(skyChip(), at(112, 352));
 
         LinearLayout top = row(14);
-        top.addView(iconButton(R.drawable.ic_input, Color.WHITE, getString(R.string.h_sources), v -> showInputs()));
+        inputsButton = iconButton(R.drawable.ic_input, Color.WHITE, getString(R.string.h_sources), v -> showInputs());
+        top.addView(inputsButton);
         top.addView(iconButton(R.drawable.ic_wifi, 0xFF5CF2A8, getString(R.string.h_wifi), v -> open(new Intent(Settings.ACTION_WIFI_SETTINGS))));
         View settings = iconButton(R.drawable.ic_settings, Color.WHITE, getString(R.string.h_settings),
                 v -> open(new Intent(this, QuickPanelActivity.class)));
@@ -650,10 +654,13 @@ public class HomeActivity extends Activity {
         soirLabel.setTypeface(textBold);
         soirLabel.setText(getString(R.string.h_tonight));
         soirPill.setOnClickListener(v -> toggleSoir());
-        speakerPill = pill(Glyph.SOUNDBAR, getString(R.string.h_soundbar), true);
+        speakerPill = pill(Glyph.SOUNDBAR, getString(R.string.h_audio), true);
         speakerValue = (TextView) speakerPill.getTag();
         speakerValue.setText("…");
-        speakerPill.setOnClickListener(v -> open(new Intent(Settings.ACTION_BLUETOOTH_SETTINGS)));
+        speakerPill.setOnClickListener(v -> {
+            if (speakerName != null) open(new Intent(Settings.ACTION_BLUETOOTH_SETTINGS));
+            else openSoundSettings();
+        });
         castPill = pill(Glyph.CAST, "CHROMECAST", false);
         ((TextView) castPill.getTag()).setText(getString(R.string.h_cast_ready));
         castPill.setVisibility(HomeData.enabled(this, "com.google.android.apps.mediashell") ? View.VISIBLE : View.GONE);
@@ -661,6 +668,7 @@ public class HomeActivity extends Activity {
         sourcesValue = (TextView) sourcesPill.getTag();
         sourcesValue.setText("HDMI");
         sourcesPill.setOnClickListener(v -> showInputs());
+        for (View v : new View[]{speakerPill, castPill, sourcesPill}) v.setId(View.generateViewId());
         left.addView(soirPill, new LinearLayout.LayoutParams(-2, -1));
         left.addView(speakerPill, new LinearLayout.LayoutParams(-2, -1));
         left.addView(castPill, new LinearLayout.LayoutParams(-2, -1));
@@ -786,6 +794,19 @@ public class HomeActivity extends Activity {
             if (hidden.contains(pkg)) continue;
             HomeData.App a = HomeData.app(this, pkg);
             if (a != null) dock.add(a);
+        }
+        if (!HomeData.dockChosen(this) && dock.size() < 3) {
+            // Apps the owner installed first, then the TV's own (streaming apps often ship as system apps).
+            List<HomeData.App> all = HomeData.allApps(this);
+            for (boolean system : new boolean[]{false, true}) {
+                for (HomeData.App a : all) {
+                    if (dock.size() >= 5) break;
+                    if (a.system != system || a.pkg.equals(getPackageName()) || a.pkg.contains("settings") || hidden.contains(a.pkg)) continue;
+                    boolean there = false;
+                    for (HomeData.App d : dock) there |= d.pkg.equals(a.pkg);
+                    if (!there) dock.add(a);
+                }
+            }
         }
         carousel.removeAllViews();
         cards.clear();
@@ -1092,14 +1113,37 @@ public class HomeActivity extends Activity {
         memRing.setValue(m[0] / (float) m[1]);
     }
 
+    /** A Bluetooth speaker by name; a soundbar on HDMI or the TV's own speakers show as the sound settings. */
     private void refreshSpeaker() {
-        HomeData.connectedSpeaker(this, n -> main.post(() -> speakerValue.setText(n != null ? n : getString(R.string.h_not_connected))));
+        HomeData.connectedSpeaker(this, n -> main.post(() -> {
+            speakerName = n;
+            speakerValue.setText(n != null ? n : getString(R.string.h_sound_settings));
+        }));
     }
 
+    private void openSoundSettings() {
+        for (Intent i : new Intent[]{new Intent("com.android.tv.action.VIEW_SOUND_SETTINGS"), new Intent(Settings.ACTION_SOUND_SETTINGS)}) {
+            if (i.resolveActivity(getPackageManager()) != null) {
+                open(i);
+                return;
+            }
+        }
+        open(new Intent(Settings.ACTION_SETTINGS));
+    }
+
+    /** A box or a stick has no HDMI input: its Sources button and pill are left out rather than shown empty. */
     private void refreshInputs() {
         bg.post(() -> {
             List<HomeData.Input> list = HomeData.inputs(this);
-            main.post(() -> sourcesValue.setText(list.isEmpty() ? getString(R.string.h_none) : list.get(0).label));
+            main.post(() -> {
+                boolean any = !list.isEmpty();
+                if (any) sourcesValue.setText(list.get(0).label);
+                sourcesPill.setVisibility(any ? View.VISIBLE : View.GONE);
+                if (inputsButton != null) inputsButton.setVisibility(any ? View.VISIBLE : View.GONE);
+                View last = any ? sourcesPill : castPill.getVisibility() == View.VISIBLE ? castPill : speakerPill;
+                memPill.setNextFocusLeftId(last.getId());
+                last.setNextFocusRightId(memPill.getId());
+            });
         });
     }
 

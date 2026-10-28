@@ -140,8 +140,10 @@ public class QuickPanelActivity extends Activity {
         addRow(Glyph.CAST, getString(R.string.h_wifi), getString(R.string.h_wifi_d), () -> open(new Intent(Settings.ACTION_WIFI_SETTINGS)));
         addRow(Glyph.SOUNDBAR, getString(R.string.h_bluetooth), getString(R.string.h_bluetooth_d),
                 () -> open(new Intent(Settings.ACTION_BLUETOOTH_SETTINGS)));
-        addRow(Glyph.MOON, getString(R.string.h_saver), getString(R.string.h_saver_d),
-                () -> open(new Intent("com.google.android.pano.action.SLEEP")));
+        // Sleep is a Google TV screen; on other TVs the row is left out rather than opening the wrong screen.
+        Intent sleep = new Intent("com.google.android.pano.action.SLEEP");
+        if (sleep.resolveActivity(getPackageManager()) != null)
+            addRow(Glyph.MOON, getString(R.string.h_saver), getString(R.string.h_saver_d), () -> open(sleep));
         addRow(Glyph.GRID, getString(R.string.h_all_settings), getString(R.string.h_all_settings_d),
                 () -> open(new Intent(Settings.ACTION_SETTINGS)));
 

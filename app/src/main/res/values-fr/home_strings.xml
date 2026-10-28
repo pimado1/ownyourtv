@@ -128,4 +128,6 @@
     <string name="o_start">Commencer</string>
     <string name="o_ok">✓</string>
     <string name="o_home_blocked">Si l\'interrupteur reste éteint, Android 13+ bloque les apps installées depuis un fichier : lance alors OwnYourTV depuis un ordinateur (ownyourtv.py).</string>
+    <string name="h_audio">SON</string>
+    <string name="h_sound_settings">Réglages du son</string>
 </resources>
