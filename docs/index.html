@@ -42,6 +42,12 @@
       <div data-reveal>
         <h1 data-i18n="h1">You paid for it. <em>Own it.</em></h1>
         <p class="lead" data-i18n="lead">Switch off the ads and tracking your Android TV or Google TV came with, and give it a home screen that is yours. From the remote, no computer needed.</p>
+        <ul class="nos" aria-label="What you need">
+          <li class="no" data-i18n="no_pc">No computer</li>
+          <li class="no" data-i18n="no_phone">No phone</li>
+          <li class="no" data-i18n="no_ai">No AI</li>
+          <li class="yes" data-i18n="yes_remote">Just the remote</li>
+        </ul>
       </div>
       <div class="hero-side" data-reveal style="--d: 120ms">
         <div class="code">
@@ -56,7 +62,7 @@
           <a class="btn btn-ghost" href="https://github.com/pimado1/ownyourtv/releases/latest" data-i18n="cta_apk">Download the APK</a>
         </div>
         <div class="facts">
-          <div><strong class="count" data-to="345">345</strong><span data-i18n="f_models">TV models recognised</span></div>
+          <div><strong>0</strong><span data-i18n="f_pc">computer or phone needed</span></div>
           <div><strong class="count" data-to="6">6</strong><span data-i18n="f_langs">languages</span></div>
           <div><strong>1</strong><span data-i18n="f_undo">button puts it all back</span></div>
         </div>
@@ -147,14 +153,30 @@
     </div>
   </section>
 
+  <section id="safe">
+    <div class="wrap">
+      <p class="eyebrow" data-i18n="safe_eye">Safe by design</p>
+      <h2 data-i18n="safe_h">Built so your TV never gets stuck</h2>
+      <p class="sub" data-i18n="safe_sub">A TV is not a phone you can wipe on a whim. OwnYourTV plans for the bad days.</p>
+      <div class="safe">
+        <div><span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 3v9M7.5 6.5a7 7 0 1 0 9 0" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span>
+          <h3 data-i18n="sf1_h">Switched off, never deleted</h3><p data-i18n="sf1_p">Every app stays on the TV. Only apps checked on a real set are ticked, and what the TV needs is never offered.</p></div>
+        <div><span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M20 12a8 8 0 1 1-2.3-5.6M20 4v5h-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+          <h3 data-i18n="sf2_h">After a TV update</h3><p data-i18n="sf2_p">Updates often switch the ads back on. OwnYourTV notices at boot and on its home screen, and switches them off again in one press.</p></div>
+        <div><span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 3l8 3v6c0 4.5-3.4 8.3-8 9-4.6-.7-8-4.5-8-9V6z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M8.5 12l2.5 2.5 4.5-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+          <h3 data-i18n="sf3_h">A backup home</h3><p data-i18n="sf3_p">If the new home screen ever fails to start, a plain home with all your apps takes over. Never a black screen.</p></div>
+        <div><span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M9 14l-5-5 5-5M4 9h11a5 5 0 0 1 0 10h-3" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+          <h3 data-i18n="sf4_h">One button puts it all back</h3><p data-i18n="sf4_p">"Put everything back" switches every app on again and brings your original home screen back.</p></div>
+      </div>
+    </div>
+  </section>
+
   <section id="tvs">
     <div class="wrap">
       <p class="eyebrow" data-i18n="tvs_eye">Which TVs</p>
-      <h2 data-i18n="tvs_h">Android TV and Google TV, from 93 brands</h2>
-      <p class="sub" data-i18n="tvs_sub">OwnYourTV knows 345 models from lists tested on real sets (TCL, Sony, Xiaomi, Philips, Hisense, Chromecast…), and changes the home screen the way each model needs, or leaves it alone when a model cannot safely take another one. Below, the TVs owners reported from the app.</p>
+      <h2 data-i18n="tvs_h">Android TV and Google TV, model by model</h2>
+      <p class="sub" data-i18n="tvs_sub">OwnYourTV recognises hundreds of models from TCL, Sony, Xiaomi, Philips, Hisense and more, thanks to lists tested on real sets by the <a href="https://github.com/Gathin23/cleanyourtv">CleanYourTV</a> community (MIT licence). It changes the home screen the way each model needs, or leaves it alone when a model cannot safely take another one. Below, the TVs OwnYourTV owners shared from the app.</p>
       <div class="tv-stats">
-        <div><strong>345</strong><span data-i18n="st_models">models recognised</span></div>
-        <div><strong>93</strong><span data-i18n="st_brands">brands</span></div>
         <div><strong id="n-reports">·</strong><span data-i18n="st_reports">reported by owners</span></div>
       </div>
       <ul class="reports" id="reports" aria-live="polite"></ul>
@@ -168,7 +190,11 @@
       <h2 data-i18n="faq_h">Before you start</h2>
       <details>
         <summary data-i18n="q1">Is it safe for my TV?</summary>
-        <p data-i18n="a1">Apps are switched off, never deleted, and only apps that were checked on a real TV are ticked. On a recognised model, OwnYourTV keeps what that model needs. "Put everything back" in the app turns every switched-off app back on and brings your original home screen back.</p>
+        <p data-i18n="a1">Apps are switched off, never deleted, and only apps that were checked on a real TV are ticked. On a recognised model, OwnYourTV keeps what that model needs. If its home screen ever fails to start, a backup home with your apps takes over. "Put everything back" in the app turns every switched-off app back on and brings your original home screen back.</p>
+      </details>
+      <details>
+        <summary data-i18n="q8">A TV update brought the ads back</summary>
+        <p data-i18n="a8">It happens: makers switch their apps back on during updates. OwnYourTV notices it at the next start and offers to switch them off again in one press. Turn USB debugging on when it asks, then off again at the end.</p>
       </details>
       <details>
         <summary data-i18n="q2">Google Play Protect says the app is blocked</summary>

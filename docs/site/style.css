@@ -224,3 +224,19 @@ section { position: relative; isolation: isolate; }
   footer a { display: inline-block; padding: 10px 0; }
   .tv-stats strong { font-size: 38px; }
 }
+
+/* Just the remote */
+.nos { list-style: none; padding: 0; margin: -10px 0 0; display: flex; flex-wrap: wrap; gap: 8px; }
+.nos li { font: 600 14px var(--body); padding: 7px 12px; border-radius: 999px; border: 1px solid var(--line); background: rgba(18, 21, 28, 0.6); }
+.nos .no { color: #c9ccd4; }
+.nos .no::before { content: ""; display: inline-block; width: 9px; height: 2px; margin: 0 8px 4px 0; background: var(--red); vertical-align: middle; transform: rotate(-35deg); }
+.nos .yes { color: var(--ink); background: var(--lime); border-color: var(--lime); }
+
+/* Safe by design */
+.safe { display: grid; grid-template-columns: repeat(4, 1fr); gap: 32px; }
+.safe > div { padding-top: 22px; border-top: 2px solid var(--line); }
+.safe .ico { display: grid; place-items: center; width: 44px; height: 44px; border-radius: 12px; background: var(--lime-dim); color: var(--lime); margin-bottom: 16px; }
+.safe .ico svg { width: 24px; height: 24px; }
+.safe p { color: #c9ccd4; margin: 0; font-size: 16px; }
+@media (max-width: 980px) { .safe { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 560px) { .safe { grid-template-columns: 1fr; gap: 24px; } }

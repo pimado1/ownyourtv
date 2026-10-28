@@ -85,7 +85,7 @@
   }
 
   // Reveals on scroll, a little staggered inside each group.
-  var groups = [".hero [data-reveal]", "section .eyebrow, section h2, section .sub", ".steps li", ".split > *", ".tv-stats > div", ".faq details"];
+  var groups = [".hero [data-reveal]", "section .eyebrow, section h2, section .sub", ".steps li", ".safe > div", ".split > *", ".tv-stats > div", ".faq details"];
   groups.forEach(function (sel) {
     document.querySelectorAll(sel).forEach(function (el, i) {
       if (!el.hasAttribute("data-reveal")) { el.setAttribute("data-reveal", ""); el.style.setProperty("--d", (i % 6) * 90 + "ms"); }
