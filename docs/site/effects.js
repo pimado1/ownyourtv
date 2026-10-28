@@ -55,8 +55,15 @@
   if (cmp && range) {
     var touched = false;
     var set = function (v) { cmp.style.setProperty("--pos", v + "%"); range.value = v; cmp.classList.toggle("hide-before", v < 16); cmp.classList.toggle("hide-after", v > 84); };
-    range.addEventListener("input", function () { touched = true; cmp.classList.add("dragging"); set(+range.value); });
-    range.addEventListener("change", function () { cmp.classList.remove("dragging"); });
+    // Keyboard: the range input. Mouse and finger: anywhere on the picture, while vertical swipes still scroll the page.
+    range.addEventListener("input", function () { touched = true; set(+range.value); });
+    var at = function (e) { var r = cmp.getBoundingClientRect(); return Math.min(100, Math.max(0, (e.clientX - r.left) / r.width * 100)); };
+    cmp.addEventListener("pointerdown", function (e) {
+      touched = true; cmp.classList.add("dragging"); set(at(e));
+      cmp.setPointerCapture(e.pointerId);
+    });
+    cmp.addEventListener("pointermove", function (e) { if (cmp.classList.contains("dragging")) set(at(e)); });
+    ["pointerup", "pointercancel"].forEach(function (n) { cmp.addEventListener(n, function () { cmp.classList.remove("dragging"); }); });
     var sweep = function () {
       if (still || touched) return;
       var keys = [[0, 50], [700, 88], [1700, 12], [2500, 50]], t0 = null;

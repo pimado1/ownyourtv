@@ -66,7 +66,7 @@ var FR = {
   before_alt: "Avant : l'accueil Google TV d'origine avec une pub plein écran et des recommandations.",
   before_chip: "Avant", after_chip: "Après", compare_aria: "Avant et après",
   ba_hint: "Fais glisser pour comparer : l'accueil Google TV d'origine, puis OwnYourTV.",
-  pick: "Essaie : choisis une appli",
+  pick: "Essaie : choisis une appli", bar_cta: "Installer",
   p_updated: "Mis à jour le 28 octobre 2026.", p_back: "← Retour à l'accueil"
 };
 
