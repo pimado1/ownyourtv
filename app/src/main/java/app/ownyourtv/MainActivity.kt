@@ -38,6 +38,8 @@ class MainActivity : Activity() {
     private var wizardOwnsWifi = false
     /** Why the OwnYourTV home cannot be this TV's home, or null when it can. */
     private var homeBlock: Int? = null
+    /** Where the remote's Back key goes in the assistant. */
+    private var back: (() -> Unit)? = null
     private var screen = ""
     private var poll: Runnable? = null
     private var still = false
@@ -86,16 +88,19 @@ class MainActivity : Activity() {
 
     @Deprecated("TV back key")
     override fun onBackPressed() {
-        when (screen) {
-            "list", "restore", "dock" -> home()
-            "progress" -> Unit
+        val b = back
+        when {
+            b != null -> b()
+            screen == "list" || screen == "restore" || screen == "dock" -> home()
+            screen == "progress" -> Unit
             else -> super.onBackPressed()
         }
     }
 
     private fun adbOn() = Settings.Global.getInt(contentResolver, Settings.Global.ADB_ENABLED, 0) == 1
 
-    private fun show(name: String, v: View, focus: View? = null) {
+    private fun show(name: String, v: View, focus: View? = null, onBack: (() -> Unit)? = null) {
+        back = onBack
         stopPoll()
         screen = name
         root.removeAllViews()
@@ -142,7 +147,7 @@ class MainActivity : Activity() {
     // 2. Developer mode, guided.
     private fun devMode() {
         val p = page()
-        p.addView(ui.chip("1 / 3"))
+        p.addView(stepper(0), ui.lp(MATCH_PARENT).apply { bottomMargin = ui.dp(22) })
         p.addView(ui.title(getString(R.string.d_title)), ui.lp().apply { topMargin = ui.dp(10) })
         p.addView(ui.text(getString(R.string.d_lead), 18, Ui.GREY), ui.lp().apply { topMargin = ui.dp(10) })
         val steps = ui.row(18)
@@ -179,7 +184,7 @@ class MainActivity : Activity() {
     // 3. The TV asks its owner; OwnYourTV waits for the OK.
     private fun connect() {
         val p = page()
-        p.addView(ui.chip("2 / 3"))
+        p.addView(stepper(0), ui.lp(MATCH_PARENT).apply { bottomMargin = ui.dp(22) })
         p.addView(ui.title(getString(R.string.c_title)), ui.lp().apply { topMargin = ui.dp(10) })
         p.addView(ui.text(getString(R.string.c_lead), 20), ui.lp().apply { topMargin = ui.dp(12) })
         val mock = ui.col(14).apply {
@@ -217,7 +222,7 @@ class MainActivity : Activity() {
             tv?.close()
             tv = t
             load()
-            main.post { if (screen == "connect") { if (intent.getStringExtra("preview") == "list") category(Kind.TRACKING, getString(R.string.h_track)) else home() } }
+            main.post { if (screen == "connect") { if (prefs.getBoolean(SETUP_DONE, false)) home() else wizTv() } }
         }
     }
 
@@ -255,7 +260,6 @@ class MainActivity : Activity() {
     private fun home() {
         val p = page()
         val head = ui.row(16)
-        head.addView(ui.chip("3 / 3"))
         head.addView(ui.text("${Build.MANUFACTURER.replaceFirstChar { it.uppercase() }} ${Build.MODEL} · Android ${Build.VERSION.RELEASE}", 14, Ui.GREY, ui.mono))
         head.addView(ui.chip(getString(if (knownTv != null) R.string.h_tv_known else R.string.h_tv_unknown), if (knownTv != null) Ui.LIME else Ui.GREY))
         p.addView(head)
@@ -312,6 +316,7 @@ class MainActivity : Activity() {
         val apply = ui.button(if (n > 0) getString(R.string.h_apply_short) else getString(R.string.h_apply_none), false) { if (changes() > 0) apply() }
         side.addView(apply, ui.lp(MATCH_PARENT))
         side.addView(ui.button(getString(R.string.h_restore), false) { restore() }, ui.lp(MATCH_PARENT))
+        side.addView(ui.button(getString(R.string.z_restart), false) { load2 { wizTv() } }, ui.lp(MATCH_PARENT))
         side.addView(ui.text(getString(R.string.h_safe), 13, Ui.GREY), ui.lp(MATCH_PARENT))
         body.addView(side, ui.lp(ui.dp(300)))
         p.addView(body, ui.lp(MATCH_PARENT).apply { topMargin = ui.dp(12) })
@@ -338,16 +343,17 @@ class MainActivity : Activity() {
     }
 
     // 5. One category, app by app.
-    private fun category(kind: Kind, name: String) {
+    private fun category(kind: Kind, name: String, step: Int? = null, onDone: () -> Unit = { home() }, onBack: (() -> Unit)? = null) {
         val list = items.filter { it.kind == kind }
         val p = page()
+        if (step != null) p.addView(stepper(step), ui.lp(MATCH_PARENT).apply { bottomMargin = ui.dp(18) })
         val head = ui.row(18)
         head.addView(ui.ellipsize(ui.title(name, 32)), ui.lp(0, WRAP_CONTENT, 1f))
         val checks = mutableListOf<Pair<Item, TextView>>()
         fun refresh() = checks.forEach { (it, box) -> box.text = if (it.want) "✓" else ""; box.background = if (it.want) ui.rounded(Ui.LIME, 8) else ui.rounded(Color.TRANSPARENT, 8, 2, Ui.DIM) }
         head.addView(ui.button(getString(R.string.l_tick_rec), false) { list.forEach { it.want = it.rec || it.offNow }; refresh() })
         head.addView(ui.button(getString(R.string.l_untick), false) { list.forEach { it.want = false }; refresh() })
-        val done = ui.button(getString(R.string.l_done), true) { home() }
+        val done = ui.button(getString(if (step != null) R.string.z_next else R.string.l_done), true) { onDone() }
         head.addView(done)
         p.addView(head, ui.lp(MATCH_PARENT))
         p.addView(ui.text(getString(R.string.l_hint), 15, Ui.GREY), ui.lp().apply { topMargin = ui.dp(8) })
@@ -370,24 +376,26 @@ class MainActivity : Activity() {
         }
         val scroll = ScrollView(this).apply { isFillViewport = false; clipToPadding = false; clipChildren = false; setPadding(ui.dp(22), ui.dp(12), ui.dp(22), ui.dp(24)); addView(rows) }
         p.addView(scroll, ui.lp(MATCH_PARENT, 0, 1f).apply { topMargin = ui.dp(14) })
-        show("list", p, rows.getChildAt(0) ?: done)
+        if (list.isEmpty()) rows.addView(ui.text(getString(R.string.z_none), 17, Ui.GREY))
+        show("list", p, rows.getChildAt(0)?.takeIf { it.isFocusable } ?: done, onBack)
     }
 
     // The home screen's dock: the apps in it, in order, and every app that can go in it.
-    private fun dockScreen(focusPkg: String? = null) {
+    private fun dockScreen(focusPkg: String? = null, step: Int? = null, onDone: () -> Unit = { home() }, onBack: (() -> Unit)? = null) {
         val chosen = app.ownyourtv.home.Dock.current(this).toMutableList()
         val all = app.ownyourtv.home.Dock.available(this)
         val p = page()
+        if (step != null) p.addView(stepper(step), ui.lp(MATCH_PARENT).apply { bottomMargin = ui.dp(18) })
         val head = ui.row(18)
         head.addView(ui.ellipsize(ui.title(getString(R.string.dk_title), 32)), ui.lp(0, WRAP_CONTENT, 1f))
-        head.addView(ui.button(getString(R.string.dk_reset), false) { app.ownyourtv.home.Dock.reset(this); dockScreen() })
-        val done = ui.button(getString(R.string.l_done), true) { home() }
+        head.addView(ui.button(getString(R.string.dk_reset), false) { app.ownyourtv.home.Dock.reset(this); dockScreen(null, step, onDone, onBack) })
+        val done = ui.button(getString(if (step != null) R.string.z_next else R.string.l_done), true) { onDone() }
         head.addView(done)
         p.addView(head, ui.lp(MATCH_PARENT))
         p.addView(ui.text(getString(R.string.dk_hint), 15, Ui.GREY), ui.lp().apply { topMargin = ui.dp(8) })
 
         fun save(list: List<app.ownyourtv.home.Dock.Entry>, focus: String?) {
-            app.ownyourtv.home.Dock.save(this, list.map { it.pkg }); dockScreen(focus)
+            app.ownyourtv.home.Dock.save(this, list.map { it.pkg }); dockScreen(focus, step, onDone, onBack)
         }
         fun art(e: app.ownyourtv.home.Dock.Entry) = android.widget.ImageView(this).apply {
             setImageDrawable(e.art); scaleType = android.widget.ImageView.ScaleType.FIT_CENTER
@@ -438,7 +446,151 @@ class MainActivity : Activity() {
         cols.addView(scroll(left), ui.lp(0, MATCH_PARENT, 1f))
         cols.addView(scroll(right), ui.lp(0, MATCH_PARENT, 1f))
         p.addView(cols, ui.lp(MATCH_PARENT, 0, 1f).apply { topMargin = ui.dp(12) })
-        show("dock", p, focusView ?: (left.getChildAt(1) as? LinearLayout)?.getChildAt(5) ?: right.getChildAt(1) ?: done)
+        show("dock", p, focusView ?: (left.getChildAt(1) as? LinearLayout)?.getChildAt(5) ?: right.getChildAt(1) ?: done, onBack)
+    }
+
+    // The assistant: one question per screen, a step bar on top, Back to the step before.
+    private val STEPS = listOf(R.string.st_unlock, R.string.st_tv, R.string.st_clean, R.string.st_home, R.string.st_dock, R.string.st_go)
+
+    /** The step bar: done steps ticked, the current one lit, the rest dim, with a progress line under them. */
+    private fun stepper(current: Int): View {
+        val box = ui.col(10)
+        val row = ui.row(18)
+        STEPS.forEachIndexed { i, id ->
+            val done = i < current
+            val now = i == current
+            val dot = TextView(this).apply {
+                text = if (done) "✓" else "${i + 1}"
+                gravity = Gravity.CENTER
+                setTextColor(if (done || now) Ui.INK else Ui.GREY)
+                typeface = ui.display
+                textSize = 13f
+                background = when { done -> ui.rounded(Ui.LIME, 13); now -> ui.rounded(Color.WHITE, 13); else -> ui.rounded(Color.TRANSPARENT, 13, 2, Ui.DIM) }
+            }
+            row.addView(ui.row(8).apply {
+                addView(dot, LinearLayout.LayoutParams(ui.dp(26), ui.dp(26)))
+                addView(ui.text(getString(id), 14, if (now) Ui.PAPER else if (done) Ui.LIME else Ui.DIM, bold = now))
+            })
+        }
+        box.addView(row)
+        val bar = FrameLayout(this).apply { background = ui.rounded(Color.argb(28, 255, 255, 255), 2) }
+        bar.addView(View(this).apply { background = ui.rounded(Ui.LIME, 2); pivotX = 0f; scaleX = (current + 0.5f) / STEPS.size },
+            FrameLayout.LayoutParams(MATCH_PARENT, MATCH_PARENT))
+        box.addView(bar, ui.lp(MATCH_PARENT, ui.dp(4)))
+        return box
+    }
+
+    private fun wizPage(step: Int) = page().apply { addView(stepper(step), ui.lp(MATCH_PARENT).apply { bottomMargin = ui.dp(26) }) }
+
+    /** Reloads what is on the TV off the main thread, then carries on. */
+    private fun load2(then: () -> Unit) = thread { runCatching { load() }; main.post(then) }
+
+    private fun counts(): Triple<Int, Int, Int> = Triple(
+        items.count { it.kind == Kind.ADS && it.rec && !it.offNow }, items.count { it.kind == Kind.TRACKING && it.rec && !it.offNow },
+        items.count { it.kind == Kind.EXTRAS && it.rec && !it.offNow })
+
+    // Step 2: this TV.
+    private fun wizTv() {
+        val p = wizPage(1)
+        val known = knownTv
+        p.addView(ui.chip(getString(if (known != null) R.string.h_tv_known else R.string.h_tv_unknown), if (known != null) Ui.LIME else Ui.GREY))
+        p.addView(ui.title(if (known != null) getString(R.string.z_tv_known) else getString(R.string.z_tv_unknown), 40), ui.lp().apply { topMargin = ui.dp(8) })
+        val card = ui.col(10).apply { background = ui.rounded(Ui.CARD, 22); setPadding(ui.dp(28), ui.dp(24), ui.dp(28), ui.dp(24)) }
+        card.addView(ui.text(known?.name ?: "${Build.MANUFACTURER.replaceFirstChar { it.uppercase() }} ${Build.MODEL}", 26, bold = true))
+        card.addView(ui.text("Android ${Build.VERSION.RELEASE} · ${Build.MODEL}", 15, Ui.GREY, ui.mono))
+        val (a, t, e) = counts()
+        card.addView(ui.text(getString(R.string.z_found, a, t, e), 18, Ui.LIME), ui.lp().apply { topMargin = ui.dp(10) })
+        if (known == null) card.addView(ui.text(getString(R.string.z_tv_unknown_b), 15, Ui.GREY).apply { maxWidth = ui.dp(720) })
+        p.addView(card, ui.lp(ui.dp(760)).apply { topMargin = ui.dp(24) })
+        val next = ui.button(getString(R.string.z_next), true) { wizClean() }
+        p.addView(next, ui.lp().apply { topMargin = ui.dp(30) })
+        show("wiz", p, next)
+    }
+
+    // Step 3: recommended, or one list after the other.
+    private fun wizClean() {
+        val p = wizPage(2)
+        p.addView(ui.title(getString(R.string.z_clean_title), 40))
+        val (a, t, e) = counts()
+        val r = ui.row(24).apply { clipChildren = false }
+        fun choice(title: String, sub: String, lime: Boolean, go: () -> Unit) = ui.col(10).apply {
+            setPadding(ui.dp(28), ui.dp(26), ui.dp(28), ui.dp(26))
+            ui.focusable(this, if (lime) Color.argb(36, 198, 244, 50) else Ui.CARD, if (lime) Color.argb(70, 198, 244, 50) else Ui.CARD_ON, 22)
+            addView(ui.text(title, 26, if (lime) Ui.LIME else Ui.PAPER, ui.display))
+            addView(ui.text(sub, 16, Ui.GREY))
+            setOnClickListener { go() }
+        }
+        val rec = choice(getString(R.string.z_rec), if (a + t + e == 0) getString(R.string.z_none) else getString(R.string.z_rec_b, a + t + e), true) {
+            items.forEach { it.want = it.offNow || (it.rec && it.kind != Kind.APPS) }
+            wantFast = true
+            wizHome()
+        }
+        val kinds = listOf(Kind.ADS to R.string.h_ads, Kind.TRACKING to R.string.h_track, Kind.EXTRAS to R.string.h_extras, Kind.APPS to R.string.h_apps)
+        fun walk(i: Int) {
+            if (i >= kinds.size) { wantFast = true; wizHome(); return }
+            category(kinds[i].first, getString(kinds[i].second), 2, onDone = { walk(i + 1) }, onBack = { if (i == 0) wizClean() else walk(i - 1) })
+        }
+        val custom = choice(getString(R.string.z_custom), getString(R.string.z_custom_b), false) { walk(0) }
+        r.addView(rec, ui.lp(0, WRAP_CONTENT, 1f)); r.addView(custom, ui.lp(0, WRAP_CONTENT, 1f))
+        p.addView(r, ui.lp(MATCH_PARENT).apply { topMargin = ui.dp(28) })
+        show("wiz", p, rec) { wizTv() }
+    }
+
+    // Step 4: the home screen, with a picture of it.
+    private fun wizHome() {
+        val p = wizPage(3)
+        val r = ui.row(36).apply { gravity = Gravity.CENTER_VERTICAL }
+        val pic = android.widget.ImageView(this).apply {
+            setImageResource(R.drawable.preview_home); scaleType = android.widget.ImageView.ScaleType.CENTER_CROP
+            clipToOutline = true; background = ui.rounded(Ui.CARD, 20)
+        }
+        r.addView(pic, ui.lp(ui.dp(456), ui.dp(256)))
+        val c = ui.col(14)
+        c.addView(ui.title(getString(R.string.z_home_title), 32))
+        c.addView(ui.text(getString(R.string.z_home_b), 17, Ui.GREY))
+        var first: View
+        if (homeBlock != null) {
+            wantHome = ourHome
+            c.addView(ui.text(getString(R.string.z_home_blocked), 17, Ui.PAPER))
+            first = ui.button(getString(R.string.z_next), true) { wizSummary() }
+            c.addView(first)
+        } else {
+            if (wizardOwnsWifi && !ourHome) c.addView(ui.text(getString(R.string.z_home_wifi), 15, Ui.LIME))
+            val btns = ui.col(12)
+            first = ui.button(getString(R.string.z_home_yes), true) { wantHome = true; wizDock() }
+            btns.addView(first, ui.lp(MATCH_PARENT))
+            btns.addView(ui.button(getString(R.string.z_home_no), false) { wantHome = ourHome; wizSummary() }, ui.lp(MATCH_PARENT))
+            c.addView(btns, ui.lp().apply { topMargin = ui.dp(8) })
+        }
+        r.addView(c, ui.lp(0, WRAP_CONTENT, 1f))
+        p.addView(r, ui.lp(MATCH_PARENT))
+        show("wiz", p, first) { wizClean() }
+    }
+
+    // Step 5: the dock.
+    private fun wizDock() = dockScreen(step = 4, onDone = { wizSummary() }, onBack = { wizHome() })
+
+    // Step 6: what is about to happen, then go.
+    private fun wizSummary() {
+        val p = wizPage(5)
+        p.addView(ui.title(getString(R.string.z_sum_title), 44))
+        val list = ui.col(14)
+        fun line(t: String) = list.addView(ui.row(16).apply { addView(ui.check(true)); addView(ui.text(t, 20)) })
+        val off = items.count { it.want && !it.offNow }
+        if (off > 0) line(getString(R.string.z_sum_off, off))
+        if (wantHome) {
+            line(getString(R.string.z_sum_home))
+            line(getString(R.string.z_sum_dock, app.ownyourtv.home.Dock.current(this).size))
+        } else line(getString(R.string.z_sum_keep))
+        if (wantFast) line(getString(R.string.z_sum_fast))
+        p.addView(list, ui.lp().apply { topMargin = ui.dp(24) })
+        p.addView(ui.text(getString(R.string.h_safe), 15, Ui.GREY), ui.lp().apply { topMargin = ui.dp(20) })
+        val go = ui.button(getString(R.string.z_go), true) {
+            prefs.edit().putBoolean(SETUP_DONE, true).apply()
+            if (changes() > 0) apply() else finished(0, 0, 0)
+        }
+        p.addView(go, ui.lp().apply { topMargin = ui.dp(28) })
+        show("wiz", p, go) { if (wantHome) wizDock() else wizHome() }
     }
 
     private fun kindName(k: Kind) = getString(when (k) {
@@ -685,6 +837,7 @@ class MainActivity : Activity() {
         const val OURS = "ours"
         const val OURS_HOME = "ours_home"
         const val ANIM = "anim_before"
+        const val SETUP_DONE = "setup_done"
         const val EXTRA_HOME = "computer_home"
         const val EXTRA_HOME_ON = "on"
         val ANIM_KEYS = listOf("window_animation_scale", "transition_animation_scale", "animator_duration_scale")
