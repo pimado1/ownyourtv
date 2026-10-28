@@ -27,6 +27,26 @@ public class HomeKeyService extends AccessibilityService {
                 || QuickPanelActivity.isOurHome(this);
     }
 
+    /**
+     * The home screen's Home entry is switched on by the app itself (the shell may not change another app's
+     * components), so it is switched back on here whenever the owner chose it: after an update that renamed it,
+     * or anything else that left it off, the TV keeps a home.
+     */
+    public static void keepHomeOn(android.content.Context ctx) {
+        if (!ctx.getSharedPreferences(PREFS, MODE_PRIVATE).getBoolean(KEY_CHOSEN, false)) return;
+        android.content.ComponentName home = new android.content.ComponentName(ctx, HomeActivity.class);
+        android.content.pm.PackageManager pm = ctx.getPackageManager();
+        if (pm.getComponentEnabledSetting(home) != android.content.pm.PackageManager.COMPONENT_ENABLED_STATE_ENABLED) {
+            pm.setComponentEnabledSetting(home, android.content.pm.PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
+                    android.content.pm.PackageManager.DONT_KILL_APP);
+        }
+    }
+
+    @Override
+    protected void onServiceConnected() {
+        keepHomeOn(this);
+    }
+
     @Override
     protected boolean onKeyEvent(KeyEvent event) {
         int code = event.getKeyCode();

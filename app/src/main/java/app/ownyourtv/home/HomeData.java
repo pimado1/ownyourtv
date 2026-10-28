@@ -93,12 +93,11 @@ final class HomeData {
         return out;
     }
 
-    /** Every app with a TV launcher entry, then phone-only ones, without this launcher. */
+    /** Every app with a TV launcher entry, then phone-only ones; OwnYourTV itself is listed, to manage the TV. */
     static List<App> allApps(Context ctx) {
         PackageManager pm = ctx.getPackageManager();
         List<App> out = new ArrayList<>();
         Set<String> seen = new LinkedHashSet<>();
-        seen.add(ctx.getPackageName());
         for (String category : new String[]{Intent.CATEGORY_LEANBACK_LAUNCHER, Intent.CATEGORY_LAUNCHER}) {
             for (ResolveInfo ri : pm.queryIntentActivities(new Intent(Intent.ACTION_MAIN).addCategory(category), 0)) {
                 String pkg = ri.activityInfo.packageName;

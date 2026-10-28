@@ -37,6 +37,7 @@ class MainActivity : Activity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         ui = Ui(this)
+        app.ownyourtv.home.HomeKeyService.keepHomeOn(this)
         root = FrameLayout(this).apply {
             background = GradientDrawable(GradientDrawable.Orientation.TL_BR, intArrayOf(Color.rgb(20, 26, 18), Ui.INK, Ui.INK))
         }
