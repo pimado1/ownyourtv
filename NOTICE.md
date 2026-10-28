@@ -28,4 +28,6 @@ and notes of [CleanYourTV](https://github.com/Gathin23/cleanyourtv), used under 
 > CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 > IN THE SOFTWARE.
 
+The APK carries this file, OwnYourTV's `LICENSE` and the Apache License 2.0 text (`licenses/`) in its `assets/licenses/`.
+
 Everything else in this repository is OwnYourTV's own work, under the MIT licence in `LICENSE`.

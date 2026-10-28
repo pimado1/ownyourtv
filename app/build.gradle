@@ -15,8 +15,8 @@ android {
         applicationId 'app.ownyourtv'
         minSdk 26
         targetSdk 34
-        versionCode 7
-        versionName '1.5'
+        versionCode 8
+        versionName '1.5.1'
     }
     signingConfigs {
         release {
@@ -44,3 +44,15 @@ android {
 dependencies {
     implementation 'dev.mobile:dadb:1.2.9'
 }
+
+// The licences travel inside the APK: OwnYourTV's own, the third-party notices (CleanYourTV's MIT notice for the
+// TV database among them) and the Apache licence text dadb and Kotlin ask for.
+def notices = layout.buildDirectory.dir('generated/notices')
+tasks.register('copyNotices', Copy) {
+    from(rootProject.file('LICENSE')) { into 'licenses'; rename { 'OwnYourTV-MIT.txt' } }
+    from(rootProject.file('NOTICE.md')) { into 'licenses'; rename { 'NOTICE.txt' } }
+    from(rootProject.file('licenses/Apache-2.0.txt')) { into 'licenses' }
+    into notices
+}
+android.sourceSets.main.assets.srcDir(notices)
+tasks.named('preBuild') { dependsOn 'copyNotices' }
