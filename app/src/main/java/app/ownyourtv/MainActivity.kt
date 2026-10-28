@@ -18,6 +18,7 @@ import android.widget.LinearLayout
 import android.widget.ScrollView
 import android.widget.TextView
 import java.io.File
+import app.ownyourtv.home.Recheck
 import kotlin.concurrent.thread
 
 class MainActivity : Activity() {
@@ -33,6 +34,8 @@ class MainActivity : Activity() {
     private var fastNow = false
     private var wantFast = false
     private var homeRefused = false
+    /** Apps switched off by name after a TV update, counted with the catalogue's on the last screen. */
+    private var extraOff = 0
     /** What happened to the home screen this run, for the report: ok, refused, blocked, kept or already. */
     private var homeResult = "kept"
     private val failedPkgs = mutableListOf<String>()
@@ -68,13 +71,14 @@ class MainActivity : Activity() {
             "restore" -> restore()
             "list" -> connect()
             "wifi" -> wifiStep()
-            else -> welcome()
+            else -> if (intent.getBooleanExtra(Recheck.EXTRA, false)) { if (adbOn()) connect() else devMode() } else welcome()
         }
     }
 
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
-        computerHome(intent)
+        if (computerHome(intent)) return
+        if (intent.getBooleanExtra(Recheck.EXTRA, false)) { if (tv != null) recheck() else if (adbOn()) connect() else devMode() }
     }
 
     private fun computerHome(i: Intent): Boolean {
@@ -225,7 +229,14 @@ class MainActivity : Activity() {
             tv?.close()
             tv = t
             load()
-            main.post { if (screen == "connect") { if (prefs.getBoolean(SETUP_DONE, false)) home() else wizTv() } }
+            val back = Recheck.cameBack(this)
+            main.post {
+                if (screen == "connect") when {
+                    !prefs.getBoolean(SETUP_DONE, false) -> wizTv()
+                    back.isNotEmpty() -> recheck()
+                    else -> home()
+                }
+            }
         }
     }
 
@@ -253,6 +264,41 @@ class MainActivity : Activity() {
         wantHome = ourHome || homeBlock == null
         fastNow = prefs.contains(ANIM)
         wantFast = fastNow
+        Recheck.remember(this)
+        tv!!.sh("pm grant $packageName android.permission.POST_NOTIFICATIONS 2>/dev/null; true")
+    }
+
+    // After a TV update: what came back on is switched off again in one press.
+    private fun recheck() {
+        val back = Recheck.cameBack(this)
+        if (back.isEmpty()) { home(); return }
+        val p = page().apply { gravity = Gravity.CENTER_VERTICAL }
+        p.addView(ui.title(getString(R.string.rc_title), 48))
+        p.addView(ui.text(resources.getQuantityString(R.plurals.rc_count, back.size, back.size), 22, Ui.LIME, ui.mono), ui.lp().apply { topMargin = ui.dp(12) })
+        p.addView(ui.text(Recheck.labels(this, back, 12), 17, Ui.PAPER).apply { maxWidth = ui.dp(900) }, ui.lp().apply { topMargin = ui.dp(16) })
+        p.addView(ui.text(getString(R.string.rc_why), 16, Ui.GREY).apply { maxWidth = ui.dp(820) }, ui.lp().apply { topMargin = ui.dp(12) })
+        val r = ui.row(16)
+        val fix = ui.button(getString(R.string.rc_fix), true) {
+            items.forEach { if (it.pkg in back) it.want = true }
+            val chosen = getSharedPreferences(app.ownyourtv.home.HomeKeeper.PREFS, MODE_PRIVATE).getBoolean(app.ownyourtv.home.HomeKeeper.KEY_CHOSEN, false)
+            val stockBack = back.any { it in prefs.getStringSet(OURS_HOME, emptySet())!! }
+            wantHome = ourHome || (chosen && stockBack && homeBlock == null)
+            wantFast = fastNow
+            if (wantHome && !ourHome && wizardOwnsWifi) { wifiStep(); return@button }
+            // Apps switched off by an older catalogue are not in today's lists: they are switched off by name.
+            val steps = buildSteps().toMutableList()
+            val listed = items.map { it.pkg }.toSet()
+            val t = tv
+            back.filter { it in prefs.getStringSet(OURS, emptySet())!! && it !in listed && t != null }.forEach { pkg ->
+                steps += Step(getString(R.string.p_off, Recheck.labels(this, listOf(pkg), 1))) { t!!.sh("pm disable-user --user 0 $pkg").out.contains("disabled").also { if (it) extraOff++ } }
+            }
+            if (steps.isEmpty()) home() else runSteps(steps)
+        }
+        r.addView(fix)
+        r.addView(ui.button(getString(R.string.rc_keep), false) { Recheck.keep(this, back); home() })
+        r.addView(ui.button(getString(R.string.rc_later), false) { Recheck.later(this, back); home() })
+        p.addView(r, ui.lp().apply { topMargin = ui.dp(32) })
+        show("recheck", p, fix)
     }
 
     private fun homeNow() = tv!!.sh("cmd package resolve-activity --brief -a android.intent.action.MAIN -c android.intent.category.HOME").out.lines().last().trim()
@@ -652,6 +698,7 @@ class MainActivity : Activity() {
         val t = tv ?: return emptyList()
         val steps = mutableListOf<Step>()
         failedPkgs.clear()
+        extraOff = 0
         homeResult = when { ourHome -> "already"; homeBlock != null -> "blocked"; else -> "kept" }
         items.filter { it.changes }.forEach { item ->
             if (item.want) steps += Step(getString(R.string.p_off, item.label)) {
@@ -778,7 +825,7 @@ class MainActivity : Activity() {
                 if (!ok) failed++
                 main.post { s.view?.apply { text = (if (ok) "✓  " else "✗  ") + s.label; setTextColor(if (ok) Ui.LIME else Ui.RED) } }
             }
-            val off = items.count { it.want && !it.offNow }
+            val off = items.count { it.want && !it.offNow } + extraOff
             val on = items.count { !it.want && it.offNow }
             runCatching { load() }
             main.postDelayed({ finished(off, on, failed) }, 700)

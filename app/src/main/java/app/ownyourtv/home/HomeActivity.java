@@ -133,6 +133,12 @@ public class HomeActivity extends Activity {
     @Override
     protected void onCreate(Bundle state) {
         super.onCreate(state);
+        if (SafeMode.on(this)) {
+            startActivity(new Intent(this, app.ownyourtv.SafeHomeActivity.class).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+            finish();
+            return;
+        }
+        SafeMode.starting(this);
         Window w = getWindow();
         w.addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
         w.setBackgroundDrawable(new ColorDrawable(0xFF03050F));
@@ -1427,6 +1433,43 @@ public class HomeActivity extends Activity {
         open(i);
     }
 
+    // ---- after a TV update -------------------------------------------------------------------------
+
+    /** A TV update switched apps OwnYourTV had switched off back on: offer to switch them off again. */
+    private void checkComeBack() {
+        bg.post(() -> {
+            List<String> back = Recheck.cameBack(this);
+            if (Recheck.shouldAsk(this, back)) main.post(() -> {
+                if (popup == null && !isFinishing()) showRecheck(back);
+            });
+        });
+    }
+
+    private void showRecheck(List<String> back) {
+        LinearLayout actions = row(18);
+        actions.addView(dockAction(getString(R.string.rc_fix_small), getString(R.string.rc_fix), () -> {
+            dismissPopup();
+            startActivity(new Intent(this, app.ownyourtv.MainActivity.class).putExtra(Recheck.EXTRA, true)
+                    .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+        }), new LinearLayout.LayoutParams(-2, px(72)));
+        actions.addView(dockAction(getString(R.string.rc_keep_small), getString(R.string.rc_keep), () -> {
+            Recheck.keep(this, back);
+            dismissPopup();
+        }), new LinearLayout.LayoutParams(-2, px(72)));
+        actions.addView(dockAction(getString(R.string.rc_later_small), getString(R.string.rc_later), () -> {
+            Recheck.later(this, back);
+            dismissPopup();
+        }), new LinearLayout.LayoutParams(-2, px(72)));
+        LinearLayout body = column(28);
+        TextView which = label(text, 26, 0xD9FFFFFF);
+        which.setText(Recheck.labels(this, back, 6));
+        body.addView(which, wrap());
+        body.addView(actions, wrap());
+        popup = sheet(getString(R.string.rc_title), getResources().getQuantityString(R.plurals.rc_count, back.size(), back.size()), body);
+        popup.show();
+        actions.post(() -> actions.getChildAt(0).requestFocus());
+    }
+
     // ---- lifecycle --------------------------------------------------------------------------------
 
     @Override
@@ -1442,6 +1485,9 @@ public class HomeActivity extends Activity {
         main.post(tick);
         main.post(slowTick);
         refreshResumes();
+        checkComeBack();
+        // Still running a moment after showing (a pop-up may take the focus first): this start went well.
+        main.postDelayed(markShown, 1500);
         if (breathe == null) {
             // A slow breath on the clock's alpha: animating the font weight re-shaped 184 px glyphs every frame.
             breathe = ValueAnimator.ofFloat(1f, 0.86f);
@@ -1454,12 +1500,22 @@ public class HomeActivity extends Activity {
         if (!carousel.hasFocus() && getCurrentFocus() == null) carousel.requestFocus();
     }
 
+    private final Runnable markShown = () -> SafeMode.shown(this);
+
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+        // On screen and focused: this start went well.
+        if (hasFocus) SafeMode.shown(this);
+    }
+
     @Override
     protected void onPause() {
         super.onPause();
         scene.setRunning(false);
         main.removeCallbacks(tick);
         main.removeCallbacks(slowTick);
+        main.removeCallbacks(markShown);
         if (breathe != null) breathe.cancel();
     }
 
@@ -1488,6 +1544,6 @@ public class HomeActivity extends Activity {
     protected void onDestroy() {
         super.onDestroy();
         dismissPopup();
-        bgThread.quitSafely();
+        if (bgThread != null) bgThread.quitSafely();
     }
 }

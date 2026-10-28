@@ -19,6 +19,10 @@ that is yours. From the remote, no computer needed.</p>
 - **Preinstalled apps**: keep the ones you use, switch off the rest.
 - **A home screen of its own**: A night sky with shooting stars, an aurora that takes the colour of the app you
   pick, your apps as a 3D deck of cards, the weather, quick settings on the remote's gear button.
+- **After a TV update**: if the update switched apps back on, the home screen and a notice say so, and one press
+  switches them off again.
+- **A backup home**: if the OwnYourTV home ever fails to start, a plain home with your apps takes over, never a
+  black screen.
 - **One button puts everything back.** Apps are switched off, never deleted.
 
 In English, French, Spanish, German, Italian and Portuguese, following your TV's language.

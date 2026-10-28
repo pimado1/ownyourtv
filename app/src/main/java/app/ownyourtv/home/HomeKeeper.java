@@ -9,7 +9,7 @@ import android.content.pm.PackageManager;
 /**
  * Keeps the home screen's Home entry on once the owner chose it. Android lets only the app itself switch the
  * entry on, so it is switched back on after every update and every boot: a TV whose stock home is off is never
- * left without one.
+ * left without one. At boot it also looks for apps a TV update switched back on.
  */
 public class HomeKeeper extends BroadcastReceiver {
     public static final String PREFS = "horizon_settings";
@@ -27,5 +27,6 @@ public class HomeKeeper extends BroadcastReceiver {
     @Override
     public void onReceive(Context ctx, Intent intent) {
         keepHomeOn(ctx);
+        if (Intent.ACTION_BOOT_COMPLETED.equals(intent.getAction())) Recheck.afterBoot(ctx);
     }
 }

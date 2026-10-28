@@ -144,4 +144,23 @@
     <string name="sh_sending">Envoi…</string>
     <string name="sh_done">Merci !</string>
     <string name="sh_fail">Pas envoyé, réessaie</string>
+    <string name="rc_channel">Après une mise à jour de la TV</string>
+    <string name="rc_title">Des pubs sont revenues</string>
+    <string name="rc_why">Une mise à jour de ta TV a rallumé ces applis. OwnYourTV peut les recouper, comme avant.</string>
+    <string name="rc_fix">Les recouper</string>
+    <string name="rc_fix_small">OwnYourTV</string>
+    <string name="rc_keep">Les garder allumées</string>
+    <string name="rc_keep_small">Mon choix</string>
+    <string name="rc_later">Plus tard</string>
+    <string name="rc_later_small">Pas maintenant</string>
+    <string name="sh_home_title">Accueil de secours</string>
+    <string name="sh_home_lead">L\'accueil OwnYourTV a eu un souci au démarrage. Tes applis sont ici en attendant, et rien n\'a changé sur ta TV.</string>
+    <string name="sh_home_retry">Réessayer le nouvel accueil</string>
+    <string name="sh_home_restore">Remettre l\'accueil d\'origine</string>
+    <string name="sh_home_settings">Paramètres</string>
+    <string name="sh_home_apps">Tes applis</string>
+    <plurals name="rc_count">
+        <item quantity="one">%d appli a été rallumée</item>
+        <item quantity="other">%d applis ont été rallumées</item>
+    </plurals>
 </resources>

@@ -144,4 +144,23 @@
     <string name="sh_sending">Enviando…</string>
     <string name="sh_done">¡Gracias!</string>
     <string name="sh_fail">No enviado, reinténtalo</string>
+    <string name="rc_channel">Tras una actualización de la TV</string>
+    <string name="rc_title">Han vuelto anuncios</string>
+    <string name="rc_why">Una actualización de tu TV ha vuelto a activar estas apps. OwnYourTV puede desactivarlas otra vez, como antes.</string>
+    <string name="rc_fix">Desactivarlas otra vez</string>
+    <string name="rc_fix_small">OwnYourTV</string>
+    <string name="rc_keep">Dejarlas activadas</string>
+    <string name="rc_keep_small">Mi elección</string>
+    <string name="rc_later">Más tarde</string>
+    <string name="rc_later_small">Ahora no</string>
+    <string name="sh_home_title">Inicio de emergencia</string>
+    <string name="sh_home_lead">El inicio de OwnYourTV ha tenido un problema al arrancar. Tus apps están aquí mientras tanto, y nada ha cambiado en tu TV.</string>
+    <string name="sh_home_retry">Probar otra vez el nuevo inicio</string>
+    <string name="sh_home_restore">Volver al inicio original</string>
+    <string name="sh_home_settings">Ajustes</string>
+    <string name="sh_home_apps">Tus apps</string>
+    <plurals name="rc_count">
+        <item quantity="one">%d app se ha vuelto a activar</item>
+        <item quantity="other">%d apps se han vuelto a activar</item>
+    </plurals>
 </resources>
