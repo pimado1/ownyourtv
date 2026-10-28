@@ -32,6 +32,7 @@ class MainActivity : Activity() {
     private var wantHome = true
     private var fastNow = false
     private var wantFast = false
+    private var homeRefused = false
     private var screen = ""
     private var poll: Runnable? = null
     private var still = false
@@ -46,8 +47,7 @@ class MainActivity : Activity() {
         setContentView(root)
         // ownyourtv.py on a computer: Android lets only the app itself switch its home entry on, so the script
         // asks the app to, and only while USB debugging is on (the script needs it anyway).
-        if (intent.getBooleanExtra(EXTRA_HOME, false) && adbOn()) {
-            setOurHome(intent.getBooleanExtra(EXTRA_HOME_ON, true))
+        if (computerHome(intent)) {
             finish()
             return
         }
@@ -59,6 +59,17 @@ class MainActivity : Activity() {
             "list" -> connect()
             else -> welcome()
         }
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        computerHome(intent)
+    }
+
+    private fun computerHome(i: Intent): Boolean {
+        if (!i.getBooleanExtra(EXTRA_HOME, false) || !adbOn()) return false
+        setOurHome(i.getBooleanExtra(EXTRA_HOME_ON, true))
+        return true
     }
 
     override fun onDestroy() {
@@ -492,17 +503,39 @@ class MainActivity : Activity() {
 
     private fun makeHome(t: Tv): Boolean {
         t.sh("cmd package set-home-activity --user 0 $HOME_ACTIVITY")
-        if (homeNow() == HOME_ACTIVITY) return true
+        if (homeOpens(t)) return true
         // Google TV keeps its own home on the Home button: switch the stock homes off, never the setup wizard
         // that owns the Wi-Fi network.
         val enabled = pkgs("-e")
-        STOCK_HOMES.filter { it in enabled }.forEach { if (t.sh("pm disable-user --user 0 $it").out.contains("disabled")) remember(OURS_HOME, it) }
+        val offNow = mutableListOf<String>()
+        STOCK_HOMES.filter { it in enabled }.forEach { if (t.sh("pm disable-user --user 0 $it").out.contains("disabled")) offNow += it }
         val wizard = "com.google.android.tungsten.setupwraith"
         if (wizard in enabled && !t.sh("dumpsys wifi | grep -o 'cname=[^ ]*'").out.contains("setupwraith")) {
-            if (t.sh("pm disable-user --user 0 $wizard").out.contains("disabled")) remember(OURS_HOME, wizard)
+            if (t.sh("pm disable-user --user 0 $wizard").out.contains("disabled")) offNow += wizard
         }
         t.sh("cmd package set-home-activity --user 0 $HOME_ACTIVITY")
-        return homeNow() == HOME_ACTIVITY
+        if (homeOpens(t)) {
+            offNow.forEach { remember(OURS_HOME, it) }
+            return true
+        }
+        // Some firmware (Xiaomi among others) only lets its own list of apps be the home. Put everything back at
+        // once, so the TV is never left without a home.
+        offNow.forEach { t.sh("pm enable $it") }
+        setOurHome(false)
+        homeRefused = true
+        t.sh("input keyevent HOME")
+        return false
+    }
+
+    /** The TV both picks the OwnYourTV home and really shows it when asked for the home. */
+    private fun homeOpens(t: Tv): Boolean {
+        if (homeNow() != HOME_ACTIVITY) return false
+        val shown = t.sh("am start -W -a android.intent.action.MAIN -c android.intent.category.HOME").out
+        Thread.sleep(800)
+        val top = t.sh("dumpsys activity activities | grep -m1 -E 'topResumedActivity|mResumedActivity'").out
+        // Back to the setup screens, which are still running the steps (the shell may start an activity at any time).
+        t.sh("am start -n $packageName/.MainActivity -f 0x20000000")
+        return shown.contains("HomeActivity") && top.contains("app.ownyourtv/.home.HomeActivity")
     }
 
     private fun remember(key: String, pkg: String) = prefs.edit().putStringSet(key, (prefs.getStringSet(key, emptySet())!! + pkg)).apply()
@@ -541,6 +574,7 @@ class MainActivity : Activity() {
         p.addView(ui.title(getString(R.string.f_title), 56))
         p.addView(ui.text(getString(R.string.f_sum, off, on), 22, Ui.LIME, ui.mono), ui.lp().apply { topMargin = ui.dp(14) })
         if (failed > 0) p.addView(ui.text(getString(R.string.f_failed, failed), 16, Ui.RED), ui.lp().apply { topMargin = ui.dp(10) })
+        if (homeRefused) p.addView(ui.text(getString(R.string.f_home_refused), 16, Ui.GREY).apply { maxWidth = ui.dp(700) }, ui.lp().apply { topMargin = ui.dp(8) })
         val lock = ui.button(getString(R.string.f_close), true) {
             thread { runCatching { tv?.sh("settings put global adb_enabled 0") }; main.post { goHome() } }
         }

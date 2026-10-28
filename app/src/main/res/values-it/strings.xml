@@ -93,4 +93,5 @@
     <string name="opt_speed">Velocizza le animazioni</string>
     <string name="opt_speed_back">Rimetti le animazioni originali</string>
     <string name="p_perms_done">Pulire una versione precedente</string>
+    <string name="f_home_refused">Questa TV non permette a un\'altra app di diventare la sua home, quindi tiene la sua. Tutto il resto è applicato.</string>
 </resources>

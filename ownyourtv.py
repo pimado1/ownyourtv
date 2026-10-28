@@ -192,7 +192,7 @@ def make_home(tv, apk=None):
         print("OwnYourTV could not be installed.")
         return False
     # Android lets only the app itself switch its home entry on: ask it, then give it the Home role.
-    tv.sh(f"am start -n {PKG}/.MainActivity --ez computer_home true --ez on true")
+    tv.sh(f"am start -f 0x20000000 -n {PKG}/.MainActivity --ez computer_home true --ez on true")
     time.sleep(2)
     tv.sh(f"pm grant {PKG} android.permission.BLUETOOTH_CONNECT; pm grant {PKG} android.permission.READ_TV_LISTINGS; "
           f"cmd appops set {PKG} ACCESS_RESTRICTED_SETTINGS allow")
@@ -202,25 +202,38 @@ def make_home(tv, apk=None):
     if ":".join(kept) != old and old not in ("", "null"):
         tv.sh("settings put secure enabled_accessibility_services " + ":".join(kept) if kept else "settings delete secure enabled_accessibility_services")
     tv.sh(f"cmd package set-home-activity --user 0 {HOME}")
-    if tv.home_now() != HOME:
+    if not home_opens(tv):
         # Google TV keeps its own home on the Home button: switch the stock homes off, never the setup wizard that
         # owns the Wi-Fi network.
         enabled = tv.packages("-e")
         offs = [p for p in STOCK_HOMES if p in enabled]
         if WIZARD in enabled and "setupwraith" not in tv.sh("dumpsys wifi | grep -o 'cname=[^ ]*'"):
             offs.append(WIZARD)
-        home_off = set(tv.state.get("home_off", []))
-        for p in offs:
-            if "disabled" in tv.sh(f"pm disable-user --user 0 {p}"):
-                home_off.add(p)
-        tv.state["home_off"] = sorted(home_off)
+        done = [p for p in offs if "disabled" in tv.sh(f"pm disable-user --user 0 {p}")]
         tv.sh(f"cmd package set-home-activity --user 0 {HOME}")
+        if not home_opens(tv):
+            # Some firmware (Xiaomi among others) only lets its own list of apps be the home: put it all back.
+            for p in done:
+                tv.sh(f"pm enable {p}")
+            tv.sh(f"am start -f 0x20000000 -n {PKG}/.MainActivity --ez computer_home true --ez on false")
+            tv.sh("input keyevent HOME")
+            print("This TV does not let another app be its home: its own home is back, nothing else changed.")
+            return False
+        tv.state["home_off"] = sorted(set(tv.state.get("home_off", [])) | set(done))
     tv.state["home"] = True
     tv.save()
-    ok = tv.home_now() == HOME
-    print("The OwnYourTV home is the TV's home." if ok else f"Home still opens {tv.home_now()}.")
-    tv.sh("input keyevent HOME")
-    return ok
+    print("The OwnYourTV home is the TV's home.")
+    return True
+
+
+def home_opens(tv):
+    """The TV both picks the OwnYourTV home and really shows it when asked for the home."""
+    if tv.home_now() != HOME:
+        return False
+    shown = tv.sh("am start -W -a android.intent.action.MAIN -c android.intent.category.HOME")
+    time.sleep(0.8)
+    top = tv.sh("dumpsys activity activities | grep -m1 -E 'topResumedActivity|mResumedActivity'")
+    return "HomeActivity" in shown and f"{PKG}/.home.HomeActivity" in top
 
 
 def undo_home(tv):
@@ -233,7 +246,7 @@ def undo_home(tv):
     if not any(p in tv.packages("-e") for p in STOCK_HOMES):
         print("No other home on this TV: the OwnYourTV home stays, so the TV is never left without one.")
         return
-    tv.sh(f"am start -n {PKG}/.MainActivity --ez computer_home true --ez on false")
+    tv.sh(f"am start -f 0x20000000 -n {PKG}/.MainActivity --ez computer_home true --ez on false")
     time.sleep(2)
     services = [s for s in tv.sh("settings get secure enabled_accessibility_services").strip().split(":") if s and s != "null" and s != KEY_SERVICE]
     tv.sh("settings put secure enabled_accessibility_services " + ":".join(services) if services else "settings delete secure enabled_accessibility_services")

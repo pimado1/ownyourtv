@@ -93,4 +93,5 @@
     <string name="opt_speed">Animationen beschleunigen</string>
     <string name="opt_speed_back">Animationen zurücksetzen</string>
     <string name="p_perms_done">Ältere Version aufräumen</string>
+    <string name="f_home_refused">Dieser Fernseher lässt keine andere App als Start zu und behält seinen eigenen. Alles andere wurde angewendet.</string>
 </resources>

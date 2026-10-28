@@ -93,4 +93,5 @@
     <string name="opt_speed">Accélérer les animations</string>
     <string name="opt_speed_back">Remettre les animations d\'origine</string>
     <string name="p_perms_done">Nettoyer une ancienne version</string>
+    <string name="f_home_refused">Cette TV ne laisse pas une autre appli devenir son accueil : elle garde le sien. Tout le reste est appliqué.</string>
 </resources>
