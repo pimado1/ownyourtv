@@ -1,0 +1,15 @@
+name = "ownyourtv-reports"
+main = "worker.js"
+compatibility_date = "2026-09-01"
+workers_dev = true
+
+[vars]
+REPO = "pimado1/ownyourtv"
+
+# At most 5 reports a minute from one address, kept only in memory to count.
+[[ratelimits]]
+name = "LIMIT"
+namespace_id = "1001"
+  [ratelimits.simple]
+  limit = 5
+  period = 60

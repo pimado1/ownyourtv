@@ -138,4 +138,10 @@
     <string name="z_go">Via</string>
     <string name="z_restart">Rifai l\'assistente</string>
     <string name="z_none">Niente da disattivare qui: la tua TV è già pulita.</string>
+    <string name="sh_title">Aiuta le altre TV</string>
+    <string name="sh_body">Condividi il modello della tua TV e cosa ha funzionato, così OwnYourTV la riconoscerà la prossima volta. Anonimo: niente nome, niente account, niente elenco delle tue app.</string>
+    <string name="sh_go">Condividi</string>
+    <string name="sh_sending">Invio…</string>
+    <string name="sh_done">Grazie!</string>
+    <string name="sh_fail">Non inviato, riprova</string>
 </resources>

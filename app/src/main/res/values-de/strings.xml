@@ -138,4 +138,10 @@
     <string name="z_go">Los geht\'s</string>
     <string name="z_restart">Assistent neu starten</string>
     <string name="z_none">Hier gibt es nichts abzuschalten: dein Fernseher ist schon sauber.</string>
+    <string name="sh_title">Hilf anderen Fernsehern</string>
+    <string name="sh_body">Teile das Modell deines Fernsehers und was funktioniert hat, damit OwnYourTV ihn nächstes Mal erkennt. Anonym: kein Name, kein Konto, keine Liste deiner Apps.</string>
+    <string name="sh_go">Teilen</string>
+    <string name="sh_sending">Wird gesendet…</string>
+    <string name="sh_done">Danke!</string>
+    <string name="sh_fail">Nicht gesendet, später</string>
 </resources>

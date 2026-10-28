@@ -139,4 +139,10 @@
     <string name="z_go">Let\'s go</string>
     <string name="z_restart">Run the assistant again</string>
     <string name="z_none">Nothing to switch off here: your TV is already clean.</string>
+    <string name="sh_title">Help other TVs</string>
+    <string name="sh_body">Share your TV\'s model and what worked, so OwnYourTV recognises it next time. Anonymous: no name, no account, no list of your apps.</string>
+    <string name="sh_go">Share</string>
+    <string name="sh_sending">Sending…</string>
+    <string name="sh_done">Thank you!</string>
+    <string name="sh_fail">Not sent, try later</string>
 </resources>

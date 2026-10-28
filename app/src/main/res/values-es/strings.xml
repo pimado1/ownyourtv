@@ -138,4 +138,10 @@
     <string name="z_go">Adelante</string>
     <string name="z_restart">Repetir el asistente</string>
     <string name="z_none">Nada que desactivar aquí: tu TV ya está limpia.</string>
+    <string name="sh_title">Ayuda a otras TV</string>
+    <string name="sh_body">Comparte el modelo de tu TV y lo que funcionó, para que OwnYourTV la reconozca la próxima vez. Anónimo: sin nombre, sin cuenta, sin lista de tus apps.</string>
+    <string name="sh_go">Compartir</string>
+    <string name="sh_sending">Enviando…</string>
+    <string name="sh_done">¡Gracias!</string>
+    <string name="sh_fail">No enviado, reinténtalo</string>
 </resources>

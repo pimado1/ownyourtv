@@ -98,7 +98,16 @@ and install 1.2. `ownyourtv.py <tv ip> home` does all of it for you when you agr
 
 Android lets the owner turn on USB debugging. When it is on, OwnYourTV connects to the TV's own debugging port,
 the TV asks you once whether to allow it, and from then on the app can switch apps off and set the home screen,
-the way a computer would. Nothing leaves the TV. When you are done, "Finish and lock" turns debugging off again.
+the way a computer would. Nothing leaves the TV unless you press **Share** at the end (below). When you are done, "Finish and lock" turns debugging off again.
+
+## TVs reported by owners
+
+On its last screen, OwnYourTV offers to **share** which TV it ran on and what worked. Only if you press it, and
+anonymously: the brand and model names Android reports, the Android and OwnYourTV versions, what happened to the
+home screen and how many apps were switched off. Never a name, an account, your list of apps or a location; the
+screen shows the line that is sent. Each report lands in the
+[TV reports](https://github.com/pimado1/ownyourtv/issues?q=label%3Atv-report) (one issue per model, labelled
+`works`, `home-refused` or `home-blocked`), through a small relay in [`relay/`](relay/) that keeps nothing.
 
 ## Add your TV
 
@@ -122,6 +131,7 @@ MIT, see [LICENSE](LICENSE). Third-party components are listed in [NOTICE.md](NO
 
 **Tu l'as payée. Elle est à toi.** OwnYourTV coupe les pubs et le pistage installés d'usine sur ta TV Android TV ou
 Google TV, et lui donne un accueil vivant. Tout se fait à la télécommande, sans ordinateur, et un bouton
-remet tout comme avant. Les applis sont désactivées, jamais supprimées.
+remet tout comme avant. Les applis sont désactivées, jamais supprimées. À la fin, tu peux partager (si tu veux, et
+anonymement) le modèle de ta TV et ce qui a marché, pour que la liste des TV compatibles grandisse.
 
 **Installer depuis la TV :** dans l'appli Downloader (Play Store de la TV), tape le code **8225348**, installe, puis suis l'appli.

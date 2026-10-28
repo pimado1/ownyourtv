@@ -33,6 +33,9 @@ class MainActivity : Activity() {
     private var fastNow = false
     private var wantFast = false
     private var homeRefused = false
+    /** What happened to the home screen this run, for the report: ok, refused, blocked, kept or already. */
+    private var homeResult = "kept"
+    private val failedPkgs = mutableListOf<String>()
     private var knownTv: TvDb.Tv? = null
     private var wizardOn = false
     private var wizardOwnsWifi = false
@@ -648,9 +651,11 @@ class MainActivity : Activity() {
     private fun buildSteps(): List<Step> {
         val t = tv ?: return emptyList()
         val steps = mutableListOf<Step>()
+        failedPkgs.clear()
+        homeResult = when { ourHome -> "already"; homeBlock != null -> "blocked"; else -> "kept" }
         items.filter { it.changes }.forEach { item ->
             if (item.want) steps += Step(getString(R.string.p_off, item.label)) {
-                t.sh("pm disable-user --user 0 ${item.pkg}").out.contains("disabled").also { if (it) remember(OURS, item.pkg) }
+                t.sh("pm disable-user --user 0 ${item.pkg}").out.contains("disabled").also { if (it) remember(OURS, item.pkg) else failedPkgs += item.pkg }
             } else steps += Step(getString(R.string.p_on, item.label)) {
                 t.sh("pm enable ${item.pkg}").out.contains("enabled").also { if (it) forget(OURS, item.pkg) }
             }
@@ -668,7 +673,7 @@ class MainActivity : Activity() {
                 if (next != s) t.sh(if (next.isEmpty()) "settings delete secure enabled_accessibility_services" else "settings put secure enabled_accessibility_services $next")
                 true
             }
-            steps += Step(getString(R.string.p_home)) { makeHome(t) }
+            steps += Step(getString(R.string.p_home)) { makeHome(t).also { homeResult = if (it) "ok" else "refused" } }
         } else if (!wantHome && ourHome) {
             steps += Step(getString(R.string.p_restore_home)) { undoHome(t) }
         }
@@ -787,13 +792,42 @@ class MainActivity : Activity() {
         p.addView(ui.text(getString(R.string.f_sum, off, on), 22, Ui.LIME, ui.mono), ui.lp().apply { topMargin = ui.dp(14) })
         if (failed > 0) p.addView(ui.text(getString(R.string.f_failed, failed), 16, Ui.RED), ui.lp().apply { topMargin = ui.dp(10) })
         if (homeRefused) p.addView(ui.text(getString(R.string.f_home_refused), 16, Ui.GREY).apply { maxWidth = ui.dp(700) }, ui.lp().apply { topMargin = ui.dp(8) })
+        p.addView(shareCard(off, on, failed), ui.lp().apply { topMargin = ui.dp(28) })
         val lock = ui.button(getString(R.string.f_close), true) {
             thread { runCatching { tv?.sh("settings put global adb_enabled 0") }; main.post { goHome() } }
         }
-        p.addView(lock, ui.lp().apply { topMargin = ui.dp(36) })
+        p.addView(lock, ui.lp().apply { topMargin = ui.dp(28) })
         p.addView(ui.text(getString(R.string.f_close_b), 14, Ui.GREY), ui.lp().apply { topMargin = ui.dp(8) })
         p.addView(ui.button(getString(R.string.f_keep), false) { goHome() }, ui.lp().apply { topMargin = ui.dp(22) })
         show("done", p, lock)
+    }
+
+    /** Opt-in: the owner may send which TV this is and what worked, anonymously, to grow the TV database. */
+    private fun shareCard(off: Int, on: Int, failed: Int): View {
+        val r = Report.build(packageManager.getPackageInfo(packageName, 0).versionName ?: "?", knownTv?.id, homeResult, wizardOwnsWifi, off, on, failed, failedPkgs)
+        val card = ui.row(24).apply {
+            setPadding(ui.dp(24), ui.dp(18), ui.dp(24), ui.dp(18)); background = ui.rounded(Ui.CARD, 20)
+        }
+        val c = ui.col(6)
+        c.addView(ui.text(getString(R.string.sh_title), 19, Ui.PAPER, bold = true))
+        c.addView(ui.text(getString(R.string.sh_body), 15, Ui.GREY).apply { maxWidth = ui.dp(620) })
+        c.addView(ui.text(Report.preview(r), 13, Ui.DIM, ui.mono))
+        card.addView(c, ui.lp(0, WRAP_CONTENT, 1f))
+        val btn = ui.button(getString(R.string.sh_go), false) {}
+        var busy = false
+        btn.setOnClickListener {
+            if (busy || prefs.getBoolean(SHARED + r.getString("app"), false)) return@setOnClickListener
+            busy = true
+            btn.text = getString(R.string.sh_sending)
+            thread {
+                val ok = Report.send(r)
+                if (ok) prefs.edit().putBoolean(SHARED + r.getString("app"), true).apply()
+                main.post { busy = false; btn.text = getString(if (ok) R.string.sh_done else R.string.sh_fail) }
+            }
+        }
+        if (prefs.getBoolean(SHARED + r.getString("app"), false)) btn.text = getString(R.string.sh_done)
+        card.addView(btn)
+        return card
     }
 
     private fun goHome() {
@@ -837,6 +871,7 @@ class MainActivity : Activity() {
         const val OURS = "ours"
         const val OURS_HOME = "ours_home"
         const val ANIM = "anim_before"
+        const val SHARED = "shared_"
         const val SETUP_DONE = "setup_done"
         const val EXTRA_HOME = "computer_home"
         const val EXTRA_HOME_ON = "on"
