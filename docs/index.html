@@ -35,16 +35,18 @@
 
 <main id="top">
   <div class="hero">
+    <canvas class="sky" id="sky" aria-hidden="true"></canvas>
+    <div class="aurora" aria-hidden="true"><span></span><span></span></div>
     <div class="wrap hero-grid">
-      <div>
+      <div data-reveal>
         <h1 data-i18n="h1">You paid for it. <em>Own it.</em></h1>
         <p class="lead" data-i18n="lead">Switch off the ads and tracking your Android TV or Google TV came with, and give it a home screen that is yours. From the remote, no computer needed.</p>
       </div>
-      <div class="hero-side">
+      <div class="hero-side" data-reveal style="--d: 120ms">
         <div class="code">
           <small data-i18n="code_label">On your TV, in the Downloader app, type</small>
           <div class="code-row">
-            <span class="code-num" id="code">8225348</span>
+            <span class="code-num" id="code" aria-label="8225348">8225348</span>
             <button class="btn btn-ghost" id="copy" type="button" data-i18n="copy">Copy</button>
           </div>
         </div>
@@ -53,14 +55,21 @@
           <a class="btn btn-ghost" href="https://github.com/pimado1/ownyourtv/releases/latest" data-i18n="cta_apk">Download the APK</a>
         </div>
         <div class="facts">
-          <div><strong>345</strong><span data-i18n="f_models">TV models recognised</span></div>
-          <div><strong>6</strong><span data-i18n="f_langs">languages</span></div>
+          <div><strong class="count" data-to="345">345</strong><span data-i18n="f_models">TV models recognised</span></div>
+          <div><strong class="count" data-to="6">6</strong><span data-i18n="f_langs">languages</span></div>
           <div><strong>1</strong><span data-i18n="f_undo">button puts it all back</span></div>
         </div>
       </div>
-      <figure class="ba">
-        <div class="shot"><img src="site/img/before-after.webp" width="1600" height="516" alt="Before: the stock Google TV home with a full-screen ad. After: the OwnYourTV home with a night sky, the weather and the apps as a 3D deck." data-i18n-alt="ba_alt"></div>
-        <div class="ba-labels"><span data-i18n="before">Before: the stock home, ads first</span><span data-i18n="after">After: OwnYourTV</span></div>
+      <figure class="ba" data-reveal style="--d: 220ms">
+        <div class="compare" id="compare" style="--pos: 50%">
+          <img src="site/img/after.webp" width="1600" height="900" alt="After: the OwnYourTV home with a night sky, the weather and the apps as a 3D deck." data-i18n-alt="after_alt">
+          <div class="compare-before"><img src="site/img/before.webp" width="1600" height="900" alt="Before: the stock Google TV home with a full-screen ad and recommendations." data-i18n-alt="before_alt"></div>
+          <span class="chip chip-before" data-i18n="before_chip">Before</span>
+          <span class="chip chip-after" data-i18n="after_chip">After</span>
+          <div class="handle" aria-hidden="true"><span><svg viewBox="0 0 24 24"><path d="M9 6l-6 6 6 6M15 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
+          <input type="range" min="0" max="100" value="50" step="0.1" id="compare-range" aria-label="Before and after" data-i18n-aria="compare_aria">
+        </div>
+        <figcaption class="ba-hint" data-i18n="ba_hint">Drag to compare: the stock Google TV home, then OwnYourTV.</figcaption>
       </figure>
     </div>
   </div>
@@ -115,8 +124,18 @@
             <li><div><b data-i18n="h2_b">Your dock, your order</b><span data-i18n="h2_s">Choose the apps on the home screen during the assistant, change them any time.</span></div></li>
             <li><div><b data-i18n="h3_b">Quick settings on the gear key</b><span data-i18n="h3_s">Volume, picture, sound, sources, Wi-Fi and Bluetooth without leaving the home screen.</span></div></li>
           </ul>
+          <div class="apps-pick">
+            <span data-i18n="pick">Try it: pick an app</span>
+            <div role="group">
+              <button type="button" class="app" data-color="#e50914" style="--c: #e50914">Netflix</button>
+              <button type="button" class="app" data-color="#ff2b2b" style="--c: #ff2b2b">YouTube</button>
+              <button type="button" class="app" data-color="#2f6bff" style="--c: #2f6bff">Disney+</button>
+              <button type="button" class="app" data-color="#1fb8ff" style="--c: #1fb8ff">Prime Video</button>
+              <button type="button" class="app" data-color="#1ed760" style="--c: #1ed760">Spotify</button>
+            </div>
+          </div>
         </div>
-        <figure>
+        <figure class="glow-fig">
           <div class="shot"><img src="site/img/home.webp" width="1280" height="720" loading="lazy" alt="The OwnYourTV home screen with Netflix selected and a red aurora" data-i18n-alt="home_alt"></div>
           <div class="pair">
             <div class="shot"><img src="site/img/quick.webp" width="1280" height="720" loading="lazy" alt="Quick settings" data-i18n-alt="quick_alt"></div>
@@ -190,6 +209,7 @@
 </footer>
 
 <script src="site/i18n.js"></script>
+<script src="site/effects.js"></script>
 <script>
   // The TVs owners reported from the app: one GitHub issue per model, labelled with what happened.
   (function () {

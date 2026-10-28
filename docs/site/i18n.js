@@ -62,6 +62,11 @@ var FR = {
   p_h4: "Où va le rapport", p_t4: "Il passe par un petit relais hébergé chez Cloudflare, qui ne garde rien : il vérifie le rapport et l'ajoute à une page publique sur GitHub, une par modèle de TV. Le relais voit l'adresse IP de la requête, comme tout serveur, et ne l'utilise que pour limiter à 5 rapports par minute, sans l'enregistrer. Le rapport devient public : c'est la liste des TV compatibles.",
   p_h5: "Supprimer un rapport", p_t5: "Le rapport ne contient rien qui te désigne. Si tu veux quand même qu'il disparaisse, ouvre une issue sur GitHub en indiquant le modèle.",
   p_h6: "Le code est public", p_t6: "Tout ce qui est décrit ici se vérifie dans le code : <a href=\"https://github.com/pimado1/ownyourtv/blob/main/app/src/main/java/app/ownyourtv/Report.kt\">ce que l'appli envoie</a> et <a href=\"https://github.com/pimado1/ownyourtv/blob/main/relay/worker.js\">ce que fait le relais</a>.",
+  after_alt: "Après : l'accueil OwnYourTV avec un ciel de nuit, la météo et les applis en cartes 3D.",
+  before_alt: "Avant : l'accueil Google TV d'origine avec une pub plein écran et des recommandations.",
+  before_chip: "Avant", after_chip: "Après", compare_aria: "Avant et après",
+  ba_hint: "Fais glisser pour comparer : l'accueil Google TV d'origine, puis OwnYourTV.",
+  pick: "Essaie : choisis une appli",
   p_updated: "Mis à jour le 28 octobre 2026.", p_back: "← Retour à l'accueil"
 };
 
@@ -80,6 +85,11 @@ function apply(next) {
     var k = el.getAttribute("data-i18n-alt");
     if (!(k in EN)) EN[k] = el.getAttribute("alt");
     el.setAttribute("alt", t(k));
+  });
+  document.querySelectorAll("[data-i18n-aria]").forEach(function (el) {
+    var k = el.getAttribute("data-i18n-aria");
+    if (!(k in EN)) EN[k] = el.getAttribute("aria-label");
+    el.setAttribute("aria-label", t(k));
   });
   var b = document.getElementById("lang");
   if (b) { b.textContent = next === "fr" ? "EN" : "FR"; b.setAttribute("aria-label", next === "fr" ? "English" : "Français"); }
