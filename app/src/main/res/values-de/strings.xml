@@ -91,4 +91,8 @@
         <item quantity="one">%d App</item>
         <item quantity="other">%d Apps</item>
     </plurals>
+    <string name="opt_btn">Mit 1 Klick optimieren</string>
+    <string name="opt_sub">Geprüfte Werbung, Tracking und Überflüssiges aus, der OwnYourTV-Start, schnellere Menüs</string>
+    <string name="opt_speed">Animationen beschleunigen</string>
+    <string name="opt_speed_back">Animationen zurücksetzen</string>
 </resources>

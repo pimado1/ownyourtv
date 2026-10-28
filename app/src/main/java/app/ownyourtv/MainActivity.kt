@@ -30,6 +30,8 @@ class MainActivity : Activity() {
     private var items: List<Item> = emptyList()
     private var ourHome = false
     private var wantHome = true
+    private var fastNow = false
+    private var wantFast = false
     private var screen = ""
     private var poll: Runnable? = null
     private var still = false
@@ -203,11 +205,13 @@ class MainActivity : Activity() {
         items = Catalog.forTv(this, installed, disabled)
         ourHome = homeNow() == HOME_ACTIVITY
         wantHome = true
+        fastNow = prefs.contains(ANIM)
+        wantFast = fastNow
     }
 
     private fun homeNow() = tv!!.sh("cmd package resolve-activity --brief -a android.intent.action.MAIN -c android.intent.category.HOME").out.lines().last().trim()
 
-    private fun changes() = items.count { it.changes } + if (wantHome != ourHome) 1 else 0
+    private fun changes() = items.count { it.changes } + (if (wantHome != ourHome) 1 else 0) + (if (wantFast && !fastNow) 1 else 0)
 
     // 4. The dashboard: every choice in one screen.
     private fun home() {
@@ -252,19 +256,25 @@ class MainActivity : Activity() {
         body.addView(grid, ui.lp(0, WRAP_CONTENT, 1f))
 
         val side = ui.col(14).apply { gravity = Gravity.START; clipChildren = false }
+        val best = ui.col(4).apply { setPadding(ui.dp(20), ui.dp(14), ui.dp(20), ui.dp(14)) }
+        ui.focusable(best, Ui.LIME, Color.WHITE, 18, ring = false)
+        best.addView(ui.text(getString(R.string.opt_btn), 19, Ui.INK, bold = true))
+        best.addView(ui.text(getString(R.string.opt_sub), 13, Color.rgb(40, 48, 20)))
+        best.setOnClickListener { optimise() }
+        side.addView(best, ui.lp(MATCH_PARENT))
         val n = changes()
         side.addView(ui.row(14).apply {
             gravity = Gravity.BOTTOM
             addView(ui.text("$n", 84, if (n > 0) Ui.LIME else Ui.DIM, ui.display))
             addView(ui.text(getString(R.string.h_changes), 20, Ui.GREY), ui.lp().apply { bottomMargin = ui.dp(12) })
         })
-        val apply = ui.button(if (n > 0) getString(R.string.h_apply_short) else getString(R.string.h_apply_none), n > 0) { if (changes() > 0) apply() }
+        val apply = ui.button(if (n > 0) getString(R.string.h_apply_short) else getString(R.string.h_apply_none), false) { if (changes() > 0) apply() }
         side.addView(apply, ui.lp(MATCH_PARENT))
         side.addView(ui.button(getString(R.string.h_restore), false) { restore() }, ui.lp(MATCH_PARENT))
         side.addView(ui.text(getString(R.string.h_safe), 13, Ui.GREY), ui.lp(MATCH_PARENT))
         body.addView(side, ui.lp(ui.dp(300)))
         p.addView(body, ui.lp(MATCH_PARENT).apply { topMargin = ui.dp(12) })
-        if (n > 0) first = apply
+        first = if (n > 0) apply else best
         show("home", p, first)
     }
 
@@ -399,6 +409,14 @@ class MainActivity : Activity() {
 
     private fun apply() = runSteps(buildSteps())
 
+    /** The best settings in one press: verified ads, tracking and clutter off, the home screen on, faster animations. */
+    private fun optimise() {
+        items.forEach { it.want = it.offNow || (it.rec && it.kind != Kind.APPS) }
+        wantHome = true
+        wantFast = true
+        if (changes() > 0) apply() else home()
+    }
+
     private fun buildSteps(): List<Step> {
         val t = tv ?: return emptyList()
         val steps = mutableListOf<Step>()
@@ -424,6 +442,12 @@ class MainActivity : Activity() {
         } else if (!wantHome && ourHome) {
             steps += Step(getString(R.string.p_restore_home)) { undoHome(t) }
         }
+        if (wantFast && !fastNow) steps += Step(getString(R.string.opt_speed)) {
+            // Half-length animations make menus feel quicker on a slow TV; the old values are kept to put back.
+            val old = ANIM_KEYS.joinToString(",") { t.sh("settings get global $it").out.trim() }
+            prefs.edit().putString(ANIM, old).apply()
+            t.sh(ANIM_KEYS.joinToString("; ") { "settings put global $it 0.5" }).ok
+        }
         return steps
     }
 
@@ -441,11 +465,20 @@ class MainActivity : Activity() {
     /** The original home comes back: what OwnYourTV switched off for the home screen comes back on, the home screen steps aside. */
     private fun undoHome(t: Tv): Boolean {
         prefs.getStringSet(OURS_HOME, emptySet())!!.forEach { if (t.sh("pm enable $it").out.contains("enabled")) forget(OURS_HOME, it) }
+        // The original home may have been switched off before OwnYourTV, by hand or by another tool: bring every
+        // stock home back, so stepping aside never leaves the TV without one.
+        val off = pkgs("-d")
+        STOCK_HOMES.filter { it in off }.forEach { t.sh("pm enable $it") }
         setOurHome(false)
+        val now = homeNow()
+        if (now == HOME_ACTIVITY || now.isBlank() || now.contains("FallbackHome") || now.contains("ResolverActivity") && pkgs("-e").none { it in STOCK_HOMES }) {
+            setOurHome(true)
+            return false
+        }
         val s = t.sh("settings get secure enabled_accessibility_services").out.trim()
         val next = s.split(':').filter { it.isNotBlank() && it != "null" && it != KEY_SERVICE }.joinToString(":")
         t.sh(if (next.isEmpty()) "settings delete secure enabled_accessibility_services" else "settings put secure enabled_accessibility_services $next")
-        return homeNow() != HOME_ACTIVITY
+        return true
     }
 
     private fun makeHome(t: Tv): Boolean {
@@ -530,6 +563,11 @@ class MainActivity : Activity() {
                 }
             }
             if (ourHome || prefs.getStringSet(OURS_HOME, emptySet())!!.isNotEmpty()) steps += Step(getString(R.string.p_restore_home)) { undoHome(t) }
+            prefs.getString(ANIM, null)?.let { old -> steps += Step(getString(R.string.opt_speed_back)) {
+                val cmds = ANIM_KEYS.zip(old.split(",")).joinToString("; ") { (k, v) ->
+                    if (v.isEmpty() || v == "null") "settings delete global $k" else "settings put global $k $v" }
+                t.sh(cmds).ok.also { if (it) prefs.edit().remove(ANIM).apply() }
+            } }
             items.forEach { if (it.pkg in prefs.getStringSet(OURS, emptySet())!!) it.want = false }
             runSteps(steps)
         })
@@ -542,6 +580,8 @@ class MainActivity : Activity() {
         const val KEY_SERVICE = "app.ownyourtv/.home.HomeKeyService"
         const val OURS = "ours"
         const val OURS_HOME = "ours_home"
+        const val ANIM = "anim_before"
+        val ANIM_KEYS = listOf("window_animation_scale", "transition_animation_scale", "animator_duration_scale")
         val STOCK_HOMES = listOf("com.google.android.apps.tv.launcherx", "com.google.android.tvlauncher", "com.google.android.leanbacklauncher")
     }
 }

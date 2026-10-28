@@ -92,4 +92,8 @@
         <item quantity="one">%d app</item>
         <item quantity="other">%d apps</item>
     </plurals>
+    <string name="opt_btn">Optimise in one click</string>
+    <string name="opt_sub">Verified ads, tracking and clutter off, the OwnYourTV home, faster menus</string>
+    <string name="opt_speed">Speed up the animations</string>
+    <string name="opt_speed_back">Put the animations back</string>
 </resources>

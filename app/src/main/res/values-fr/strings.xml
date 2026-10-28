@@ -91,4 +91,8 @@
         <item quantity="one">%d appli</item>
         <item quantity="other">%d applis</item>
     </plurals>
+    <string name="opt_btn">Optimiser en 1 clic</string>
+    <string name="opt_sub">Pubs, pistage et superflu vérifiés coupés, l\'accueil OwnYourTV, des menus plus rapides</string>
+    <string name="opt_speed">Accélérer les animations</string>
+    <string name="opt_speed_back">Remettre les animations d\'origine</string>
 </resources>
