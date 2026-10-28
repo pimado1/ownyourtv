@@ -81,6 +81,42 @@
     </div>
   </div>
 
+  <section id="try" class="try">
+    <div class="wrap">
+      <p class="eyebrow" data-i18n="try_eye">Try it here</p>
+      <h2 data-i18n="try_h">The home screen, live</h2>
+      <p class="sub" data-i18n="try_sub">Move through the dock like with the remote: arrow keys, a swipe, or a click. The aurora takes the colour of the app you land on.</p>
+      <div class="tvset">
+        <div class="screen" id="demo" tabindex="0" role="group" aria-roledescription="carousel" aria-label="OwnYourTV home screen demo" data-i18n-aria="demo_aria">
+          <canvas class="d-sky" aria-hidden="true"></canvas>
+          <div class="d-aurora" aria-hidden="true"></div>
+          <div class="d-hills" aria-hidden="true"></div>
+          <div class="d-top">
+            <div>
+              <div class="d-greet" id="d-greet"></div>
+              <div class="d-clock" id="d-clock">20:26</div>
+              <div class="d-date" id="d-date"></div>
+            </div>
+            <div class="d-side">
+              <div class="d-icons" aria-hidden="true"><i></i><i></i><i></i></div>
+              <div class="d-weather" aria-hidden="true">
+                <div class="d-now"><span class="d-moon"></span><b>12°</b><span data-i18n="d_clear">Clear sky</span></div>
+                <div class="d-days"><span>☁</span><span>☀</span><span>☁</span><span>☂</span><span>☀</span><span>☀</span></div>
+              </div>
+            </div>
+          </div>
+          <div class="d-deck" id="d-deck"></div>
+          <div class="d-label"><b id="d-name" aria-live="polite">Netflix</b><span data-i18n="d_ok">OK to open</span></div>
+          <div class="d-toast" id="d-toast" role="status"></div>
+          <button class="d-arrow d-prev" type="button" aria-label="Previous app" data-i18n-aria="d_prev">‹</button>
+          <button class="d-arrow d-next" type="button" aria-label="Next app" data-i18n-aria="d_next">›</button>
+        </div>
+        <div class="stand" aria-hidden="true"></div>
+      </div>
+      <p class="try-hint" data-i18n="try_hint">A web replica, for trying. On the TV it runs on the remote.</p>
+    </div>
+  </section>
+
   <section id="how">
     <div class="wrap">
       <p class="eyebrow" data-i18n="how_eye">How it works</p>
@@ -131,16 +167,6 @@
             <li><div><b data-i18n="h2_b">Your dock, your order</b><span data-i18n="h2_s">Choose the apps on the home screen during the assistant, change them any time.</span></div></li>
             <li><div><b data-i18n="h3_b">Quick settings on the gear key</b><span data-i18n="h3_s">Volume, picture, sound, sources, Wi-Fi and Bluetooth without leaving the home screen.</span></div></li>
           </ul>
-          <div class="apps-pick">
-            <span data-i18n="pick">Try it: pick an app</span>
-            <div role="group">
-              <button type="button" class="app" data-color="#e50914" style="--c: #e50914">Netflix</button>
-              <button type="button" class="app" data-color="#ff2b2b" style="--c: #ff2b2b">YouTube</button>
-              <button type="button" class="app" data-color="#2f6bff" style="--c: #2f6bff">Disney+</button>
-              <button type="button" class="app" data-color="#1fb8ff" style="--c: #1fb8ff">Prime Video</button>
-              <button type="button" class="app" data-color="#1ed760" style="--c: #1ed760">Spotify</button>
-            </div>
-          </div>
         </div>
         <figure class="glow-fig">
           <div class="shot"><img src="site/img/home.webp" width="1280" height="720" loading="lazy" alt="The OwnYourTV home screen with Netflix selected and a red aurora" data-i18n-alt="home_alt"></div>
@@ -175,7 +201,7 @@
     <div class="wrap">
       <p class="eyebrow" data-i18n="tvs_eye">Which TVs</p>
       <h2 data-i18n="tvs_h">Android TV and Google TV, model by model</h2>
-      <p class="sub" data-i18n="tvs_sub">OwnYourTV recognises hundreds of models from TCL, Sony, Xiaomi, Philips, Hisense and more, thanks to lists tested on real sets by the <a href="https://github.com/Gathin23/cleanyourtv">CleanYourTV</a> community (MIT licence). It changes the home screen the way each model needs, or leaves it alone when a model cannot safely take another one. Below, the TVs OwnYourTV owners shared from the app.</p>
+      <p class="sub" data-i18n="tvs_sub">OwnYourTV recognises hundreds of models from TCL, Sony, Xiaomi, Philips, Hisense and more, from lists tested on real sets. It changes the home screen the way each model needs, or leaves it alone when a model cannot safely take another one. Below, the TVs OwnYourTV owners shared from the app.</p>
       <div class="tv-stats">
         <div><strong id="n-reports">·</strong><span data-i18n="st_reports">reported by owners</span></div>
       </div>
@@ -237,6 +263,7 @@
 
 <script src="site/i18n.js"></script>
 <script src="site/effects.js"></script>
+<script src="site/demo.js"></script>
 <script>
   // The TVs owners reported from the app: one GitHub issue per model, labelled with what happened.
   (function () {
