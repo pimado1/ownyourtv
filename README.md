@@ -42,12 +42,14 @@ Taken on a TCL C89B, Google TV 14.
 
 ## Which TVs
 
-OwnYourTV recognises **345 TV models from 93 brands** (TCL, Sony, Xiaomi, Philips, Skyworth, Hisense, Chromecast,
-Fire TV…), from lists tested on real sets. On a recognised TV it ticks what was checked on that very model, keeps
+OwnYourTV recognises hundreds of TV models (TCL, Sony, Xiaomi, Philips, Skyworth, Hisense, Chromecast, Fire TV…),
+from lists tested on real sets by the [CleanYourTV](https://github.com/Gathin23/cleanyourtv) community (MIT
+licence). On a recognised TV it ticks what was checked on that very model, keeps
 what that model needs, and changes the home screen in the order that model needs, or leaves it alone when that
 model cannot safely take another home. On any other Android TV or Google TV it offers what lists of the same brand
 switch off, unticked unless several of them agree. The database is built by `tools/build_tvs.py`
-([NOTICE.md](NOTICE.md)).
+([NOTICE.md](NOTICE.md)). The TVs OwnYourTV owners shared from the app are in the
+[TV reports](https://github.com/pimado1/ownyourtv/issues?q=label%3Atv-report).
 
 ## Three ways to install
 
