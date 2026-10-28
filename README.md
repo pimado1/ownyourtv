@@ -7,6 +7,8 @@ that is yours. From the remote, no computer needed.</p>
 
 ---
 
+<p align="center"><b>Install from your TV: in the Downloader app, type <code>8225348</code></b></p>
+
 ## What it does
 
 - **Ads**: promos, sponsored rows and store demos the maker put on your TV.
@@ -23,7 +25,7 @@ In English, French, Spanish, German, Italian and Portuguese, following your TV's
 
 | | How | You need |
 |---|---|---|
-| **On the TV** | In [Downloader](https://www.aftvnews.com/downloader/), open `github.com/pimado1/ownyourtv/releases/latest/download/OwnYourTV.apk`, install it, then follow the app | Just the remote |
+| **On the TV** | In [Downloader](https://www.aftvnews.com/downloader/), type the code **8225348**, install, then follow the app | Just the remote |
 | **From a computer** | `python3 ownyourtv.py <tv ip>` ([below](#from-a-computer)) | Python 3, adb |
 | **With an AI agent** | Paste [PROMPT.md](PROMPT.md) into Claude Code | Claude Code, adb |
 
@@ -91,3 +93,5 @@ MIT, see [LICENSE](LICENSE). Third-party components are listed in [NOTICE.md](NO
 **Tu l'as payée. Elle est à toi.** OwnYourTV coupe les pubs et le pistage installés d'usine sur ta TV Android TV ou
 Google TV, et lui donne un accueil vivant. Tout se fait à la télécommande, sans ordinateur, et un bouton
 remet tout comme avant. Les applis sont désactivées, jamais supprimées.
+
+**Installer depuis la TV :** dans l'appli Downloader (Play Store de la TV), tape le code **8225348**, installe, puis suis l'appli.
