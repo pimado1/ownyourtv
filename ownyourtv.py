@@ -1,22 +1,38 @@
 #!/usr/bin/env python3
-"""OwnYourTV from a computer: the same catalogue and the same safety rules as the TV app, over adb.
+"""OwnYourTV from a computer: the same catalogue, the same safety rules and the same home screen as the TV app.
 
-    python3 ownyourtv.py <tv ip>            show what can be switched off, then ask before changing anything
-    python3 ownyourtv.py <tv ip> --apply    switch off what is recommended (ads and tracking checked on a TV)
-    python3 ownyourtv.py <tv ip> --undo     switch back on everything this script switched off
+    python3 ownyourtv.py <tv ip>                 a menu: optimise, choose apps, home screen, undo
+    python3 ownyourtv.py <tv ip> optimise        one click: verified ads, tracking, clutter off, the OwnYourTV home,
+                                                 faster animations
+    python3 ownyourtv.py <tv ip> list            what can be switched off, and what already is
+    python3 ownyourtv.py <tv ip> off <app> ...   switch apps off (package names from "list")
+    python3 ownyourtv.py <tv ip> on <app> ...    switch apps back on
+    python3 ownyourtv.py <tv ip> home            install OwnYourTV and make its home screen the TV's home
+    python3 ownyourtv.py <tv ip> undo            put back everything this script changed
 
-Needs adb (Android platform-tools). Apps are disabled for the user, never uninstalled. What was switched off is
-recorded in ~/.ownyourtv/<ip>.json so --undo can bring it back.
+Add --yes to skip the questions. Needs Python 3.8+ and adb (Android platform-tools). Apps are switched off for
+the user, never uninstalled. What this script changes is recorded in ~/.ownyourtv/<tv>.json, so undo can put
+it back.
 """
 import json
 import re
 import subprocess
 import sys
+import tempfile
+import time
+import urllib.request
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
 CATALOG = HERE / "data" / "catalog.json"
-STATE = Path.home() / ".ownyourtv"
+STATE_DIR = Path.home() / ".ownyourtv"
+APK_URL = "https://github.com/pimado1/ownyourtv/releases/latest/download/OwnYourTV.apk"
+PKG = "app.ownyourtv"
+HOME = f"{PKG}/.home.HomeActivity"
+KEY_SERVICE = f"{PKG}/.home.HomeKeyService"
+STOCK_HOMES = ["com.google.android.apps.tv.launcherx", "com.google.android.tvlauncher", "com.google.android.leanbacklauncher"]
+WIZARD = "com.google.android.tungsten.setupwraith"
+ANIM_KEYS = ["window_animation_scale", "transition_animation_scale", "animator_duration_scale"]
 
 # Kept identical to Catalog.PROTECTED in the app: never offered, whatever the catalogue or the name says.
 PROTECTED = re.compile(
@@ -37,27 +53,56 @@ GUESS = [
     ("ads", re.compile(r"(^|\.)(ads?|adservice|advert|promo|promotion|sponsor|recommend(ation)?s?|partnercustomizer|demo|"
                        r"exhibit|retail|storemode|messagebox|pushservice|marketing|channelplus|fastchannel)", re.IGNORECASE)),
 ]
-KINDS = {"ads": "Ads", "tracking": "Tracking", "extras": "Clutter", "apps": "Preinstalled apps"}
+GROUPS = [("ads", "Ads"), ("tracking", "Tracking"), ("extras", "Clutter"), ("apps", "Preinstalled apps")]
 
 
-def adb(host, *args):
-    r = subprocess.run(["adb", "-s", f"{host}:5555", *args], capture_output=True, text=True)
-    return r.stdout.strip() + r.stderr.strip()
+class Tv:
+    def __init__(self, target):
+        self.serial = target if (":" in target or target.startswith("emulator-")) else f"{target}:5555"
+        self.state_file = STATE_DIR / (self.serial.replace(":", "_") + ".json")
+        self.state = json.loads(self.state_file.read_text()) if self.state_file.exists() else {}
+
+    def adb(self, *args, timeout=120):
+        r = subprocess.run(["adb", "-s", self.serial, *args], capture_output=True, text=True, timeout=timeout)
+        return (r.stdout + r.stderr).strip()
+
+    def sh(self, cmd):
+        return self.adb("shell", cmd)
+
+    def connect(self):
+        if not self.serial.startswith("emulator-"):
+            subprocess.run(["adb", "connect", self.serial], capture_output=True, text=True, timeout=30)
+        for i in range(40):
+            state = self.adb("get-state")
+            if state == "device":
+                return True
+            if i == 0:
+                print("Waiting for the TV: accept \"Allow USB debugging?\" on screen (tick Always allow).")
+            time.sleep(1.5)
+            if not self.serial.startswith("emulator-"):
+                subprocess.run(["adb", "connect", self.serial], capture_output=True, text=True, timeout=30)
+        print("The TV did not answer. Check its IP address, that USB debugging is on, then run this again.")
+        return False
+
+    def save(self):
+        STATE_DIR.mkdir(exist_ok=True)
+        self.state_file.write_text(json.dumps(self.state, indent=1, sort_keys=True))
+
+    def packages(self, flag=""):
+        return {l[len("package:"):].strip() for l in self.sh(f"pm list packages {flag}").splitlines() if l.startswith("package:")}
+
+    def home_now(self):
+        out = self.sh("cmd package resolve-activity --brief -a android.intent.action.MAIN -c android.intent.category.HOME")
+        return out.splitlines()[-1].strip() if out else ""
 
 
-def shell(host, cmd):
-    return adb(host, "shell", cmd)
-
-
-def packages(host, flag=""):
-    return {l.removeprefix("package:").strip() for l in shell(host, f"pm list packages {flag}").splitlines() if l.startswith("package:")}
-
-
-def items(host):
+def items(tv):
     cat = json.loads(CATALOG.read_text())["packages"]
-    installed, off = packages(host), packages(host, "-d")
+    installed, off = tv.packages(), tv.packages("-d")
     out = []
     for p in sorted(installed):
+        if p == PKG:
+            continue
         if p in cat:
             e = cat[p]
             out.append({"pkg": p, "kind": e["k"], "rec": e["r"], "verified": bool(e.get("v")), "off": p in off})
@@ -69,58 +114,223 @@ def items(host):
     return out
 
 
-def record(host):
-    STATE.mkdir(exist_ok=True)
-    return STATE / f"{host}.json"
+def ask(question, yes):
+    if yes:
+        return True
+    return input(f"{question} [y/N] ").strip().lower() in ("y", "yes", "o", "oui")
 
 
-def main():
-    if len(sys.argv) < 2 or sys.argv[1].startswith("-"):
-        print(__doc__)
-        return 1
-    host, mode = sys.argv[1], (sys.argv[2] if len(sys.argv) > 2 else "")
-    subprocess.run(["adb", "connect", f"{host}:5555"], capture_output=True, text=True)
-    if adb(host, "get-state") != "device":
-        print("Accept \"Allow USB debugging?\" on the TV (tick Always allow), then run this again.")
-        return 1
-    rec_file = record(host)
-    ours = set(json.loads(rec_file.read_text())) if rec_file.exists() else set()
-
-    if mode == "--undo":
-        for p in sorted(ours):
-            print(("on   " if "enabled" in shell(host, f"pm enable {p}") else "FAIL ") + p)
-        rec_file.write_text("[]")
-        return 0
-
-    found = items(host)
-    for kind, title in KINDS.items():
+def show(found):
+    n = 0
+    for kind, title in GROUPS:
         group = [i for i in found if i["kind"] == kind]
         if not group:
             continue
         print(f"\n{title}")
         for i in group:
-            mark = "off " if i["off"] else ("[x] " if i["rec"] else "[ ] ")
+            n += 1
+            i["n"] = n
+            mark = "off" if i["off"] else ("[x]" if i["rec"] else "[ ]")
             note = "checked on a test TV" if i["verified"] else ("spotted by its name" if i.get("guessed") else "")
-            print(f"  {mark}{i['pkg']}  {note}")
-    todo = [i["pkg"] for i in found if i["rec"] and not i["off"]]
-    print(f"\n{len(todo)} recommended app(s) to switch off.")
-    if not todo:
-        return 0
-    if mode != "--apply":
-        answer = input("Switch them off now? [y/N] ").strip().lower()
-        if answer not in ("y", "yes", "o", "oui"):
-            print("Nothing changed.")
-            return 0
-    for p in todo:
-        ok = "disabled" in shell(host, f"pm disable-user --user 0 {p}")
+            print(f"  {n:>3}  {mark}  {i['pkg']:<52} {note}")
+    print("\n[x] recommended   off already switched off")
+
+
+def switch_off(tv, pkgs):
+    done = set(tv.state.get("off", []))
+    for p in pkgs:
+        if PROTECTED.match(p) and p not in json.loads(CATALOG.read_text())["packages"]:
+            print(f"skip {p}: protected, the TV needs it")
+            continue
+        ok = "disabled" in tv.sh(f"pm disable-user --user 0 {p}")
         print(("off  " if ok else "FAIL ") + p)
         if ok:
-            ours.add(p)
-    rec_file.write_text(json.dumps(sorted(ours)))
-    print(f"\nDone. Undo any time: python3 ownyourtv.py {host} --undo")
-    print("Then switch USB debugging off on the TV (Developer options).")
+            done.add(p)
+    tv.state["off"] = sorted(done)
+    tv.save()
+
+
+def switch_on(tv, pkgs):
+    done = set(tv.state.get("off", []))
+    for p in pkgs:
+        ok = "enabled" in tv.sh(f"pm enable {p}")
+        print(("on   " if ok else "FAIL ") + p)
+        if ok:
+            done.discard(p)
+    tv.state["off"] = sorted(done)
+    tv.save()
+
+
+def install_app(tv, apk=None):
+    if PKG in tv.packages():
+        print("OwnYourTV is installed.")
+        return True
+    if apk is None:
+        print("Downloading OwnYourTV…")
+        apk = Path(tempfile.gettempdir()) / "OwnYourTV.apk"
+        urllib.request.urlretrieve(APK_URL, apk)
+    print(tv.adb("install", "-r", str(apk), timeout=300).splitlines()[-1])
+    return PKG in tv.packages()
+
+
+def make_home(tv, apk=None):
+    if not install_app(tv, apk):
+        print("OwnYourTV could not be installed.")
+        return False
+    # Android lets only the app itself switch its home entry on: ask it, then give it the Home role.
+    tv.sh(f"am start -n {PKG}/.MainActivity --ez computer_home true --ez on true")
+    time.sleep(2)
+    tv.sh(f"pm grant {PKG} android.permission.BLUETOOTH_CONNECT; pm grant {PKG} android.permission.READ_TV_LISTINGS; "
+          f"cmd appops set {PKG} ACCESS_RESTRICTED_SETTINGS allow")
+    services = tv.sh("settings get secure enabled_accessibility_services").strip()
+    if KEY_SERVICE not in services:
+        services = KEY_SERVICE if services in ("", "null") else f"{services}:{KEY_SERVICE}"
+        tv.sh(f"settings put secure enabled_accessibility_services {services}; settings put secure accessibility_enabled 1")
+    tv.sh(f"cmd package set-home-activity --user 0 {HOME}")
+    if tv.home_now() != HOME:
+        # Google TV keeps its own home on the Home button: switch the stock homes off, never the setup wizard that
+        # owns the Wi-Fi network.
+        enabled = tv.packages("-e")
+        offs = [p for p in STOCK_HOMES if p in enabled]
+        if WIZARD in enabled and "setupwraith" not in tv.sh("dumpsys wifi | grep -o 'cname=[^ ]*'"):
+            offs.append(WIZARD)
+        home_off = set(tv.state.get("home_off", []))
+        for p in offs:
+            if "disabled" in tv.sh(f"pm disable-user --user 0 {p}"):
+                home_off.add(p)
+        tv.state["home_off"] = sorted(home_off)
+        tv.sh(f"cmd package set-home-activity --user 0 {HOME}")
+    tv.state["home"] = True
+    tv.save()
+    ok = tv.home_now() == HOME
+    print("The OwnYourTV home is the TV's home." if ok else f"Home still opens {tv.home_now()}.")
+    tv.sh("input keyevent HOME")
+    return ok
+
+
+def undo_home(tv):
+    for p in tv.state.get("home_off", []):
+        tv.sh(f"pm enable {p}")
+    off = tv.packages("-d")
+    for p in STOCK_HOMES:
+        if p in off:
+            tv.sh(f"pm enable {p}")
+    if not any(p in tv.packages("-e") for p in STOCK_HOMES):
+        print("No other home on this TV: the OwnYourTV home stays, so the TV is never left without one.")
+        return
+    tv.sh(f"am start -n {PKG}/.MainActivity --ez computer_home true --ez on false")
+    time.sleep(2)
+    services = [s for s in tv.sh("settings get secure enabled_accessibility_services").strip().split(":") if s and s != "null" and s != KEY_SERVICE]
+    tv.sh("settings put secure enabled_accessibility_services " + ":".join(services) if services else "settings delete secure enabled_accessibility_services")
+    tv.state.pop("home_off", None)
+    tv.state.pop("home", None)
+    tv.save()
+    print("The original home is back.")
+
+
+def faster(tv):
+    if "anim" not in tv.state:
+        tv.state["anim"] = [tv.sh(f"settings get global {k}").strip() for k in ANIM_KEYS]
+        tv.save()
+    tv.sh("; ".join(f"settings put global {k} 0.5" for k in ANIM_KEYS))
+    print("Faster animations.")
+
+
+def optimise(tv, yes):
+    found = items(tv)
+    todo = [i["pkg"] for i in found if i["rec"] and not i["off"] and i["kind"] != "apps"]
+    print(f"Optimise: switch off {len(todo)} verified app(s), make the OwnYourTV home the home, faster animations.")
+    if not ask("Go ahead?", yes):
+        print("Nothing changed.")
+        return
+    switch_off(tv, todo)
+    make_home(tv)
+    faster(tv)
+
+
+def undo(tv, yes):
+    off = tv.state.get("off", [])
+    print(f"Undo: switch {len(off)} app(s) back on" + (", bring the original home back" if tv.state.get("home") else "")
+          + (", put the animations back" if "anim" in tv.state else "") + ".")
+    if not ask("Go ahead?", yes):
+        print("Nothing changed.")
+        return
+    switch_on(tv, off)
+    if tv.state.get("home"):
+        undo_home(tv)
+    if "anim" in tv.state:
+        tv.sh("; ".join(f"settings delete global {k}" if v in ("", "null") else f"settings put global {k} {v}"
+                        for k, v in zip(ANIM_KEYS, tv.state.pop("anim"))))
+        tv.save()
+        print("Animations put back.")
+
+
+def choose(tv):
+    found = items(tv)
+    show(found)
+    print("\nType the numbers to switch, separated by spaces (an app that is off comes back on), or press Enter.")
+    picked = input("> ").split()
+    by_n = {str(i["n"]): i for i in found}
+    to_off = [by_n[n]["pkg"] for n in picked if n in by_n and not by_n[n]["off"]]
+    to_on = [by_n[n]["pkg"] for n in picked if n in by_n and by_n[n]["off"]]
+    if to_off:
+        switch_off(tv, to_off)
+    if to_on:
+        switch_on(tv, to_on)
+    if not (to_off or to_on):
+        print("Nothing changed.")
+
+
+def menu(tv):
+    while True:
+        print("\nOwnYourTV\n  1  Optimise in one click\n  2  Choose apps, one by one\n  3  Install the OwnYourTV home"
+              "\n  4  Put everything back\n  5  Done (switch USB debugging off)\n  q  Quit")
+        c = input("> ").strip().lower()
+        if c == "1":
+            optimise(tv, False)
+        elif c == "2":
+            choose(tv)
+        elif c == "3":
+            make_home(tv)
+        elif c == "4":
+            undo(tv, False)
+        elif c == "5":
+            tv.sh("settings put global adb_enabled 0")
+            print("USB debugging is off. See you.")
+            return
+        elif c in ("q", ""):
+            return
+
+
+def main(argv):
+    args = [a for a in argv if not a.startswith("--")]
+    yes = "--yes" in argv
+    if not args:
+        print(__doc__)
+        return 1
+    tv = Tv(args[0])
+    if not tv.connect():
+        return 1
+    cmd, rest = (args[1] if len(args) > 1 else "menu"), args[2:]
+    if cmd == "menu":
+        menu(tv)
+    elif cmd == "optimise":
+        optimise(tv, yes)
+    elif cmd == "list":
+        show(items(tv))
+    elif cmd == "off":
+        switch_off(tv, rest)
+    elif cmd == "on":
+        switch_on(tv, rest)
+    elif cmd == "home":
+        make_home(tv, Path(rest[0]) if rest else None)
+    elif cmd == "undo":
+        undo(tv, yes)
+    else:
+        print(__doc__)
+        return 1
     return 0
 
 
 if __name__ == "__main__":
-    sys.exit(main())
+    sys.exit(main(sys.argv[1:]))

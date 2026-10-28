@@ -24,11 +24,43 @@ In English, French, Spanish, German, Italian and Portuguese, following your TV's
 | | How | You need |
 |---|---|---|
 | **On the TV** | In [Downloader](https://www.aftvnews.com/downloader/), open `github.com/pimado1/ownyourtv/releases/latest/download/OwnYourTV.apk`, install it, then follow the app | Just the remote |
-| **From a computer** | `python3 ownyourtv.py <tv ip>` | adb (Android platform-tools) |
+| **From a computer** | `python3 ownyourtv.py <tv ip>` ([below](#from-a-computer)) | Python 3, adb |
 | **With an AI agent** | Paste [PROMPT.md](PROMPT.md) into Claude Code | Claude Code, adb |
 
 Every route uses the same catalogue (`data/catalog.json`) and the same safety rules: what Android or the TV needs to
 start, play a channel or an HDMI input, take a remote, a keyboard or a network is never offered.
+
+## From a computer
+
+Everything the TV app does, from a terminal on Windows, macOS or Linux.
+
+1. Install **adb**: [Android platform-tools](https://developer.android.com/tools/releases/platform-tools)
+   (macOS: `brew install android-platform-tools`, Windows: `winget install Google.PlatformTools`,
+   Linux: `sudo apt install adb`), and **Python 3**.
+2. Download this repository (`git clone https://github.com/pimado1/ownyourtv` or Code › Download ZIP).
+3. On the TV: Settings › System › About › click "Android TV OS build" 7 times, then Settings › System ›
+   Developer options › USB debugging. Note the TV's IP address (Settings › Network).
+4. Run:
+
+```bash
+python3 ownyourtv.py 192.168.1.50
+```
+
+A menu opens: **Optimise in one click**, **Choose apps one by one**, **Install the OwnYourTV home**, **Put
+everything back**, **Done** (switches USB debugging off). The TV asks once whether to allow the computer.
+
+The same, without the menu:
+
+| Command | What it does |
+|---|---|
+| `python3 ownyourtv.py <ip> optimise` | Verified ads, tracking and clutter off, the OwnYourTV home, faster animations |
+| `python3 ownyourtv.py <ip> list` | What can be switched off, and what already is |
+| `python3 ownyourtv.py <ip> off <app> …` / `on <app> …` | Switch apps off, or back on |
+| `python3 ownyourtv.py <ip> home` | Install OwnYourTV and make its home the TV's home |
+| `python3 ownyourtv.py <ip> undo` | Put back everything the script changed |
+
+Add `--yes` to skip the questions. The script and the TV app share the catalogue and the safety rules; each
+keeps its own record of what it changed, so undo each from where you made the change.
 
 ## How the TV app works without a computer
 

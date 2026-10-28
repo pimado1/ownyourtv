@@ -44,6 +44,13 @@ class MainActivity : Activity() {
             background = GradientDrawable(GradientDrawable.Orientation.TL_BR, intArrayOf(Color.rgb(20, 26, 18), Ui.INK, Ui.INK))
         }
         setContentView(root)
+        // ownyourtv.py on a computer: Android lets only the app itself switch its home entry on, so the script
+        // asks the app to, and only while USB debugging is on (the script needs it anyway).
+        if (intent.getBooleanExtra(EXTRA_HOME, false) && adbOn()) {
+            setOurHome(intent.getBooleanExtra(EXTRA_HOME_ON, true))
+            finish()
+            return
+        }
         // Screenshots of each screen for the store page and for checking translations.
         when (intent.getStringExtra("preview")) {
             "dev" -> { still = true; devMode() }
@@ -581,6 +588,8 @@ class MainActivity : Activity() {
         const val OURS = "ours"
         const val OURS_HOME = "ours_home"
         const val ANIM = "anim_before"
+        const val EXTRA_HOME = "computer_home"
+        const val EXTRA_HOME_ON = "on"
         val ANIM_KEYS = listOf("window_animation_scale", "transition_animation_scale", "animator_duration_scale")
         val STOCK_HOMES = listOf("com.google.android.apps.tv.launcherx", "com.google.android.tvlauncher", "com.google.android.leanbacklauncher")
     }
