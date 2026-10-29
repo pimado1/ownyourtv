@@ -86,6 +86,8 @@ public class HomeActivity extends Activity {
     private final Map<String, HomeData.Resume> resumes = new HashMap<>();
 
     private View weatherCard;
+    /** The sun times and the week, shown once there is a forecast: without one the card stays a single line. */
+    private View weatherMore;
     private Glyph weatherIcon, sunArc;
     private TextView weatherTemp, weatherSky, weatherPlace, weatherRise, weatherSet;
     private Weather weather;
@@ -254,9 +256,16 @@ public class HomeActivity extends Activity {
     static final String EXTRA_PICK_CITY = "pick_city";
 
     private void showNoCity() {
-        weatherTemp.setText("—");
-        weatherSky.setText(getString(R.string.h_weather));
-        weatherPlace.setText(getString(R.string.h_pick_city_hint));
+        showWeatherLine(getString(R.string.h_weather), getString(R.string.h_pick_city_hint));
+    }
+
+    /** No forecast yet (no city, or offline): one line, no empty week. */
+    private void showWeatherLine(String title, String detail) {
+        weatherIcon.setVisibility(View.GONE);
+        weatherTemp.setVisibility(View.GONE);
+        weatherMore.setVisibility(View.GONE);
+        weatherSky.setText(title);
+        weatherPlace.setText(detail);
     }
 
     /** The city search: type a name with the remote's keyboard, pick it, and it is kept on the TV. */
@@ -398,6 +407,8 @@ public class HomeActivity extends Activity {
         carousel.setClipChildren(false);
         carousel.setFocusable(true);
         carousel.setDefaultFocusHighlightEnabled(false);
+        // The apps get the remote first, not the Wi-Fi button that comes first on screen.
+        carousel.setFocusedByDefault(true);
         carousel.setOnKeyListener(this::carouselKey);
         carousel.setId(View.generateViewId());
         FrameLayout.LayoutParams cl = new FrameLayout.LayoutParams(-1, px(360));
@@ -547,6 +558,7 @@ public class HomeActivity extends Activity {
         col.addView(weatherPlace, wrap());
         top.addView(col, new LinearLayout.LayoutParams(0, -2, 1));
         card.addView(top);
+        LinearLayout more = column(14);
         LinearLayout sun = row(10);
         weatherRise = label(text, 15, 0xB8FFFFFF);
         weatherSet = label(text, 15, 0xB8FFFFFF);
@@ -554,10 +566,10 @@ public class HomeActivity extends Activity {
         sun.addView(weatherRise, wrap());
         sun.addView(sunArc, new LinearLayout.LayoutParams(0, px(30), 1));
         sun.addView(weatherSet, wrap());
-        card.addView(sun, new LinearLayout.LayoutParams(-1, -2));
+        more.addView(sun, new LinearLayout.LayoutParams(-1, -2));
         View line = new View(this);
         line.setBackgroundColor(0x1FFFFFFF);
-        card.addView(line, new LinearLayout.LayoutParams(-1, Math.max(1, px(1))));
+        more.addView(line, new LinearLayout.LayoutParams(-1, Math.max(1, px(1))));
         LinearLayout week = row(0);
         for (int i = 0; i < Weather.Reading.DAYS; i++) {
             LinearLayout day = column(6);
@@ -572,8 +584,10 @@ public class HomeActivity extends Activity {
             day.addView(dayTemp[i], wrap());
             week.addView(day, new LinearLayout.LayoutParams(0, -2, 1));
         }
-        card.addView(week, new LinearLayout.LayoutParams(-1, -2));
-        weatherTemp.setText("—");
+        more.addView(week, new LinearLayout.LayoutParams(-1, -2));
+        card.addView(more, new LinearLayout.LayoutParams(-1, -2));
+        weatherMore = more;
+        showWeatherLine(getString(R.string.h_weather), weather != null ? weather.place : "");
         return card;
     }
 
@@ -1025,6 +1039,9 @@ public class HomeActivity extends Activity {
             main.post(() -> {
                 if (r == null) return;
                 reading = r;
+                weatherIcon.setVisibility(View.VISIBLE);
+                weatherTemp.setVisibility(View.VISIBLE);
+                weatherMore.setVisibility(View.VISIBLE);
                 weatherTemp.setText(r.temp + "°");
                 weatherSky.setText(getString(r.label()));
                 weatherPlace.setText((place.place.isEmpty() ? "" : place.place + " · ") + getString(R.string.h_feels, (int) r.feels));
