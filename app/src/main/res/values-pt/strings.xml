@@ -163,4 +163,15 @@
         <item quantity="one">%d app foi reativado</item>
         <item quantity="other">%d apps foram reativados</item>
     </plurals>
+    <string name="up_title">OwnYourTV %1$s está disponível</string>
+    <string name="up_sub">Nova versão</string>
+    <string name="up_lead">A nova versão instala-se por cima desta: as tuas escolhas, o teu dock e o teu ecrã inicial ficam como estão.</string>
+    <string name="up_safe">O OwnYourTV só a instala se estiver assinada com a mesma chave da que está na tua TV. Depois, o Android pede-te para confirmar.</string>
+    <string name="up_now">Atualizar</string>
+    <string name="up_now_small">OwnYourTV</string>
+    <string name="up_download">A transferir e a verificar…</string>
+    <string name="up_install">O Android pede-te para confirmar e depois instala a nova versão.</string>
+    <string name="up_failed">Não foi possível atualizar. Nada mudou na tua TV. Tenta mais tarde.</string>
+    <string name="up_bad">O ficheiro transferido não está assinado pelo OwnYourTV, por isso não foi instalado.</string>
+    <string name="up_button">Atualizar para %1$s</string>
 </resources>

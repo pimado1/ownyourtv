@@ -1514,6 +1514,39 @@ public class HomeActivity extends Activity {
         actions.post(() -> actions.getChildAt(0).requestFocus());
     }
 
+    // ---- updates ------------------------------------------------------------------------------------
+
+    /** A newer OwnYourTV is on GitHub: offered once, on the home screen; the app installs it. */
+    private void checkUpdate() {
+        bg.post(() -> {
+            Update.checkIfDue(this);
+            if (Update.shouldAsk(this)) main.post(() -> {
+                if (popup == null && !isFinishing()) showUpdate(Update.available(this));
+            });
+        });
+    }
+
+    private void showUpdate(String version) {
+        LinearLayout actions = row(18);
+        actions.addView(dockAction(getString(R.string.up_now_small), getString(R.string.up_now), () -> {
+            dismissPopup();
+            startActivity(new Intent(this, app.ownyourtv.MainActivity.class).putExtra(Update.EXTRA, true)
+                    .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+        }), new LinearLayout.LayoutParams(-2, px(72)));
+        actions.addView(dockAction(getString(R.string.rc_later_small), getString(R.string.rc_later), () -> {
+            Update.later(this);
+            dismissPopup();
+        }), new LinearLayout.LayoutParams(-2, px(72)));
+        LinearLayout body = column(28);
+        TextView lead = label(text, 26, 0xD9FFFFFF);
+        lead.setText(R.string.up_lead);
+        body.addView(lead, wrap());
+        body.addView(actions, wrap());
+        popup = sheet(getString(R.string.up_title, version), getString(R.string.up_sub), body);
+        popup.show();
+        actions.post(() -> actions.getChildAt(0).requestFocus());
+    }
+
     // ---- lifecycle --------------------------------------------------------------------------------
 
     @Override
@@ -1530,6 +1563,7 @@ public class HomeActivity extends Activity {
         main.post(slowTick);
         refreshResumes();
         checkComeBack();
+        checkUpdate();
         // Still running a moment after showing (a pop-up may take the focus first): this start went well.
         main.postDelayed(markShown, 1500);
         if (breathe == null) {

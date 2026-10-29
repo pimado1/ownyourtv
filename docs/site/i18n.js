@@ -61,6 +61,7 @@ var FR = {
   p_r4: "Combien d'applis ont été coupées, et lesquelles de la liste OwnYourTV n'ont pas pu l'être", p_n4: "Ton historique de visionnage",
   p_h4: "Où va le rapport", p_t4: "Il passe par un petit relais hébergé chez Cloudflare, qui ne garde rien : il vérifie le rapport et l'ajoute à une page publique sur GitHub, une par modèle de TV. Le relais voit l'adresse IP de la requête, comme tout serveur, et ne l'utilise que pour limiter à 5 rapports par minute, sans l'enregistrer. Le rapport devient public : c'est la liste des TV compatibles.",
   p_h5: "Supprimer un rapport", p_t5: "Le rapport ne contient rien qui te désigne. Si tu veux quand même qu'il disparaisse, ouvre une issue sur GitHub en indiquant le modèle.",
+  p_h7: "Les mises à jour", p_t7: "Une fois par jour, OwnYourTV demande à GitHub (api.github.com) le numéro de sa dernière version. Rien sur ta TV n'est envoyé ; comme tout serveur, GitHub voit l'adresse IP de la requête. Si tu choisis de mettre à jour, la nouvelle version est téléchargée depuis GitHub.",
   p_h6: "Le code est public", p_t6: "Tout ce qui est décrit ici se vérifie dans le code : <a href=\"https://github.com/pimado1/ownyourtv/blob/main/app/src/main/java/app/ownyourtv/Report.kt\">ce que l'appli envoie</a> et <a href=\"https://github.com/pimado1/ownyourtv/blob/main/relay/worker.js\">ce que fait le relais</a>.",
   after_alt: "Après : l'accueil OwnYourTV avec un ciel de nuit, la météo et les applis en cartes 3D.",
   before_alt: "Avant : l'accueil Google TV d'origine avec une pub plein écran et des recommandations.",
@@ -74,6 +75,8 @@ var FR = {
   sf2_h: "Après une mise à jour de la TV", sf2_p: "Les mises à jour rallument souvent les pubs. OwnYourTV le repère au démarrage et sur son accueil, et les recoupe en un appui.",
   sf3_h: "Un accueil de secours", sf3_p: "Si le nouvel accueil n'arrive pas à démarrer, un accueil simple avec toutes tes applis prend le relais. Jamais d'écran noir.",
   sf4_h: "Un bouton remet tout", sf4_p: "« Tout remettre » rallume chaque appli et ramène ton accueil d'origine.",
+  q9: "Comment avoir les nouvelles versions ?",
+  a9: "Depuis la version 1.7, l'accueil te prévient quand une nouvelle version sort. Appuie sur Mettre à jour : OwnYourTV vérifie qu'elle est signée avec la même clé, puis Android te demande de confirmer. Tes choix et ton dock restent. Avant la 1.7, installe-la par-dessus l'ancienne avec le même code Downloader.",
   q8: "Une mise à jour de la TV a remis les pubs",
   a8: "Ça arrive : les fabricants rallument leurs applis pendant les mises à jour. OwnYourTV le repère au démarrage suivant et propose de les recouper en un appui. Active le débogage USB quand elle le demande, puis recoupe-le à la fin.",
   try_eye: "Sur une vraie TV", try_h: "L'accueil, en vrai",
@@ -81,7 +84,7 @@ var FR = {
   try_hint: "Une TCL C89B sous Google TV 14, sans montage.",
   video_aria: "L'accueil OwnYourTV sur une vraie TV : le dock défile appli par appli et l'aurore prend la couleur de chacune.",
   bar_cta: "Installer",
-  p_updated: "Mis à jour le 28 octobre 2026.", p_back: "← Retour à l'accueil"
+  p_updated: "Mis à jour le 29 octobre 2026.", p_back: "← Retour à l'accueil"
 };
 
 var EN = {}, lang = "en";

@@ -106,6 +106,9 @@ Android lets the owner turn on USB debugging. When it is on, OwnYourTV connects 
 the TV asks you once whether to allow it, and from then on the app can switch apps off and set the home screen,
 the way a computer would. Nothing leaves the TV unless you press **Share** at the end (below). When you are done, "Finish and lock" turns debugging off again.
 
+Once a day, OwnYourTV asks GitHub for the number of its latest version, and nothing else. When a newer one is out, the home screen
+offers it; the app installs it only if it is signed with the same key as the one on the TV, and Android asks you to confirm.
+
 ## TVs reported by owners
 
 On its last screen, OwnYourTV offers to **share** which TV it ran on and what worked. Only if you press it, and

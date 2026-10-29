@@ -164,4 +164,15 @@
         <item quantity="one">%d app was switched back on</item>
         <item quantity="other">%d apps were switched back on</item>
     </plurals>
+    <string name="up_title">OwnYourTV %1$s is available</string>
+    <string name="up_sub">New version</string>
+    <string name="up_lead">The new version installs over this one: your choices, your dock and your home screen stay as they are.</string>
+    <string name="up_safe">OwnYourTV only installs it if it is signed with the same key as the one on your TV. Android then asks you to confirm.</string>
+    <string name="up_now">Update</string>
+    <string name="up_now_small">OwnYourTV</string>
+    <string name="up_download">Downloading and checking…</string>
+    <string name="up_install">Android is asking you to confirm, then installs the new version.</string>
+    <string name="up_failed">The update could not be done. Nothing has changed on your TV. Try again later.</string>
+    <string name="up_bad">The downloaded file is not signed by OwnYourTV, so it was not installed.</string>
+    <string name="up_button">Update to %1$s</string>
 </resources>

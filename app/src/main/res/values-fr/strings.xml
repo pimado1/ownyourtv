@@ -163,4 +163,15 @@
         <item quantity="one">%d appli a été rallumée</item>
         <item quantity="other">%d applis ont été rallumées</item>
     </plurals>
+    <string name="up_title">OwnYourTV %1$s est disponible</string>
+    <string name="up_sub">Nouvelle version</string>
+    <string name="up_lead">La nouvelle version s\'installe par-dessus celle-ci : tes choix, ton dock et ton accueil restent comme ils sont.</string>
+    <string name="up_safe">OwnYourTV ne l\'installe que si elle est signée avec la même clé que celle de ta TV. Android te demande ensuite de confirmer.</string>
+    <string name="up_now">Mettre à jour</string>
+    <string name="up_now_small">OwnYourTV</string>
+    <string name="up_download">Téléchargement et vérification…</string>
+    <string name="up_install">Android te demande de confirmer, puis installe la nouvelle version.</string>
+    <string name="up_failed">La mise à jour n\'a pas pu se faire. Rien n\'a changé sur ta TV. Réessaie plus tard.</string>
+    <string name="up_bad">Le fichier téléchargé n\'est pas signé par OwnYourTV : il n\'a pas été installé.</string>
+    <string name="up_button">Passer en %1$s</string>
 </resources>

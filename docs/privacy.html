@@ -7,7 +7,7 @@
 <meta name="description" content="What OwnYourTV sends, and when: nothing, unless you choose a weather city or press Share.">
 <meta name="theme-color" content="#0b0d12">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect x='3' y='11' width='26' height='14' rx='4' fill='%23c6f432'/%3E%3Cpath d='M12 11V7.5a4 4 0 0 1 8 0' fill='none' stroke='%23f4f4f0' stroke-width='3' stroke-linecap='round'/%3E%3C/svg%3E">
-<link rel="stylesheet" href="site/style.css?v=202610290032">
+<link rel="stylesheet" href="site/style.css?v=202610290844">
 </head>
 <body>
 
@@ -32,6 +32,9 @@
   <h2 data-i18n="p_h2">The weather</h2>
   <p data-i18n="p_t2">If you pick a city for the weather, its name (to find it) and then its coordinates are sent to <a href="https://open-meteo.com">Open-Meteo</a>, a free weather service with no account. With no city picked, nothing is sent.</p>
 
+  <h2 data-i18n="p_h7">Updates</h2>
+  <p data-i18n="p_t7">Once a day, OwnYourTV asks GitHub (api.github.com) for the number of its latest version. Nothing about your TV is sent; like any server, GitHub sees the request's IP address. If you choose to update, the new version is downloaded from GitHub.</p>
+
   <h2 data-i18n="p_h3">Sharing, only if you press Share</h2>
   <p data-i18n="p_t3">On the last screen, the Share button sends an anonymous report. The screen shows the line that is sent before you press it.</p>
   <table>
@@ -53,7 +56,7 @@
   <h2 data-i18n="p_h6">The code is public</h2>
   <p data-i18n="p_t6">Everything described here can be checked in the code: <a href="https://github.com/pimado1/ownyourtv/blob/main/app/src/main/java/app/ownyourtv/Report.kt">what the app sends</a> and <a href="https://github.com/pimado1/ownyourtv/blob/main/relay/worker.js">what the relay does</a>.</p>
 
-  <p data-i18n="p_updated">Updated 28 October 2026.</p>
+  <p data-i18n="p_updated">Updated 29 October 2026.</p>
 </main>
 
 <footer>
@@ -64,6 +67,6 @@
   </div>
 </footer>
 
-<script src="site/i18n.js?v=202610290032"></script>
+<script src="site/i18n.js?v=202610290844"></script>
 </body>
 </html>

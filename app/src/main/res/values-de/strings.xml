@@ -163,4 +163,15 @@
         <item quantity="one">%d App wurde wieder eingeschaltet</item>
         <item quantity="other">%d Apps wurden wieder eingeschaltet</item>
     </plurals>
+    <string name="up_title">OwnYourTV %1$s ist verfügbar</string>
+    <string name="up_sub">Neue Version</string>
+    <string name="up_lead">Die neue Version wird über diese installiert: Deine Auswahl, dein Dock und dein Startbildschirm bleiben, wie sie sind.</string>
+    <string name="up_safe">OwnYourTV installiert sie nur, wenn sie mit demselben Schlüssel signiert ist wie die auf deinem Fernseher. Android bittet dich dann um Bestätigung.</string>
+    <string name="up_now">Aktualisieren</string>
+    <string name="up_now_small">OwnYourTV</string>
+    <string name="up_download">Wird heruntergeladen und geprüft…</string>
+    <string name="up_install">Android bittet dich um Bestätigung und installiert dann die neue Version.</string>
+    <string name="up_failed">Die Aktualisierung hat nicht geklappt. An deinem Fernseher hat sich nichts geändert. Versuch es später noch einmal.</string>
+    <string name="up_bad">Die heruntergeladene Datei ist nicht von OwnYourTV signiert und wurde nicht installiert.</string>
+    <string name="up_button">Auf %1$s aktualisieren</string>
 </resources>

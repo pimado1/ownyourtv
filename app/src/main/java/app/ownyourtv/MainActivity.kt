@@ -19,6 +19,7 @@ import android.widget.ScrollView
 import android.widget.TextView
 import java.io.File
 import app.ownyourtv.home.Recheck
+import app.ownyourtv.home.Update
 import kotlin.concurrent.thread
 
 class MainActivity : Activity() {
@@ -49,6 +50,9 @@ class MainActivity : Activity() {
     private var screen = ""
     private var poll: Runnable? = null
     private var still = false
+    /** Opened from the home screen's "update" pop-up: once connected, the update comes first. */
+    private var wantUpdate = false
+    private var updateStatus: TextView? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -71,14 +75,19 @@ class MainActivity : Activity() {
             "restore" -> restore()
             "list" -> connect()
             "wifi" -> wifiStep()
-            else -> if (intent.getBooleanExtra(Recheck.EXTRA, false)) { if (adbOn()) connect() else devMode() } else welcome()
+            else -> when {
+                intent.getBooleanExtra(Update.EXTRA, false) -> startUpdate()
+                intent.getBooleanExtra(Recheck.EXTRA, false) -> if (adbOn()) connect() else devMode()
+                else -> welcome()
+            }
         }
     }
 
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
         if (computerHome(intent)) return
-        if (intent.getBooleanExtra(Recheck.EXTRA, false)) { if (tv != null) recheck() else if (adbOn()) connect() else devMode() }
+        if (intent.getBooleanExtra(Update.EXTRA, false)) startUpdate()
+        else if (intent.getBooleanExtra(Recheck.EXTRA, false)) { if (tv != null) recheck() else if (adbOn()) connect() else devMode() }
     }
 
     private fun computerHome(i: Intent): Boolean {
@@ -186,6 +195,8 @@ class MainActivity : Activity() {
     override fun onResume() {
         super.onResume()
         if (screen == "dev" && adbOn() && !still) connect()
+        // Back from Android's confirmation without updating: the button is ready again.
+        if (screen == "update") updateStatus?.text = ""
     }
 
     // 3. The TV asks its owner; OwnYourTV waits for the OK.
@@ -229,9 +240,11 @@ class MainActivity : Activity() {
             tv?.close()
             tv = t
             load()
+            Update.checkIfDue(this)
             val back = Recheck.cameBack(this)
             main.post {
                 if (screen == "connect") when {
+                    wantUpdate && Update.canInstall(this) -> updateScreen()
                     !prefs.getBoolean(SETUP_DONE, false) -> wizTv()
                     back.isNotEmpty() -> recheck()
                     else -> home()
@@ -266,6 +279,8 @@ class MainActivity : Activity() {
         wantFast = fastNow
         Recheck.remember(this)
         tv!!.sh("pm grant $packageName android.permission.POST_NOTIFICATIONS 2>/dev/null; true")
+        // So that later updates from GitHub install without the owner hunting for "unknown apps" in the settings.
+        tv!!.sh("appops set $packageName REQUEST_INSTALL_PACKAGES allow 2>/dev/null; true")
     }
 
     // After a TV update: what came back on is switched off again in one press.
@@ -364,6 +379,7 @@ class MainActivity : Activity() {
         })
         val apply = ui.button(if (n > 0) getString(R.string.h_apply_short) else getString(R.string.h_apply_none), false) { if (changes() > 0) apply() }
         side.addView(apply, ui.lp(MATCH_PARENT))
+        Update.available(this)?.let { v -> side.addView(ui.button(getString(R.string.up_button, v), false) { updateScreen() }, ui.lp(MATCH_PARENT)) }
         side.addView(ui.button(getString(R.string.h_restore), false) { restore() }, ui.lp(MATCH_PARENT))
         side.addView(ui.button(getString(R.string.z_restart), false) { load2 { wizTv() } }, ui.lp(MATCH_PARENT))
         side.addView(ui.text(getString(R.string.h_safe), 13, Ui.GREY), ui.lp(MATCH_PARENT))
@@ -371,6 +387,50 @@ class MainActivity : Activity() {
         p.addView(body, ui.lp(MATCH_PARENT).apply { topMargin = ui.dp(12) })
         first = if (n > 0) apply else best
         show("home", p, first)
+    }
+
+    private fun startUpdate() {
+        if (Update.canInstall(this)) { updateScreen(); return }
+        // First update: OwnYourTV needs ADB once to allow itself to install apps.
+        wantUpdate = true
+        if (adbOn()) connect() else devMode()
+    }
+
+    // A newer OwnYourTV from GitHub, checked against this app's own key, then installed by Android.
+    private fun updateScreen() {
+        wantUpdate = false
+        val version = Update.available(this) ?: run { if (tv != null) home() else finish(); return }
+        val p = page().apply { gravity = Gravity.CENTER_VERTICAL }
+        p.addView(ui.title(getString(R.string.up_title, version), 48))
+        p.addView(ui.text(getString(R.string.up_lead), 20, Ui.PAPER).apply { maxWidth = ui.dp(860) }, ui.lp().apply { topMargin = ui.dp(14) })
+        p.addView(ui.text(getString(R.string.up_safe), 16, Ui.GREY).apply { maxWidth = ui.dp(860) }, ui.lp().apply { topMargin = ui.dp(10) })
+        val status = ui.text("", 16, Ui.LIME, ui.mono)
+        updateStatus = status
+        val r = ui.row(16)
+        var busy = false
+        val go = ui.button(getString(R.string.up_now), true) {}
+        go.setOnClickListener {
+            if (busy) return@setOnClickListener
+            busy = true
+            status.setTextColor(Ui.LIME); status.text = getString(R.string.up_download)
+            thread {
+                val res = Update.install(this)
+                main.post {
+                    busy = false
+                    when (res) {
+                        Update.Result.OK -> status.text = getString(R.string.up_install)
+                        Update.Result.NOT_OURS -> { status.setTextColor(Ui.RED); status.text = getString(R.string.up_bad) }
+                        else -> { status.setTextColor(Ui.RED); status.text = getString(R.string.up_failed) }
+                    }
+                }
+            }
+        }
+        r.addView(go)
+        val leave = { if (tv != null) home() else finish() }
+        r.addView(ui.button(getString(R.string.rc_later), false) { Update.later(this); leave() })
+        p.addView(r, ui.lp().apply { topMargin = ui.dp(32) })
+        p.addView(status, ui.lp().apply { topMargin = ui.dp(20) })
+        show("update", p, go) { leave() }
     }
 
     private fun card(title: String, sub: String, status: String, frac: Float, wide: Boolean = false, check: Boolean? = null): View {
