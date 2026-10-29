@@ -1632,7 +1632,7 @@ public class HomeActivity extends Activity {
     // ---- profiles -----------------------------------------------------------------------------------
 
     private void refreshProfile() {
-        Profiles.Profile p = Profiles.current(this);
+        Profiles.Profile p = Profiles.shown(this);
         // Always on the home screen: with no profiles yet, it invites to add the family.
         profilePill.setVisibility(View.VISIBLE);
         if (p == null) {

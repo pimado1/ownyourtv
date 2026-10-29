@@ -230,4 +230,6 @@
     <string name="pf_pick_hint">OK auf einer Blase</string>
     <string name="pf_row_on">%1$s · Profil wechseln</string>
     <string name="pf_row_off">Füge deine Familie hinzu</string>
+    <string name="pf_in_use">Aktiv</string>
+    <string name="pf_edit_short">Bearbeiten</string>
 </resources>

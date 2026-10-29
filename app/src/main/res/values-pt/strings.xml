@@ -230,4 +230,6 @@
     <string name="pf_pick_hint">OK numa bolha</string>
     <string name="pf_row_on">%1$s · mudar de perfil</string>
     <string name="pf_row_off">Adiciona a tua família</string>
+    <string name="pf_in_use">Em uso</string>
+    <string name="pf_edit_short">Editar</string>
 </resources>

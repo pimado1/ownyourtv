@@ -103,6 +103,15 @@ public final class Profiles {
         return list.get(0);
     }
 
+    /** The profile to show on the home screen's pill: the one in use, even when it is the only one. */
+    public static Profile shown(Context ctx) {
+        List<Profile> list = all(ctx);
+        if (list.isEmpty()) return null;
+        String id = prefs(ctx).getString("current", MAIN);
+        for (Profile p : list) if (p.id.equals(id)) return p;
+        return list.get(0);
+    }
+
     public static void use(Context ctx, String id) {
         prefs(ctx).edit().putString("current", id).apply();
     }

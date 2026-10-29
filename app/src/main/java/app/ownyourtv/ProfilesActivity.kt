@@ -62,17 +62,23 @@ class ProfilesActivity : Activity() {
         val p = page()
         p.addView(ui.title(getString(R.string.pf_title), 40))
         p.addView(ui.text(getString(R.string.pf_lead), 18, Ui.GREY).apply { maxWidth = ui.dp(900) }, ui.lp().apply { topMargin = ui.dp(8) })
-        val r = ui.row(20).apply { clipChildren = false }
+        val r = ui.row(20).apply { clipChildren = false; gravity = Gravity.TOP }
         var first: View? = null
+        val inUse = Profiles.shown(this)?.id
         Profiles.all(this).forEach { pr ->
+            // OK on the card: this person is watching now. Editing is the button under it.
+            val holder = ui.col(10).apply { gravity = Gravity.CENTER_HORIZONTAL }
             val c = ui.col(10).apply { gravity = Gravity.CENTER_HORIZONTAL; setPadding(ui.dp(24), ui.dp(22), ui.dp(24), ui.dp(20)) }
-            ui.focusable(c)
+            ui.focusable(c, if (pr.id == inUse) Ui.CARD_ON else Ui.CARD)
             c.addView(bubble(pr.name, pr.color, 84))
             c.addView(ui.ellipsize(ui.text(pr.name, 20, bold = true)).apply { maxWidth = ui.dp(170); gravity = Gravity.CENTER })
-            c.addView(ui.chip(getString(if (pr.kid) R.string.pf_kid else R.string.pf_adult), if (pr.kid) Ui.LIME else Ui.GREY).apply { gravity = Gravity.CENTER })
-            c.setOnClickListener { edit(pr, false) }
-            r.addView(c, ui.lp(ui.dp(210), MATCH_PARENT))
-            if (first == null) first = c
+            c.addView(ui.chip(if (pr.id == inUse) getString(R.string.pf_in_use) else getString(if (pr.kid) R.string.pf_kid else R.string.pf_adult),
+                if (pr.id == inUse || pr.kid) Ui.LIME else Ui.GREY).apply { gravity = Gravity.CENTER })
+            c.setOnClickListener { Profiles.use(this, pr.id); finish() }
+            holder.addView(c, ui.lp(ui.dp(210), ui.dp(210)))
+            holder.addView(ui.button(getString(R.string.pf_edit_short), false) { edit(pr, false) }, ui.lp(ui.dp(210)))
+            r.addView(holder)
+            if (first == null || pr.id == inUse) first = c
         }
         if (Profiles.all(this).size < 6) {
             val add = ui.col(10).apply { gravity = Gravity.CENTER; setPadding(ui.dp(24), ui.dp(22), ui.dp(24), ui.dp(20)) }
@@ -83,7 +89,7 @@ class ProfilesActivity : Activity() {
                 val used = Profiles.all(this).map { it.color }
                 edit(Profiles.Profile().apply { id = Profiles.newId(); name = ""; color = Profiles.COLORS.firstOrNull { it !in used } ?: Profiles.COLORS[1] }, true)
             }
-            r.addView(add, ui.lp(ui.dp(210), MATCH_PARENT))
+            r.addView(add, ui.lp(ui.dp(210), ui.dp(210)).apply { gravity = Gravity.TOP })
         }
         p.addView(r, ui.lp().apply { topMargin = ui.dp(30) })
         val actions = ui.row(16)
@@ -203,7 +209,7 @@ class ProfilesActivity : Activity() {
 
         val actions = ui.row(16)
         val save = ui.button(getString(R.string.pf_save), true) {
-            pr.name = name.text.toString().trim().ifEmpty { getString(if (pr.kid) R.string.pf_kid else R.string.pf_me) }
+            pr.name = name.text.toString().trim().replaceFirstChar { it.titlecase() }.ifEmpty { getString(if (pr.kid) R.string.pf_kid else R.string.pf_me) }
             store(pr)
         }
         actions.addView(save)
