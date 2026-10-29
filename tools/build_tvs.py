@@ -26,11 +26,13 @@ HARD_CORE = re.compile(r"^(android|android\.ext\..*|com\.android\.(systemui|shel
                        r"permissioncontroller|packageinstaller|ext\.services|ext\.shared|providers\.(?!calendar|contacts|"
                        r"userdictionary|blockednumber).*)|com\.google\.android\.(gms|gsf|modulemetadata|permissioncontroller|"
                        r"packageinstaller|ext\..*|overlay\.modules.*)|com\.android\.vending|com\.cltv\.mal|"
-                       r"com\.mediatek\.(tis|tv\.service|tv\.agent))$")
+                       r"com\.mediatek\.(tis|tv\.service|tv\.agent)|com\.android\.sdksandbox)$")
 TRACK = r"telemetr|analytic|diagnos|\blog|feedback|privacy sandbox|adservices|personali[sz]|federated|crash|report|statist|track|usage|data collect|acr\b|samba"
 ADS = r"promo|\bads?\b|advert|sponsor|push|demo|fast|channel|recommend|banner|message|popup|content row|store|shopping|waterfall|deal|patchwall"
 APPS = r"youtube|netflix|prime|disney|music|alexa|assistant|voice|cast|airplay|miracast|mirror|browser|game|player|video|photo|gallery|weather|keyboard|karaoke|fitness|sport|news|radio|spotify|twitch|plex|kodi"
 NO_TICK = re.compile(r"update|upgrad|\\bota\\b|\\.ota|fota|firmware", re.I)
+# Crash-loops some builds of the same model (tvlauncher.widget lives there): offered, never ticked.
+RISKY = re.compile(r"\.partnercustomizer(\.|$)")
 GENERIC = {"android", "tv", "smart", "google", "the", "and", "with", "for", "pro", "max", "plus", "mini", "inch", "series",
            "box", "stick", "uhd", "hdr", "led", "oled", "qled", "mini-led", "europe", "global", "india", "china", "us", "uk",
            "eu", "gb", "ram", "rom", "first", "second", "third", "gen", "new", "old", "edition"}
@@ -142,7 +144,8 @@ kinds = [pkg_kind[p].most_common(1)[0][0] if pkg_kind[p] else "extras" for p in 
 out_tvs = []
 for t in tvs:
     # Updaters are offered but never ticked: stopping updates stays the owner's choice.
-    rec = [idx[p] for p, k in t["off"].items() if k in ("ads", "tracking", "extras") and not NO_TICK.search(p)]
+    rec = [idx[p] for p, k in t["off"].items() if k in ("ads", "tracking", "extras") and not NO_TICK.search(p)
+           and not RISKY.search(p)]
     out_tvs.append({"id": t["id"], "n": t["name"], "b": t["brand"], "os": t["os"], "m": t["match"], "home": t["home"],
                     "live": t["live"], "f": t["flags"], "off": sorted(idx[p] for p in t["off"]), "rec": sorted(rec),
                     "keep": sorted(idx[p] for p in t["keep"])})
@@ -150,7 +153,7 @@ brands = {}
 for b, seen in brand_seen.items():
     lists = sum(1 for t in tvs if t["brand"] == b)
     rec = [idx[p] for p, n in seen.items() if kinds[idx[p]] in ("ads", "tracking") and n >= 2 and not NO_TICK.search(p)
-           and brand_keep[b][p] * 4 < n]
+           and not RISKY.search(p) and brand_keep[b][p] * 4 < n]
     brands[b] = {"lists": lists, "seen": sorted(idx[p] for p in seen), "rec": sorted(rec),
                  "keep": sorted(idx[p] for p, n in brand_keep[b].items() if n * 2 >= seen.get(p, 0) and n)}
 OUT.write_text(json.dumps({"source": "CleanYourTV examples (MIT)", "pkgs": names, "kinds": kinds, "tvs": out_tvs,

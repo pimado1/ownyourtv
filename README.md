@@ -116,6 +116,17 @@ the way a computer would. Nothing leaves the TV unless you press **Share** at th
 Once a day, OwnYourTV asks GitHub for the number of its latest version, and nothing else. When a newer one is out, the home screen
 offers it; the app installs it only if it is signed with the same key as the one on the TV, and Android asks you to confirm.
 
+## Good to know
+
+- **Google Home panel on Google TV.** The lights-and-cameras panel reads its account from Google's own home screen.
+  On TVs where that home has to be switched off for OwnYourTV's to take over, the panel opens and closes at once.
+  Undo (one button) brings it back.
+- **Some apps are never offered.** What Android or the TV needs to start, play a channel or an HDMI input, take a
+  remote, a keyboard or a network, and `com.android.sdksandbox` (switched off, it left a TCL stuck on its boot logo).
+- **Partner customizers are offered, never ticked.** On some builds of the same TV model they hold what the TV's
+  own service needs, and the TV restarts in a loop without them.
+- **After a TV update**, apps that came back are shown on the home screen, and one press switches them off again.
+
 ## TVs reported by owners
 
 On its last screen, OwnYourTV offers to **share** which TV it ran on and what worked. Only if you press it, and

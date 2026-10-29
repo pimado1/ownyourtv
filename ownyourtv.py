@@ -48,6 +48,10 @@ PROTECTED = re.compile(
     r"mediatek\.(tis|tv\..*)|cltv|downloader|filelinked|sendfiles|ownyourtv).*)$",
     re.IGNORECASE,
 )
+# Kept identical to Catalog.NEVER and Catalog.NO_TICK: never offered even when a tested list switched it off (a TV
+# stuck on its boot logo), and offered but never ticked (crash-loops some builds of the same model).
+NEVER = re.compile(r"^com\.android\.sdksandbox$")
+NO_TICK = re.compile(r".*\.partnercustomizer(\..*)?$")
 GUESS = [
     ("tracking", re.compile(r"(^|\.)(analytics|telemetry|tracking|tracker|logkit|logcollect|feedback|crashreport|diagnos|"
                             r"usagestat|statistic|bigdata|dataservice|acr|samba)", re.IGNORECASE)),
@@ -130,7 +134,7 @@ def items(tv):
     keep = (known or {}).get("keep", set()) | (set() if known else (group or {}).get("keep", set()))
     out = []
     for p in sorted(installed):
-        if p == PKG or p in keep or p in STOCK_HOMES or p == WIZARD:
+        if p == PKG or p in keep or p in STOCK_HOMES or p == WIZARD or NEVER.match(p):
             continue
         if known and p in known["off"]:
             k = cat.get(p, {}).get("k") or kinds.get(p, "extras")
@@ -146,6 +150,9 @@ def items(tv):
                 if rx.search(p):
                     out.append({"pkg": p, "kind": kind, "rec": False, "verified": False, "off": p in off, "guessed": True})
                     break
+    for i in out:
+        if NO_TICK.match(i["pkg"]):
+            i["rec"] = False
     return out
 
 
@@ -174,7 +181,7 @@ def show(found):
 def switch_off(tv, pkgs):
     done = set(tv.state.get("off", []))
     for p in pkgs:
-        if PROTECTED.match(p) and p not in json.loads(CATALOG.read_text())["packages"]:
+        if NEVER.match(p) or PROTECTED.match(p) and p not in json.loads(CATALOG.read_text())["packages"]:
             print(f"skip {p}: protected, the TV needs it")
             continue
         ok = "disabled" in tv.sh(f"pm disable-user --user 0 {p}")

@@ -39,6 +39,18 @@ object Catalog {
     fun protectedPkg(pkg: String) = PROTECTED.matches(pkg)
 
     /**
+     * Never offered, even when a tested list switched it off: switched off, these left a TV stuck on its boot logo
+     * that only a factory reset brought back (com.android.sdksandbox on a TCL G08, CleanYourTV #2557).
+     */
+    private val NEVER = Regex("^com\\.android\\.sdksandbox$")
+
+    /**
+     * Offered, never ticked: on some builds of the same model these hold a content provider a TV service needs, and
+     * the TV crash-loops without it (the partner customizer's tvlauncher.widget on TCL Google TV 14, CleanYourTV #2138).
+     */
+    private val NO_TICK = Regex(".*\\.partnercustomizer(\\..*)?$")
+
+    /**
      * What OwnYourTV offers on this TV, in order of trust: what a list switched off on this very model, then
      * OwnYourTV's own catalogue, then what lists of the same brand switch off, then unknown apps whose name gives
      * them away. Never what this model's list kept on purpose, and only ticked when checked.
@@ -51,7 +63,7 @@ object Catalog {
         val keep = (tv?.keep ?: emptySet()) + (if (tv == null) brand?.keep ?: emptySet() else emptySet())
         val out = mutableListOf<Item>()
         for (pkg in installed) {
-            if (pkg == ctx.packageName || pkg in keep || HOME_STEP.contains(pkg)) continue
+            if (pkg == ctx.packageName || pkg in keep || HOME_STEP.contains(pkg) || NEVER.matches(pkg)) continue
             val own = json.optJSONObject(pkg)
             val onModel = tv != null && pkg in tv.off
             val onBrand = brand != null && pkg in brand.seen
@@ -69,6 +81,7 @@ object Catalog {
         }
         // A list that switches off an app people use (a streaming app, voice, casting) did it by choice: never ticked.
         out.filter { it.kind == Kind.APPS && !it.offNow }.forEach { it.want = false }
+        out.replaceAll { if (it.rec && NO_TICK.matches(it.pkg)) Item(it.pkg, it.label, it.kind, false, it.verified, it.offNow, it.guessed) else it }
         return out.sortedWith(compareByDescending<Item> { it.rec }.thenByDescending { it.verified }.thenBy { it.label.lowercase() })
     }
 
