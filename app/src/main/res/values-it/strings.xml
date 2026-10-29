@@ -174,4 +174,9 @@
     <string name="up_failed">Non è stato possibile aggiornare. Sulla tua TV non è cambiato nulla. Riprova più tardi.</string>
     <string name="up_bad">Il file scaricato non è firmato da OwnYourTV, quindi non è stato installato.</string>
     <string name="up_button">Aggiorna a %1$s</string>
+    <string name="up_search">Cerca un aggiornamento</string>
+    <string name="up_searching">Ricerca di una nuova versione…</string>
+    <string name="up_latest">OwnYourTV è aggiornato: versione %1$s.</string>
+    <string name="up_offline">Impossibile raggiungere GitHub. Controlla la connessione a internet della TV, poi riprova.</string>
+    <string name="up_row">Versione %1$s · cerca un aggiornamento</string>
 </resources>

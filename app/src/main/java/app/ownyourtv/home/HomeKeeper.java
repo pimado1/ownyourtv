@@ -27,6 +27,9 @@ public class HomeKeeper extends BroadcastReceiver {
     @Override
     public void onReceive(Context ctx, Intent intent) {
         keepHomeOn(ctx);
-        if (Intent.ACTION_BOOT_COMPLETED.equals(intent.getAction())) Recheck.afterBoot(ctx);
+        if (Intent.ACTION_BOOT_COMPLETED.equals(intent.getAction())) {
+            Recheck.afterBoot(ctx);
+            Update.dueNow(ctx);
+        }
     }
 }

@@ -77,6 +77,7 @@ class MainActivity : Activity() {
             "wifi" -> wifiStep()
             else -> when {
                 intent.getBooleanExtra(Update.EXTRA, false) -> startUpdate()
+                intent.getBooleanExtra(Update.EXTRA_CHECK, false) -> checkUpdate()
                 intent.getBooleanExtra(Recheck.EXTRA, false) -> if (adbOn()) connect() else devMode()
                 else -> welcome()
             }
@@ -87,6 +88,7 @@ class MainActivity : Activity() {
         super.onNewIntent(intent)
         if (computerHome(intent)) return
         if (intent.getBooleanExtra(Update.EXTRA, false)) startUpdate()
+        else if (intent.getBooleanExtra(Update.EXTRA_CHECK, false)) checkUpdate()
         else if (intent.getBooleanExtra(Recheck.EXTRA, false)) { if (tv != null) recheck() else if (adbOn()) connect() else devMode() }
     }
 
@@ -153,7 +155,13 @@ class MainActivity : Activity() {
         }
         left.addView(points, ui.lp(MATCH_PARENT).apply { topMargin = ui.dp(28) })
         val go = ui.button(getString(R.string.start), true) { if (adbOn()) connect() else devMode() }
-        left.addView(go, ui.lp().apply { topMargin = ui.dp(34) })
+        val actions = ui.row(16)
+        actions.addView(go)
+        val upd = ui.button(Update.available(this)?.let { getString(R.string.up_button, it) } ?: getString(R.string.up_search), false) { checkUpdate() }
+        actions.addView(upd)
+        left.addView(actions, ui.lp().apply { topMargin = ui.dp(34) })
+        // Opening the app is a good moment to ask: a newer version shows on the button at once.
+        thread { if (Update.check(this)) main.post { Update.available(this)?.let { if (screen == "welcome") upd.text = getString(R.string.up_button, it) } } }
         split.addView(left, ui.lp(0, WRAP_CONTENT, 1f))
         split.addView(android.widget.ImageView(this).apply { setImageResource(R.drawable.logo) }, ui.lp(ui.dp(250), ui.dp(250)))
         p.addView(split, ui.lp(MATCH_PARENT))
@@ -387,6 +395,29 @@ class MainActivity : Activity() {
         p.addView(body, ui.lp(MATCH_PARENT).apply { topMargin = ui.dp(12) })
         first = if (n > 0) apply else best
         show("home", p, first)
+    }
+
+    // "Check for an update": GitHub now, then the update screen or "up to date".
+    private fun checkUpdate() {
+        val p = page().apply { gravity = Gravity.CENTER_VERTICAL }
+        p.addView(ui.title(getString(R.string.up_search), 48))
+        val status = ui.text(getString(R.string.up_searching), 18, Ui.LIME, ui.mono)
+        p.addView(status, ui.lp().apply { topMargin = ui.dp(16) })
+        val leave = { if (tv != null) home() else welcome() }
+        val ok = ui.button(getString(android.R.string.ok), true) { leave() }
+        p.addView(ok, ui.lp().apply { topMargin = ui.dp(32) })
+        show("check", p, ok) { leave() }
+        thread {
+            val reached = Update.check(this)
+            main.post {
+                if (screen != "check") return@post
+                when {
+                    Update.available(this) != null -> startUpdate()
+                    reached -> { status.setTextColor(Ui.PAPER); status.text = getString(R.string.up_latest, Update.current(this)) }
+                    else -> { status.setTextColor(Ui.RED); status.text = getString(R.string.up_offline) }
+                }
+            }
+        }
     }
 
     private fun startUpdate() {

@@ -174,4 +174,9 @@
     <string name="up_failed">Die Aktualisierung hat nicht geklappt. An deinem Fernseher hat sich nichts geändert. Versuch es später noch einmal.</string>
     <string name="up_bad">Die heruntergeladene Datei ist nicht von OwnYourTV signiert und wurde nicht installiert.</string>
     <string name="up_button">Auf %1$s aktualisieren</string>
+    <string name="up_search">Nach Updates suchen</string>
+    <string name="up_searching">Neue Version wird gesucht…</string>
+    <string name="up_latest">OwnYourTV ist aktuell: Version %1$s.</string>
+    <string name="up_offline">GitHub ist nicht erreichbar. Prüfe die Internetverbindung des Fernsehers und versuch es noch einmal.</string>
+    <string name="up_row">Version %1$s · nach Updates suchen</string>
 </resources>

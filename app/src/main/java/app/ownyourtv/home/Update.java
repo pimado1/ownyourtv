@@ -35,6 +35,8 @@ public final class Update {
     private static final long DAY = 20 * 3600_000L;
     private static final long MAX_SIZE = 50L << 20;
     public static final String EXTRA = "update";
+    /** Opens OwnYourTV on "check for an update now". */
+    public static final String EXTRA_CHECK = "check_update";
 
     public enum Result { OK, OFFLINE, NOT_OURS }
 
@@ -47,12 +49,23 @@ public final class Update {
         if (now - p.getLong("checked", 0) < DAY) return;
         // Offline: tried again in an hour, not at every return to the home screen.
         p.edit().putLong("checked", now - DAY + 3600_000L).apply();
+        check(ctx);
+    }
+
+    /** The next return to the home screen asks GitHub again: after a reboot, a day may well have gone by. */
+    public static void dueNow(Context ctx) {
+        prefs(ctx).edit().remove("checked").apply();
+    }
+
+    /** Asks GitHub now (the owner opened the app or pressed "check"); false when GitHub could not be reached. */
+    public static boolean check(Context ctx) {
+        SharedPreferences p = prefs(ctx);
         try {
             HttpURLConnection c = (HttpURLConnection) new URL(LATEST).openConnection();
             c.setConnectTimeout(8000);
             c.setReadTimeout(8000);
             c.setRequestProperty("Accept", "application/vnd.github+json");
-            if (c.getResponseCode() != 200) return;
+            if (c.getResponseCode() != 200) return false;
             JSONObject r;
             try (InputStream in = c.getInputStream()) {
                 r = new JSONObject(new String(readAll(in), "UTF-8"));
@@ -63,11 +76,12 @@ public final class Update {
                 JSONObject a = assets.getJSONObject(i);
                 if (a.optString("name").endsWith(".apk")) apk = a.optString("browser_download_url");
             }
-            if (apk == null || !apk.startsWith("https://github.com/pimado1/ownyourtv/")) return;
+            if (apk == null || !apk.startsWith("https://github.com/pimado1/ownyourtv/")) return false;
             p.edit().putLong("checked", System.currentTimeMillis())
                     .putString("tag", r.optString("tag_name").replaceFirst("^v", "")).putString("apk", apk).apply();
+            return true;
         } catch (Exception offline) {
-            // Tried again at the next check.
+            return false;
         }
     }
 
@@ -159,7 +173,7 @@ public final class Update {
         return out;
     }
 
-    private static String current(Context ctx) {
+    public static String current(Context ctx) {
         try {
             return ctx.getPackageManager().getPackageInfo(ctx.getPackageName(), 0).versionName;
         } catch (PackageManager.NameNotFoundException e) {

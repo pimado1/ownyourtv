@@ -144,6 +144,8 @@ public class QuickPanelActivity extends Activity {
         Intent sleep = new Intent("com.google.android.pano.action.SLEEP");
         if (sleep.resolveActivity(getPackageManager()) != null)
             addRow(Glyph.MOON, getString(R.string.h_saver), getString(R.string.h_saver_d), () -> open(sleep));
+        addRow(Glyph.SPARKLE, getString(R.string.app_name), getString(R.string.up_row, Update.current(this)),
+                () -> open(new Intent(this, app.ownyourtv.MainActivity.class).putExtra(Update.EXTRA_CHECK, true)));
         addRow(Glyph.GRID, getString(R.string.h_all_settings), getString(R.string.h_all_settings_d),
                 () -> open(new Intent(Settings.ACTION_SETTINGS)));
 

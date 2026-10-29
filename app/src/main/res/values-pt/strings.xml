@@ -174,4 +174,9 @@
     <string name="up_failed">Não foi possível atualizar. Nada mudou na tua TV. Tenta mais tarde.</string>
     <string name="up_bad">O ficheiro transferido não está assinado pelo OwnYourTV, por isso não foi instalado.</string>
     <string name="up_button">Atualizar para %1$s</string>
+    <string name="up_search">Procurar uma atualização</string>
+    <string name="up_searching">A procurar uma nova versão…</string>
+    <string name="up_latest">O OwnYourTV está atualizado: versão %1$s.</string>
+    <string name="up_offline">Não foi possível contactar o GitHub. Verifica a ligação à internet da TV e tenta de novo.</string>
+    <string name="up_row">Versão %1$s · procurar uma atualização</string>
 </resources>
