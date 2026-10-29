@@ -139,8 +139,8 @@
     <string name="z_go">Let\'s go</string>
     <string name="z_restart">Run the assistant again</string>
     <string name="z_none">Nothing to switch off here: your TV is already clean.</string>
-    <string name="sh_title">Help other TVs</string>
-    <string name="sh_body">Share your TV\'s model and what worked, so OwnYourTV recognises it next time. Anonymous: no name, no account, no list of your apps.</string>
+    <string name="sh_title">Help the next owner of this TV</string>
+    <string name="sh_body">Share it so OwnYourTV knows this model next time. Anonymous: no name, no account, no list of your apps. Optional, and it really helps.</string>
     <string name="sh_go">Share</string>
     <string name="sh_sending">Sending…</string>
     <string name="sh_done">Thank you!</string>
@@ -233,4 +233,9 @@
     <string name="pf_row_off">Add your family</string>
     <string name="pf_in_use">In use</string>
     <string name="pf_edit_short">Edit</string>
+    <string name="sh_remind_title">Does OwnYourTV work well on your TV?</string>
+    <string name="sh_remind_yes">Yes, share</string>
+    <string name="sh_remind_no">No thanks</string>
+    <string name="sh_remind_lead">One anonymous line, the one below, adds your TV to the public list, so the next owner of the same model gets it right from the start.</string>
+    <string name="sh_remind_thanks">Thank you, your TV is on the list!</string>
 </resources>

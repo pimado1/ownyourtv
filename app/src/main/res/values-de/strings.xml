@@ -138,8 +138,8 @@
     <string name="z_go">Los geht\'s</string>
     <string name="z_restart">Assistent neu starten</string>
     <string name="z_none">Hier gibt es nichts abzuschalten: dein Fernseher ist schon sauber.</string>
-    <string name="sh_title">Hilf anderen Fernsehern</string>
-    <string name="sh_body">Teile das Modell deines Fernsehers und was funktioniert hat, damit OwnYourTV ihn nächstes Mal erkennt. Anonym: kein Name, kein Konto, keine Liste deiner Apps.</string>
+    <string name="sh_title">Hilf dem nächsten Besitzer dieses Fernsehers</string>
+    <string name="sh_body">Teile ihn, damit OwnYourTV dieses Modell beim nächsten Mal kennt. Anonym: kein Name, kein Konto, keine Liste deiner Apps. Freiwillig, und es hilft wirklich.</string>
     <string name="sh_go">Teilen</string>
     <string name="sh_sending">Wird gesendet…</string>
     <string name="sh_done">Danke!</string>
@@ -232,4 +232,9 @@
     <string name="pf_row_off">Füge deine Familie hinzu</string>
     <string name="pf_in_use">Aktiv</string>
     <string name="pf_edit_short">Bearbeiten</string>
+    <string name="sh_remind_title">Läuft OwnYourTV gut auf deinem Fernseher?</string>
+    <string name="sh_remind_yes">Ja, teilen</string>
+    <string name="sh_remind_no">Nein danke</string>
+    <string name="sh_remind_lead">Eine einzige anonyme Zeile, die unten, setzt deinen Fernseher auf die öffentliche Liste: Wer dasselbe Modell hat, bekommt alles von Anfang an richtig.</string>
+    <string name="sh_remind_thanks">Danke, dein Fernseher steht auf der Liste!</string>
 </resources>

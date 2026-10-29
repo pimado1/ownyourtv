@@ -138,8 +138,8 @@
     <string name="z_go">Via</string>
     <string name="z_restart">Rifai l\'assistente</string>
     <string name="z_none">Niente da disattivare qui: la tua TV è già pulita.</string>
-    <string name="sh_title">Aiuta le altre TV</string>
-    <string name="sh_body">Condividi il modello della tua TV e cosa ha funzionato, così OwnYourTV la riconoscerà la prossima volta. Anonimo: niente nome, niente account, niente elenco delle tue app.</string>
+    <string name="sh_title">Aiuta il prossimo che ha questa TV</string>
+    <string name="sh_body">Condividila perché OwnYourTV conosca questo modello la prossima volta. Anonimo: niente nome, niente account, nessuna lista delle tue app. Facoltativo, e aiuta davvero.</string>
     <string name="sh_go">Condividi</string>
     <string name="sh_sending">Invio…</string>
     <string name="sh_done">Grazie!</string>
@@ -232,4 +232,9 @@
     <string name="pf_row_off">Aggiungi la tua famiglia</string>
     <string name="pf_in_use">In uso</string>
     <string name="pf_edit_short">Modifica</string>
+    <string name="sh_remind_title">OwnYourTV funziona bene sulla tua TV?</string>
+    <string name="sh_remind_yes">Sì, condividi</string>
+    <string name="sh_remind_no">No grazie</string>
+    <string name="sh_remind_lead">Una sola riga anonima, quella qui sotto, aggiunge la tua TV alla lista pubblica: chi ha lo stesso modello avrà tutto giusto fin dall\'inizio.</string>
+    <string name="sh_remind_thanks">Grazie, la tua TV è nella lista!</string>
 </resources>

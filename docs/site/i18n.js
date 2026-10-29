@@ -24,6 +24,7 @@ var FR = {
   clean_alt: "L'étape de nettoyage de l'assistant : Recommandé, ou je choisis moi-même",
   clean_cap: "Recommandé, en un appui, ou les listes une par une.",
   home_eye: "Un accueil bien à elle", home_h: "Un ciel de nuit vivant, tes applis devant",
+  cta_b: "Ta TV n'est pas dans la liste ?", cta_s: "À la fin de l'appli, appuie sur <strong>Partager</strong> : une ligne anonyme (marque, modèle, ce qui a marché) l'ajoute ici, et le prochain qui a la même TV aura tout bon dès le début. Oublié ? L'accueil te le repropose une fois le lendemain.", cta_btn: "Ou dis-le-nous ici",
   prof_eye: "Profils et mode enfant", prof_h: "Une TV, un accueil pour chacun",
   pr1_b: "Qui regarde ?", pr1_s: "Au réveil de la TV, chacun appuie sur OK sur sa bulle et retrouve son dock et sa couleur.",
   pr2_b: "Un profil enfant reste dans ses applis", pr2_s: "Seulement les applis que tu choisis, une heure de coucher, un temps par jour et un volume maximum. Une appli ouverte autrement le ramène à son accueil.",

@@ -949,28 +949,35 @@ class MainActivity : Activity() {
         p.addView(ui.text(getString(R.string.f_sum, off, on), 22, Ui.LIME, ui.mono), ui.lp().apply { topMargin = ui.dp(14) })
         if (failed > 0) p.addView(ui.text(getString(R.string.f_failed, failed), 16, Ui.RED), ui.lp().apply { topMargin = ui.dp(10) })
         if (homeRefused) p.addView(ui.text(getString(R.string.f_home_refused), 16, Ui.GREY).apply { maxWidth = ui.dp(700) }, ui.lp().apply { topMargin = ui.dp(8) })
-        p.addView(shareCard(off, on, failed), ui.lp().apply { topMargin = ui.dp(28) })
-        val lock = ui.button(getString(R.string.f_close), true) {
+        val share = shareCard(off, on, failed)
+        p.addView(share, ui.lp().apply { topMargin = ui.dp(28) })
+        val lock = ui.button(getString(R.string.f_close), false) {
             thread { runCatching { tv?.sh("settings put global adb_enabled 0") }; main.post { goHome() } }
         }
-        p.addView(lock, ui.lp().apply { topMargin = ui.dp(28) })
+        val after = ui.row(16)
+        after.addView(lock)
+        after.addView(ui.button(getString(R.string.f_keep), false) { goHome() })
+        p.addView(after, ui.lp().apply { topMargin = ui.dp(28) })
         p.addView(ui.text(getString(R.string.f_close_b), 14, Ui.GREY), ui.lp().apply { topMargin = ui.dp(8) })
-        p.addView(ui.button(getString(R.string.f_keep), false) { goHome() }, ui.lp().apply { topMargin = ui.dp(22) })
-        show("done", p, lock)
+        // The report goes first: it is what lets the next owner of this TV get it right. Still the owner's choice.
+        show("done", p, share.tag as? View ?: lock)
     }
 
     /** Opt-in: the owner may send which TV this is and what worked, anonymously, to grow the TV database. */
     private fun shareCard(off: Int, on: Int, failed: Int): View {
         val r = Report.build(packageManager.getPackageInfo(packageName, 0).versionName ?: "?", knownTv?.id, homeResult, wizardOwnsWifi, off, on, failed, failedPkgs)
+        // Kept so the home screen can offer it once more the next day, if the owner did not press Share here.
+        if (!prefs.contains(PENDING_REPORT)) prefs.edit().putLong(PENDING_REPORT + "_at", System.currentTimeMillis()).apply()
+        prefs.edit().putString(PENDING_REPORT, r.toString()).apply()
         val card = ui.row(24).apply {
-            setPadding(ui.dp(24), ui.dp(18), ui.dp(24), ui.dp(18)); background = ui.rounded(Ui.CARD, 20)
+            setPadding(ui.dp(24), ui.dp(18), ui.dp(24), ui.dp(18)); background = ui.rounded(Ui.CARD, 20, 2, Ui.LIME)
         }
         val c = ui.col(6)
         c.addView(ui.text(getString(R.string.sh_title), 19, Ui.PAPER, bold = true))
         c.addView(ui.text(getString(R.string.sh_body), 15, Ui.GREY).apply { maxWidth = ui.dp(620) })
         c.addView(ui.text(Report.preview(r), 13, Ui.DIM, ui.mono))
         card.addView(c, ui.lp(0, WRAP_CONTENT, 1f))
-        val btn = ui.button(getString(R.string.sh_go), false) {}
+        val btn = ui.button(getString(R.string.sh_go), true) {}
         var busy = false
         btn.setOnClickListener {
             if (busy || prefs.getBoolean(SHARED + r.getString("app"), false)) return@setOnClickListener
@@ -978,12 +985,13 @@ class MainActivity : Activity() {
             btn.text = getString(R.string.sh_sending)
             thread {
                 val ok = Report.send(r)
-                if (ok) prefs.edit().putBoolean(SHARED + r.getString("app"), true).apply()
+                if (ok) prefs.edit().putBoolean(SHARED + r.getString("app"), true).putBoolean(SHARED_ANY, true).apply()
                 main.post { busy = false; btn.text = getString(if (ok) R.string.sh_done else R.string.sh_fail) }
             }
         }
         if (prefs.getBoolean(SHARED + r.getString("app"), false)) btn.text = getString(R.string.sh_done)
         card.addView(btn)
+        card.tag = btn
         return card
     }
 
@@ -1029,6 +1037,9 @@ class MainActivity : Activity() {
         const val OURS_HOME = "ours_home"
         const val ANIM = "anim_before"
         const val SHARED = "shared_"
+        /** The last report the assistant built, for the home screen's one reminder. */
+        const val PENDING_REPORT = "pending_report"
+        const val SHARED_ANY = "shared_any"
         const val SETUP_DONE = "setup_done"
         const val EXTRA_HOME = "computer_home"
         /** From the profiles screen: connect once so the child guard can switch itself on. */

@@ -1601,7 +1601,40 @@ public class HomeActivity extends Activity {
             if (Update.shouldAsk(this)) main.post(() -> {
                 if (popup == null && !isFinishing()) showUpdate(Update.available(this));
             });
+            else if (ShareReminder.shouldAsk(this) && !Profiles.kidNow(this)) main.post(() -> {
+                if (popup == null && !isFinishing()) showShareReminder();
+            });
         });
+    }
+
+    /** The day after setup: the TV report, once, with the exact line that would be sent. */
+    private void showShareReminder() {
+        ShareReminder.asked(this);
+        LinearLayout actions = row(18);
+        actions.addView(dockAction(getString(R.string.sh_go), getString(R.string.sh_remind_yes), () -> {
+            dismissPopup();
+            bg.post(() -> {
+                boolean ok = ShareReminder.send(this);
+                main.post(() -> showToast(getString(ok ? R.string.sh_remind_thanks : R.string.sh_fail)));
+            });
+        }), new LinearLayout.LayoutParams(-2, px(72)));
+        actions.addView(dockAction(getString(R.string.rc_later_small), getString(R.string.sh_remind_no), this::dismissPopup),
+                new LinearLayout.LayoutParams(-2, px(72)));
+        LinearLayout body = column(28);
+        TextView lead = label(text, 26, 0xD9FFFFFF);
+        lead.setSingleLine(false);
+        lead.setMaxLines(3);
+        lead.setMaxWidth(px(1180));
+        lead.setLineSpacing(px(6), 1f);
+        lead.setText(R.string.sh_remind_lead);
+        body.addView(lead, wrap());
+        TextView line = label(text, 20, 0x99FFFFFF);
+        line.setText(ShareReminder.preview(this));
+        body.addView(line, wrap());
+        body.addView(actions, wrap());
+        popup = sheet(getString(R.string.sh_remind_title), getString(R.string.sh_title), body);
+        popup.show();
+        actions.post(() -> actions.getChildAt(0).requestFocus());
     }
 
     private void showUpdate(String version) {

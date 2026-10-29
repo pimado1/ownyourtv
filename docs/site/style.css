@@ -96,6 +96,12 @@ figcaption { color: var(--grey); font-size: 14px; margin-top: 10px; }
 .tv-stats { display: grid; grid-template-columns: repeat(3, auto); justify-content: start; gap: 48px; margin-bottom: 40px; }
 .tv-stats strong { display: block; font: 700 46px/1 var(--display); color: var(--lime); }
 .tv-stats span { color: var(--grey); font-size: 15px; }
+.share-cta { margin-top: 32px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px 24px;
+  border: 1px solid var(--lime); border-radius: 16px; padding: 20px 24px; }
+.share-cta > div { flex: 1 1 320px; min-width: 0; }
+.share-cta b { font: 700 19px var(--display); color: var(--paper); }
+.share-cta p { margin: 6px 0 0; color: var(--grey); max-width: 62ch; }
+.share-cta strong { color: var(--lime); }
 @media (max-width: 600px) { .tv-stats { grid-template-columns: 1fr 1fr; gap: 24px; } }
 .reports { list-style: none; padding: 0; margin: 0; border-top: 1px solid var(--line); }
 .reports li { display: flex; gap: 14px; align-items: baseline; justify-content: space-between; padding: 14px 0; border-bottom: 1px solid var(--line); }
