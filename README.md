@@ -7,7 +7,7 @@ that is yours. From the remote, no computer needed.</p>
 
 ---
 
-<p align="center"><b>Install from your TV: in the Downloader app, type <code>8225348</code></b><br><a href="https://pimado1.github.io/ownyourtv/">pimado1.github.io/ownyourtv</a></p>
+<p align="center"><b>Install from your TV: in the Downloader app, type <code>8225348</code></b><br><a href="https://ownyour.tv/">ownyour.tv</a></p>
 
 <p align="center"><img src="docs/screenshots/before-after.jpg" alt="Before: the stock Google TV home with a full-screen ad and recommendations. After: the OwnYourTV home with a night sky, the weather and the apps as a 3D deck." width="100%"></p>
 
