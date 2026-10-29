@@ -377,6 +377,10 @@ public class HomeActivity extends Activity {
         scene = skies[0];
         sceneTop = skies[1];
         sceneTop.setAlpha(0f);
+        sceneTop.setVisibility(View.INVISIBLE);
+        // The sky covers the whole window: once it is up, the window's own background is one screen painted for
+        // nothing on every frame.
+        root.post(() -> getWindow().setBackgroundDrawable(null));
 
         greeting = label(textBold, 22, 0xD1FFFFFF);
         greeting.setLetterSpacing(0.27f);
@@ -861,20 +865,49 @@ public class HomeActivity extends Activity {
         ml.leftMargin = px(S);
         ml.topMargin = px(S + CARD_H + 10);
         h.addView(mirror, ml);
-        FrameLayout.LayoutParams fl = new FrameLayout.LayoutParams(px(CARD_W), px(CARD_H));
-        fl.leftMargin = px(S);
-        fl.topMargin = px(S);
-        h.addView(face, fl);
-        h.setTag(face);
+        // Tilted in 3D, a view's own edges are not smoothed and step like stairs. The face is drawn once into a
+        // picture with a thin clear border, and a picture is filtered when it is turned, so its edges stay clean,
+        // without the cost of an offscreen layer per card.
+        int e = EDGE;
+        ImageView img = new ImageView(this);
+        Drawable ring = face.getForeground();
+        face.setForeground(null);
+        img.setImageBitmap(bakeFace(face));
+        if (ring != null) img.setForeground(new android.graphics.drawable.InsetDrawable(ring, e));
+        FrameLayout.LayoutParams fl = new FrameLayout.LayoutParams(px(CARD_W) + 2 * e, px(CARD_H) + 2 * e);
+        fl.leftMargin = px(S) - e;
+        fl.topMargin = px(S) - e;
+        h.addView(img, fl);
+        h.setTag(img);
         h.setOnClickListener(v -> click.run());
         h.setPivotX(px(CARD_W / 2 + S));
         h.setPivotY(px(S + CARD_H / 2));
         h.setCameraDistance(getResources().getDisplayMetrics().density * 1700 * u);
-        // Tilted in 3D, a view's edges are not smoothed and step like stairs. Drawn into a layer whose border is the
-        // transparent shadow margin, the card is filtered as one picture, so its edges stay straight and clean.
-        h.setLayerType(View.LAYER_TYPE_HARDWARE, null);
         cardDim.put(h, new float[]{0f});
         return h;
+    }
+
+    /** Clear border around each card picture, in pixels: what the filtering softens into a clean edge. */
+    private static final int EDGE = 2;
+
+    /** The card face as one picture: its rounded corners drawn smooth, a clear border all around. */
+    private Bitmap bakeFace(FrameLayout face) {
+        int w = px(CARD_W), h = px(CARD_H), e = EDGE;
+        face.measure(View.MeasureSpec.makeMeasureSpec(w, View.MeasureSpec.EXACTLY),
+                View.MeasureSpec.makeMeasureSpec(h, View.MeasureSpec.EXACTLY));
+        face.layout(0, 0, w, h);
+        Bitmap flat = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
+        face.draw(new Canvas(flat));
+        Bitmap out = Bitmap.createBitmap(w + 2 * e, h + 2 * e, Bitmap.Config.ARGB_8888);
+        Paint p = new Paint(Paint.ANTI_ALIAS_FLAG | Paint.FILTER_BITMAP_FLAG);
+        android.graphics.BitmapShader sh = new android.graphics.BitmapShader(flat, Shader.TileMode.CLAMP, Shader.TileMode.CLAMP);
+        Matrix m = new Matrix();
+        m.setTranslate(e, e);
+        sh.setLocalMatrix(m);
+        p.setShader(sh);
+        new Canvas(out).drawRoundRect(new RectF(e, e, e + w, e + h), px(28), px(28), p);
+        flat.recycle();
+        return out;
     }
 
     private FrameLayout baseCard() {
@@ -892,7 +925,7 @@ public class HomeActivity extends Activity {
     }
 
     private int skyColor;
-    /** Each card's darkening, applied to its layer when it is drawn on screen: changing it redraws nothing. */
+    /** Each card's darkening, a colour filter on its picture: cheap to change on every frame. */
     private final java.util.Map<View, float[]> cardDim = new java.util.HashMap<>();
     private final java.util.Map<View, android.animation.ValueAnimator> dimAnims = new java.util.HashMap<>();
 
@@ -917,9 +950,7 @@ public class HomeActivity extends Activity {
         android.graphics.ColorMatrix m = new android.graphics.ColorMatrix();
         float k = 1f - v;
         m.setScale(k, k, k, 1f);
-        android.graphics.Paint p = new android.graphics.Paint();
-        p.setColorFilter(new android.graphics.ColorMatrixColorFilter(m));
-        c.setLayerPaint(p);
+        ((ImageView) c.getTag()).setColorFilter(new android.graphics.ColorMatrixColorFilter(m));
     }
 
     /** The new colour goes into whichever sky is hidden, which then fades in or the top one fades out. */
@@ -929,7 +960,13 @@ public class HomeActivity extends Activity {
         sceneTop.animate().cancel();
         boolean topShown = sceneTop.getAlpha() >= 0.5f;
         (topShown ? scene : sceneTop).setAccent(color);
-        sceneTop.animate().alpha(topShown ? 0f : 1f).setDuration(450).start();
+        scene.setVisibility(View.VISIBLE);
+        sceneTop.setVisibility(View.VISIBLE);
+        // Once the fade is over, the sky hidden under the other is not painted at all.
+        sceneTop.animate().alpha(topShown ? 0f : 1f).setDuration(450).withEndAction(() -> {
+            if (sceneTop.getAlpha() >= 1f) scene.setVisibility(View.INVISIBLE);
+            else if (sceneTop.getAlpha() <= 0f) sceneTop.setVisibility(View.INVISIBLE);
+        }).start();
     }
 
     /**
@@ -963,12 +1000,14 @@ public class HomeActivity extends Activity {
                 c.setAlpha(alpha);
             }
             ImageView shadow = c.findViewWithTag("shadow");
-            shadow.setColorFilter(d == 0 ? accent : Color.BLACK, PorterDuff.Mode.SRC_IN);
-            // Set at once: animating what is inside a card would redraw its layer on every frame.
-            shadow.setAlpha(d == 0 ? 0.9f : 0.65f);
-            shadow.setTranslationY(d == 0 ? px(14) : 0);
+            shadow.setColorFilter(accent, PorterDuff.Mode.SRC_IN);
+            // Only the focused card casts its glow: the others' shadows sat behind the deck, each one a large
+            // picture the TV still had to paint on every frame.
+            shadow.setVisibility(d == 0 ? View.VISIBLE : View.INVISIBLE);
+            shadow.setAlpha(0.9f);
+            shadow.setTranslationY(px(14));
             c.findViewWithTag("mirror").setAlpha(d == 0 ? 1f : 0.55f);
-            FrameLayout face = (FrameLayout) c.getTag();
+            View face = (View) c.getTag();
             // Further cards sink into the night, as in the mockup.
             dimCard(c, Math.min(0.7f, ad * 0.2f), animate);
             Drawable fg = face.getForeground();
