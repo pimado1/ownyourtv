@@ -803,6 +803,9 @@ public class HomeActivity extends Activity {
         }
         carousel.removeAllViews();
         cards.clear();
+        for (android.animation.ValueAnimator old : dimAnims.values()) old.cancel();
+        dimAnims.clear();
+        cardDim.clear();
         for (HomeData.App a : dock) cards.add(card(a));
         cards.add(allAppsCard());
         for (View c : cards) {
@@ -858,11 +861,6 @@ public class HomeActivity extends Activity {
         ml.leftMargin = px(S);
         ml.topMargin = px(S + CARD_H + 10);
         h.addView(mirror, ml);
-        View dim = new View(this);
-        dim.setBackgroundColor(0xFF05060F);
-        dim.setAlpha(0f);
-        dim.setTag("dim");
-        face.addView(dim, new FrameLayout.LayoutParams(-1, -1));
         FrameLayout.LayoutParams fl = new FrameLayout.LayoutParams(px(CARD_W), px(CARD_H));
         fl.leftMargin = px(S);
         fl.topMargin = px(S);
@@ -872,6 +870,10 @@ public class HomeActivity extends Activity {
         h.setPivotX(px(CARD_W / 2 + S));
         h.setPivotY(px(S + CARD_H / 2));
         h.setCameraDistance(getResources().getDisplayMetrics().density * 1700 * u);
+        // Tilted in 3D, a view's edges are not smoothed and step like stairs. Drawn into a layer whose border is the
+        // transparent shadow margin, the card is filtered as one picture, so its edges stay straight and clean.
+        h.setLayerType(View.LAYER_TYPE_HARDWARE, null);
+        cardDim.put(h, new float[]{0f});
         return h;
     }
 
@@ -890,6 +892,35 @@ public class HomeActivity extends Activity {
     }
 
     private int skyColor;
+    /** Each card's darkening, applied to its layer when it is drawn on screen: changing it redraws nothing. */
+    private final java.util.Map<View, float[]> cardDim = new java.util.HashMap<>();
+    private final java.util.Map<View, android.animation.ValueAnimator> dimAnims = new java.util.HashMap<>();
+
+    private void dimCard(View c, float to, boolean animate) {
+        float[] level = cardDim.get(c);
+        if (level == null) return;
+        android.animation.ValueAnimator old = dimAnims.remove(c);
+        if (old != null) old.cancel();
+        if (!animate || level[0] == to) {
+            applyDim(c, level, to);
+            return;
+        }
+        android.animation.ValueAnimator a = android.animation.ValueAnimator.ofFloat(level[0], to);
+        a.setDuration(420);
+        a.addUpdateListener(v -> applyDim(c, level, (float) v.getAnimatedValue()));
+        dimAnims.put(c, a);
+        a.start();
+    }
+
+    private void applyDim(View c, float[] level, float v) {
+        level[0] = v;
+        android.graphics.ColorMatrix m = new android.graphics.ColorMatrix();
+        float k = 1f - v;
+        m.setScale(k, k, k, 1f);
+        android.graphics.Paint p = new android.graphics.Paint();
+        p.setColorFilter(new android.graphics.ColorMatrixColorFilter(m));
+        c.setLayerPaint(p);
+    }
 
     /** The new colour goes into whichever sky is hidden, which then fades in or the top one fades out. */
     private void skyTo(int color) {
@@ -933,11 +964,13 @@ public class HomeActivity extends Activity {
             }
             ImageView shadow = c.findViewWithTag("shadow");
             shadow.setColorFilter(d == 0 ? accent : Color.BLACK, PorterDuff.Mode.SRC_IN);
-            shadow.animate().alpha(d == 0 ? 0.9f : 0.65f).translationY(d == 0 ? px(14) : 0).setDuration(450).start();
-            c.findViewWithTag("mirror").animate().alpha(d == 0 ? 1f : 0.55f).setDuration(450).start();
+            // Set at once: animating what is inside a card would redraw its layer on every frame.
+            shadow.setAlpha(d == 0 ? 0.9f : 0.65f);
+            shadow.setTranslationY(d == 0 ? px(14) : 0);
+            c.findViewWithTag("mirror").setAlpha(d == 0 ? 1f : 0.55f);
             FrameLayout face = (FrameLayout) c.getTag();
             // Further cards sink into the night, as in the mockup.
-            face.findViewWithTag("dim").animate().alpha(Math.min(0.7f, ad * 0.2f)).setDuration(500).start();
+            dimCard(c, Math.min(0.7f, ad * 0.2f), animate);
             Drawable fg = face.getForeground();
             if (fg != null) fg.setAlpha(d == 0 ? 255 : 0);
         }
