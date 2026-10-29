@@ -24,6 +24,7 @@ var FR = {
   clean_alt: "L'étape de nettoyage de l'assistant : Recommandé, ou je choisis moi-même",
   clean_cap: "Recommandé, en un appui, ou les listes une par une.",
   home_eye: "Un accueil bien à elle", home_h: "Un ciel de nuit vivant, tes applis devant",
+  by_brand: "Par marque :",
   cta_b: "Ta TV n'est pas dans la liste ?", cta_s: "À la fin de l'appli, appuie sur <strong>Partager</strong> : une ligne anonyme (marque, modèle, ce qui a marché) l'ajoute ici, et le prochain qui a la même TV aura tout bon dès le début. Oublié ? L'accueil te le repropose une fois le lendemain.", cta_btn: "Ou dis-le-nous ici",
   nav_contact: "Contact", ft_contact: "Contact",
   c_title: "Contact", c_lead: "Une seule personne fait OwnYourTV, en public. Choisis ce qui te convient : chaque moyen arrive jusqu'à moi, et je réponds.",

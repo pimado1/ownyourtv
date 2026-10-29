@@ -106,6 +106,10 @@ for page in PAGES:
     path = "" if page == "index.html" else page
     urls.append("  <url><loc>%s%s</loc><xhtml:link rel=\"alternate\" hreflang=\"fr\" href=\"%sfr/%s\"/></url>" % (SITE, path, SITE, path))
     urls.append("  <url><loc>%sfr/%s</loc><xhtml:link rel=\"alternate\" hreflang=\"en\" href=\"%s%s\"/></url>" % (SITE, path, SITE, path))
+for brand in sorted((ROOT / "tv").glob("*.html")):
+    path = "tv/" + brand.name
+    urls.append("  <url><loc>%s%s</loc><xhtml:link rel=\"alternate\" hreflang=\"fr\" href=\"%sfr/%s\"/></url>" % (SITE, path, SITE, path))
+    urls.append("  <url><loc>%sfr/%s</loc><xhtml:link rel=\"alternate\" hreflang=\"en\" href=\"%s%s\"/></url>" % (SITE, path, SITE, path))
 (ROOT / "sitemap.xml").write_text('<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" '
                                   'xmlns:xhtml="http://www.w3.org/1999/xhtml">\n' + "\n".join(urls) + "\n</urlset>\n")
 (ROOT / "robots.txt").write_text("User-agent: *\nAllow: /\nSitemap: %ssitemap.xml\n" % SITE)

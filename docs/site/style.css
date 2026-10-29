@@ -256,3 +256,14 @@ section { position: relative; isolation: isolate; }
 .contact-card > span { color: var(--grey); font-size: 15px; }
 .contact-card em { font-style: normal; color: var(--lime); font-weight: 700; margin-top: auto; padding-top: 6px; }
 .nowrap { white-space: nowrap; }
+
+.brand-page .lead { font-size: 19px; color: var(--paper); max-width: 62ch; }
+.brand-page .code-inline { display: inline-block; margin-top: 8px; padding: 10px 16px; border: 1px solid var(--lime); border-radius: 12px; color: var(--grey); }
+.brand-page .code-inline strong { color: var(--lime); font: 700 22px var(--display); margin-left: 6px; letter-spacing: 0.04em; }
+.pkg-list { list-style: none; padding: 0; margin: 12px 0 0; display: grid; gap: 0; }
+.pkg-list li { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 4px 16px; padding: 10px 0; border-bottom: 1px solid var(--line); }
+.pkg-list b { color: var(--paper); font-weight: 600; }
+.pkg-list code { color: var(--grey); font-size: 13px; overflow-wrap: anywhere; }
+.brand-page .others { margin-top: 48px; color: var(--grey); }
+.brand-links { margin-top: 20px; color: var(--grey); }
+.brand-links a { color: var(--paper); }
