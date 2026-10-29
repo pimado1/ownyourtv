@@ -1,0 +1,45 @@
+name: My TV
+description: Tell us how OwnYourTV did on your TV, so the list of TVs grows. The Share button at the end of the app does this for you.
+title: "TV: <brand> <model>"
+labels: [tv-report]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        The quickest way is the **Share** button on the app's last screen: it sends the same thing, anonymously.
+        Use this form if your TV could not get that far. En français aussi, c'est très bien.
+  - type: input
+    id: model
+    attributes:
+      label: Brand and model
+      description: Settings › System › About › Model.
+      placeholder: TCL 65C89B, Xiaomi TV A Pro 2026…
+    validations:
+      required: true
+  - type: input
+    id: android
+    attributes:
+      label: Android TV / Google TV version
+      placeholder: Android 14
+  - type: input
+    id: version
+    attributes:
+      label: OwnYourTV version
+      description: Quick settings (the remote's gear button) › OwnYourTV.
+      placeholder: "1.8.4"
+  - type: dropdown
+    id: home
+    attributes:
+      label: The OwnYourTV home screen
+      options:
+        - It is my home screen now
+        - I kept the original one
+        - The TV did not let it be the home screen
+        - Something went wrong (tell us below)
+    validations:
+      required: true
+  - type: textarea
+    id: notes
+    attributes:
+      label: What worked, what did not
+      description: Live TV, HDMI inputs, the remote, Wi-Fi, your apps. A photo of the screen helps a lot.

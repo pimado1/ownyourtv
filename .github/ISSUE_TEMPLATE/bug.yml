@@ -1,0 +1,29 @@
+name: Something is wrong
+description: A screen that looks off, a step that does not pass, an app that came back.
+labels: [bug]
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened
+      description: What you did, what you saw. A photo of the TV screen is the fastest way to explain. En français aussi.
+    validations:
+      required: true
+  - type: input
+    id: model
+    attributes:
+      label: Brand and model of the TV
+      description: Settings › System › About › Model.
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: OwnYourTV version
+      description: Quick settings (the remote's gear button) › OwnYourTV.
+  - type: checkboxes
+    id: back
+    attributes:
+      label: Is the TV still usable?
+      options:
+        - label: "Yes. (If not: open OwnYourTV and press \"Put everything back\", or hold OK on the gear button of the home screen.)"

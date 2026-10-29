@@ -11,6 +11,8 @@ that is yours. From the remote, no computer needed.</p>
 
 <p align="center"><img src="docs/screenshots/before-after.jpg" alt="Before: the stock Google TV home with a full-screen ad and recommendations. After: the OwnYourTV home with a night sky, the weather and the apps as a 3D deck." width="100%"></p>
 
+<p align="center"><img src="docs/screenshots/dock.gif" alt="The OwnYourTV home on a TCL Google TV: moving through the dock, the sky takes the colour of each app" width="800"></p>
+
 ## What it does
 
 - **Ads**: promos, sponsored rows and store demos the maker put on your TV.
