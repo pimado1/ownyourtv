@@ -58,16 +58,18 @@ class Ui(private val ctx: Context) {
         setColor(Color.TRANSPARENT); if (horizontal) setSize(dp(gap), 1) else setSize(1, dp(gap))
     }
 
-    /** Grows a little and lights up when the remote lands on it. */
+    /**
+     * Lights up when the remote lands on it: a brighter fill and a lime ring drawn inside its own bounds. It does not
+     * grow, so nothing spills past the box its row gave it or covers a neighbour.
+     */
     fun focusable(v: View, normal: Int = CARD, focused: Int = CARD_ON, radius: Int = 20, ring: Boolean = true): View {
         v.isFocusable = true
         v.isClickable = true
         v.background = StateListDrawable().apply {
             addState(intArrayOf(android.R.attr.state_focused), rounded(focused, radius, if (ring) 3 else 0, LIME))
             addState(intArrayOf(), rounded(normal, radius))
-        }
-        v.setOnFocusChangeListener { view, has ->
-            view.animate().scaleX(if (has) 1.035f else 1f).scaleY(if (has) 1.035f else 1f).setDuration(140).start()
+            setEnterFadeDuration(120)
+            setExitFadeDuration(120)
         }
         return v
     }

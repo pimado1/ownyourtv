@@ -350,8 +350,8 @@ class MainActivity : Activity() {
             resources.getQuantityString(R.plurals.dk_count, dock.size, dock.size), if (dock.isEmpty()) 0f else 1f)
         dockCard.setOnClickListener { dockScreen() }
         val top = ui.row(12).apply { clipChildren = false }
-        top.addView(homeCard, ui.lp(0, WRAP_CONTENT, 1.25f))
-        top.addView(dockCard, ui.lp(0, WRAP_CONTENT, 1f))
+        top.addView(homeCard, ui.lp(0, MATCH_PARENT, 1.25f))
+        top.addView(dockCard, ui.lp(0, MATCH_PARENT, 1f))
         grid.addView(top, ui.lp(MATCH_PARENT))
         val kinds = listOf(Kind.ADS to (R.string.h_ads to R.string.h_ads_b), Kind.TRACKING to (R.string.h_track to R.string.h_track_b),
             Kind.EXTRAS to (R.string.h_extras to R.string.h_extras_b), Kind.APPS to (R.string.h_apps to R.string.h_apps_b))
@@ -366,7 +366,7 @@ class MainActivity : Activity() {
                     if (list.isEmpty()) 0f else off / list.size.toFloat())
                 c.isEnabled = list.isNotEmpty()
                 c.setOnClickListener { if (list.isNotEmpty()) category(k, getString(s.first)) }
-                r.addView(c, ui.lp(0, WRAP_CONTENT, 1f))
+                r.addView(c, ui.lp(0, MATCH_PARENT, 1f))
             }
             grid.addView(r, ui.lp(MATCH_PARENT))
         }
@@ -671,7 +671,8 @@ class MainActivity : Activity() {
             category(kinds[i].first, getString(kinds[i].second), 2, onDone = { walk(i + 1) }, onBack = { if (i == 0) wizClean() else walk(i - 1) })
         }
         val custom = choice(getString(R.string.z_custom), getString(R.string.z_custom_b), false) { walk(0) }
-        r.addView(rec, ui.lp(0, WRAP_CONTENT, 1f)); r.addView(custom, ui.lp(0, WRAP_CONTENT, 1f))
+        // Side by side at the height of the taller one, so the two choices line up.
+        r.addView(rec, ui.lp(0, MATCH_PARENT, 1f)); r.addView(custom, ui.lp(0, MATCH_PARENT, 1f))
         p.addView(r, ui.lp(MATCH_PARENT).apply { topMargin = ui.dp(28) })
         show("wiz", p, rec) { wizTv() }
     }

@@ -52,6 +52,64 @@ final class HomeData {
         boolean system;
     }
 
+    /**
+     * A phone app with no TV banner: its icon whole, centred on a card tinted with its own colour, instead of a
+     * round icon cropped into a wide card.
+     */
+    static final class IconBanner extends Drawable {
+        private final Drawable icon;
+        private final int color;
+        private final android.graphics.Paint fill = new android.graphics.Paint();
+
+        IconBanner(Drawable icon, int color) {
+            this.icon = icon;
+            this.color = color;
+            fill.setColor(SkyScene.lerpColor(0xFF16182E, color, 0.3f));
+        }
+
+        @Override
+        public void draw(Canvas c) {
+            android.graphics.Rect b = getBounds();
+            c.drawRect(b, fill);
+            int side = Math.round(b.height() * 0.58f);
+            icon.setBounds(b.centerX() - side / 2, b.centerY() - side / 2, b.centerX() + side / 2, b.centerY() + side / 2);
+            icon.draw(c);
+        }
+
+        @Override
+        public void setAlpha(int alpha) {
+            fill.setAlpha(alpha);
+            icon.setAlpha(alpha);
+        }
+
+        @Override
+        public void setColorFilter(android.graphics.ColorFilter filter) {
+            fill.setColorFilter(filter);
+            icon.setColorFilter(filter);
+        }
+
+        @Override
+        public int getOpacity() {
+            return android.graphics.PixelFormat.OPAQUE;
+        }
+
+        @Override
+        public ConstantState getConstantState() {
+            return new ConstantState() {
+                @Override
+                public Drawable newDrawable() {
+                    ConstantState s = icon.getConstantState();
+                    return new IconBanner(s != null ? s.newDrawable().mutate() : icon, color);
+                }
+
+                @Override
+                public int getChangingConfigurations() {
+                    return 0;
+                }
+            };
+        }
+    }
+
     /** The overlay's dock_apps, falling back to the three big streaming apps. */
     private static final String DOCK_PREFS = "horizon_dock";
 
@@ -132,8 +190,14 @@ final class HomeData {
                 if (banner == null) banner = pm.getApplicationBanner(pkg);
             } catch (PackageManager.NameNotFoundException ignored) {
             }
-            a.banner = banner != null ? banner : ri.loadIcon(pm);
-            a.color = accent(a.banner);
+            if (banner != null) {
+                a.banner = banner;
+                a.color = accent(banner);
+            } else {
+                Drawable icon = ri.loadIcon(pm);
+                a.color = accent(icon);
+                a.banner = new IconBanner(icon, a.color);
+            }
             a.system = (ri.activityInfo.applicationInfo.flags & ApplicationInfo.FLAG_SYSTEM) != 0;
             a.launch = new Intent(Intent.ACTION_MAIN).addCategory(category).setComponent(cn)
                     .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);

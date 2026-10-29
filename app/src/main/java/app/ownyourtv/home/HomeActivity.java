@@ -1208,7 +1208,8 @@ public class HomeActivity extends Activity {
         LinearLayout panel = column(32);
         panel.setPadding(px(56), px(48), px(56), px(56));
         overlay.setClipChildren(false);
-        panel.setBackground(round(0xF00E1028, 40, 1, 0x29FFFFFF));
+        // Opaque: the home screen's big app name would otherwise show through behind the pop-up's own text.
+        panel.setBackground(round(0xFF0E1028, 40, 1, 0x29FFFFFF));
         LinearLayout head = column(6);
         TextView t = label(displayLight, 52, Color.WHITE);
         t.setText(title);
@@ -1429,6 +1430,8 @@ public class HomeActivity extends Activity {
         scroll.setVerticalFadingEdgeEnabled(true);
         scroll.setFadingEdgeLength(px(64));
         scroll.setVerticalScrollBarEnabled(false);
+        // The first tile gets the remote, not the scroll box around it: otherwise the first press only lands there.
+        scroll.setFocusable(false);
         scroll.addView(grid);
         int rows = (others.size() + 4) / 5;
         // A view is cropped to its bounds only when its parent clips children, and the panel does not (focus
@@ -1439,7 +1442,10 @@ public class HomeActivity extends Activity {
         dismissPopup();
         popup = sheet(getString(R.string.h_all_apps), getString(R.string.h_apps_count, others.size()), box);
         popup.show();
-        if (!others.isEmpty()) ((ViewGroup) ((ViewGroup) grid.getChildAt(0)).getChildAt(0)).getChildAt(0).requestFocus();
+        if (!others.isEmpty()) {
+            View first = ((ViewGroup) ((ViewGroup) grid.getChildAt(0)).getChildAt(0)).getChildAt(0);
+            first.post(first::requestFocus);
+        }
     }
 
     private void showInputs() {
