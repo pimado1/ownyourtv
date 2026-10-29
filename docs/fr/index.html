@@ -19,7 +19,7 @@
 <meta name="theme-color" content="#0b0d12">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect x='3' y='11' width='26' height='14' rx='4' fill='%23c6f432'/%3E%3Cpath d='M12 11V7.5a4 4 0 0 1 8 0' fill='none' stroke='%23f4f4f0' stroke-width='3' stroke-linecap='round'/%3E%3C/svg%3E">
 <link rel="apple-touch-icon" href="../site/img/apple-touch-icon.png">
-<link rel="stylesheet" href="../site/style.css?v=202610292244">
+<link rel="stylesheet" href="../site/style.css?v=202610292252">
 </head>
 <body>
 
@@ -180,6 +180,30 @@
           <p data-i18n="s3_p">Accepte une fois la demande de débogage. L'assistant reconnaît ta TV, te propose le nettoyage recommandé, le nouvel accueil et ton dock. Puis un appui : c'est fait.</p>
         </li>
       </ol>
+
+      <div class="ways" data-reveal>
+        <h3 class="ways-h" data-i18n="ways_h">Deux façons, le même résultat</h3>
+        <div class="ways-grid">
+          <div class="way">
+            <p class="eyebrow" data-i18n="w1_eye">Sur la TV</p>
+            <h4 data-i18n="w1_h">À la télécommande</h4>
+            <p data-i18n="w1_p">Les trois étapes ci-dessus : l'appli OwnYourTV te guide sur l'écran de la TV, du nettoyage au nouvel accueil.</p>
+            <p class="way-need" data-i18n="w1_need">Il te faut : la télécommande. Rien d'autre.</p>
+          </div>
+          <div class="way">
+            <p class="eyebrow" data-i18n="w2_eye">Depuis un ordinateur</p>
+            <h4 data-i18n="w2_h">Avec un agent IA</h4>
+            <p data-i18n="w2_p">Aucune appli à télécharger sur la TV : ton ordinateur lui parle par le Wi-Fi. Active le mode développeur (étape 1), puis colle ceci dans Claude Code ou tout agent capable de lancer des commandes :</p>
+            <div class="prompt">
+              <code id="agent-prompt" data-i18n="w2_prompt">Clone https://github.com/pimado1/ownyourtv et suis son PROMPT.md pour nettoyer ma TV. L'adresse IP de ma TV est :</code>
+              <button class="btn btn-ghost" type="button" data-copy="agent-prompt" data-i18n="copy">Copier</button>
+            </div>
+            <p data-i18n="w2_p2">L'agent installe ce qu'il lui faut, te montre ce qu'il a trouvé, demande avant de désactiver quoi que ce soit et t'explique comment tout annuler. Le nouvel accueil n'est installé que si tu le demandes.</p>
+            <p class="way-need" data-i18n="w2_need">Il te faut : un ordinateur sur le même Wi-Fi, un agent IA, l'adresse IP de ta TV (Paramètres › Réseau). Tu préfères taper les commandes toi-même ? <a href="https://github.com/pimado1/ownyourtv#from-a-computer">ownyourtv.py</a></p>
+          </div>
+        </div>
+        <p class="ways-foot" data-i18n="ways_foot">Les deux utilisent les mêmes listes et les mêmes règles de sécurité, et les deux peuvent tout remettre comme avant.</p>
+      </div>
     </div>
   </section>
 
@@ -260,7 +284,7 @@
       </details>
       <details>
         <summary data-i18n="q5">Je peux le faire depuis un ordinateur ?</summary>
-        <p data-i18n="a5">Oui : <code>ownyourtv.py</code> fait la même chose depuis Windows, macOS ou Linux, avec adb. Voir <a href="https://github.com/pimado1/ownyourtv#from-a-computer">From a computer</a> sur GitHub.</p>
+        <p data-i18n="a5">Oui, de deux façons : colle un prompt dans un agent IA comme Claude Code (voir <a href="#how">Comment ça marche</a>), ou lance toi-même <code>ownyourtv.py</code> depuis Windows, macOS ou Linux, avec adb (<a href="https://github.com/pimado1/ownyourtv#from-a-computer">From a computer</a> sur GitHub).</p>
       </details>
       <details>
         <summary data-i18n="q6">OwnYourTV collecte-t-elle des données ?</summary>
@@ -306,8 +330,8 @@
   </div>
 </footer>
 
-<script src="../site/i18n.js?v=202610292244"></script>
-<script src="../site/effects.js?v=202610292244"></script>
+<script src="../site/i18n.js?v=202610292252"></script>
+<script src="../site/effects.js?v=202610292252"></script>
 <script>
   // The TVs owners reported from the app: one GitHub issue per model, labelled with what happened.
   (function () {
@@ -331,7 +355,8 @@
 
   document.querySelectorAll("[data-copy]").forEach(function (b) {
     b.addEventListener("click", function () {
-      navigator.clipboard.writeText("8225348").then(function () { b.textContent = t("copied"); setTimeout(function () { b.textContent = t("copy"); }, 1600); });
+      var from = b.getAttribute("data-copy");
+      navigator.clipboard.writeText(from ? document.getElementById(from).textContent : "8225348").then(function () { b.textContent = t("copied"); setTimeout(function () { b.textContent = t("copy"); }, 1600); });
     });
   });
 </script>

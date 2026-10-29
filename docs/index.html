@@ -19,7 +19,7 @@
 <meta name="theme-color" content="#0b0d12">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect x='3' y='11' width='26' height='14' rx='4' fill='%23c6f432'/%3E%3Cpath d='M12 11V7.5a4 4 0 0 1 8 0' fill='none' stroke='%23f4f4f0' stroke-width='3' stroke-linecap='round'/%3E%3C/svg%3E">
 <link rel="apple-touch-icon" href="site/img/apple-touch-icon.png">
-<link rel="stylesheet" href="site/style.css?v=202610292244">
+<link rel="stylesheet" href="site/style.css?v=202610292252">
 </head>
 <body>
 
@@ -180,6 +180,30 @@
           <p data-i18n="s3_p">Accept the debugging prompt once. The assistant recognises your TV, offers the recommended clean-up, the new home screen and your dock. Then one press: done.</p>
         </li>
       </ol>
+
+      <div class="ways" data-reveal>
+        <h3 class="ways-h" data-i18n="ways_h">Two ways, same result</h3>
+        <div class="ways-grid">
+          <div class="way">
+            <p class="eyebrow" data-i18n="w1_eye">On the TV</p>
+            <h4 data-i18n="w1_h">With the remote</h4>
+            <p data-i18n="w1_p">The three steps above: the OwnYourTV app guides you on the TV screen, from the clean-up to the new home screen.</p>
+            <p class="way-need" data-i18n="w1_need">You need: the remote. Nothing else.</p>
+          </div>
+          <div class="way">
+            <p class="eyebrow" data-i18n="w2_eye">From a computer</p>
+            <h4 data-i18n="w2_h">With an AI agent</h4>
+            <p data-i18n="w2_p">No app to download on the TV: your computer talks to it over Wi-Fi. Turn on developer mode (step 1), then paste this into Claude Code or any agent that can run commands:</p>
+            <div class="prompt">
+              <code id="agent-prompt" data-i18n="w2_prompt">Clone https://github.com/pimado1/ownyourtv and follow its PROMPT.md to clean my TV. My TV's IP address is:</code>
+              <button class="btn btn-ghost" type="button" data-copy="agent-prompt" data-i18n="copy">Copy</button>
+            </div>
+            <p data-i18n="w2_p2">The agent installs what it needs, shows what it found, asks before switching anything off, and tells you how to undo it. The new home screen is installed only if you ask for it.</p>
+            <p class="way-need" data-i18n="w2_need">You need: a computer on the same Wi-Fi, an AI agent, your TV's IP address (Settings › Network). Rather type the commands yourself? <a href="https://github.com/pimado1/ownyourtv#from-a-computer">ownyourtv.py</a></p>
+          </div>
+        </div>
+        <p class="ways-foot" data-i18n="ways_foot">Both use the same lists and the same safety rules, and both can put everything back.</p>
+      </div>
     </div>
   </section>
 
@@ -260,7 +284,7 @@
       </details>
       <details>
         <summary data-i18n="q5">Can I do it from a computer?</summary>
-        <p data-i18n="a5">Yes: <code>ownyourtv.py</code> does the same from Windows, macOS or Linux, with adb. See <a href="https://github.com/pimado1/ownyourtv#from-a-computer">From a computer</a> on GitHub.</p>
+        <p data-i18n="a5">Yes, two ways: paste one prompt into an AI agent such as Claude Code (see <a href="#how">How it works</a>), or run <code>ownyourtv.py</code> yourself from Windows, macOS or Linux, with adb (<a href="https://github.com/pimado1/ownyourtv#from-a-computer">From a computer</a> on GitHub).</p>
       </details>
       <details>
         <summary data-i18n="q6">Does OwnYourTV collect data?</summary>
@@ -306,8 +330,8 @@
   </div>
 </footer>
 
-<script src="site/i18n.js?v=202610292244"></script>
-<script src="site/effects.js?v=202610292244"></script>
+<script src="site/i18n.js?v=202610292252"></script>
+<script src="site/effects.js?v=202610292252"></script>
 <script>
   // The TVs owners reported from the app: one GitHub issue per model, labelled with what happened.
   (function () {
@@ -331,7 +355,8 @@
 
   document.querySelectorAll("[data-copy]").forEach(function (b) {
     b.addEventListener("click", function () {
-      navigator.clipboard.writeText("8225348").then(function () { b.textContent = t("copied"); setTimeout(function () { b.textContent = t("copy"); }, 1600); });
+      var from = b.getAttribute("data-copy");
+      navigator.clipboard.writeText(from ? document.getElementById(from).textContent : "8225348").then(function () { b.textContent = t("copied"); setTimeout(function () { b.textContent = t("copy"); }, 1600); });
     });
   });
 </script>

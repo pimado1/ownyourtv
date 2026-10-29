@@ -57,7 +57,7 @@ var FR = {
   q4: "Ma TV ne veut pas d'un autre accueil",
   a4: "Certains modèles n'acceptent que leur propre accueil. OwnYourTV les connaît et te le dit : les pubs et le pistage sont quand même coupés, et ton accueil actuel reste.",
   q5: "Je peux le faire depuis un ordinateur ?",
-  a5: "Oui : <code>ownyourtv.py</code> fait la même chose depuis Windows, macOS ou Linux, avec adb. Voir <a href=\"https://github.com/pimado1/ownyourtv#from-a-computer\">From a computer</a> sur GitHub.",
+  a5: "Oui, de deux façons : colle un prompt dans un agent IA comme Claude Code (voir <a href=\"#how\">Comment ça marche</a>), ou lance toi-même <code>ownyourtv.py</code> depuis Windows, macOS ou Linux, avec adb (<a href=\"https://github.com/pimado1/ownyourtv#from-a-computer\">From a computer</a> sur GitHub).",
   q6: "OwnYourTV collecte-t-elle des données ?",
   a6: "Non. Tout se passe sur la TV. À la fin, l'appli propose de partager le modèle de ta TV et ce qui a marché, anonymement, seulement si tu appuies sur Partager. Détails sur la <a href=\"privacy.html\">page confidentialité</a>.",
   q7: "Combien ça coûte ?", a7: "Rien. OwnYourTV est gratuite et open source, sous licence MIT.",
@@ -105,6 +105,16 @@ var FR = {
   faq_sub: "Une autre question ? <a href=\"contact.html\">Écris-moi</a>, je réponds à chaque message.",
   get_eye: "Prêt ?", get_h: "Dix minutes, la télécommande, et elle est à toi",
   get_sub: "Gratuit, open source, et un bouton remet tout comme avant.",
+  ways_h: "Deux façons, le même résultat",
+  w1_eye: "Sur la TV", w1_h: "À la télécommande",
+  w1_p: "Les trois étapes ci-dessus : l'appli OwnYourTV te guide sur l'écran de la TV, du nettoyage au nouvel accueil.",
+  w1_need: "Il te faut : la télécommande. Rien d'autre.",
+  w2_eye: "Depuis un ordinateur", w2_h: "Avec un agent IA",
+  w2_p: "Aucune appli à télécharger sur la TV : ton ordinateur lui parle par le Wi-Fi. Active le mode développeur (étape 1), puis colle ceci dans Claude Code ou tout agent capable de lancer des commandes :",
+  w2_prompt: "Clone https://github.com/pimado1/ownyourtv et suis son PROMPT.md pour nettoyer ma TV. L'adresse IP de ma TV est :",
+  w2_p2: "L'agent installe ce qu'il lui faut, te montre ce qu'il a trouvé, demande avant de désactiver quoi que ce soit et t'explique comment tout annuler. Le nouvel accueil n'est installé que si tu le demandes.",
+  w2_need: "Il te faut : un ordinateur sur le même Wi-Fi, un agent IA, l'adresse IP de ta TV (Paramètres › Réseau). Tu préfères taper les commandes toi-même ? <a href=\"https://github.com/pimado1/ownyourtv#from-a-computer\">ownyourtv.py</a>",
+  ways_foot: "Les deux utilisent les mêmes listes et les mêmes règles de sécurité, et les deux peuvent tout remettre comme avant.",
   p_updated: "Mis à jour le 29 octobre 2026.", p_back: "← Retour à l'accueil"
 };
 

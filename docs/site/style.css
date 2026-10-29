@@ -88,6 +88,20 @@ h3 { font: 700 21px/1.25 var(--display); margin: 0 0 8px; letter-spacing: -0.01e
 .steps kbd { font: 600 14px var(--body); background: var(--ink-2); border: 1px solid var(--line); border-radius: 6px; padding: 1px 6px; color: var(--paper); white-space: nowrap; }
 @media (max-width: 820px) { .steps { grid-template-columns: 1fr; gap: 28px; } }
 
+/* Two ways to install: the remote, or a computer with an AI agent */
+.ways { margin-top: 64px; }
+.ways-h { font: 700 26px var(--display); margin: 0 0 20px; }
+.ways-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+.way { display: flex; flex-direction: column; gap: 14px; padding: 28px; border: 1px solid var(--line); border-radius: 14px; background: var(--ink-2); }
+.way .eyebrow { margin: 0; }
+.way h4 { font: 700 22px var(--display); margin: 0; }
+.way p { color: #c9ccd4; margin: 0; font-size: 16px; }
+.way .way-need { margin-top: auto; padding-top: 14px; border-top: 1px solid var(--line); color: var(--grey); font-size: 14px; }
+.prompt { display: flex; align-items: center; gap: 14px; padding: 14px 16px; border: 1px solid var(--lime); border-radius: 12px; background: var(--lime-dim); }
+.prompt code { flex: 1; font: 500 14px/1.5 ui-monospace, SFMono-Regular, Menlo, monospace; color: var(--paper); }
+.ways-foot { color: var(--grey); margin: 18px 0 0; font-size: 15px; }
+@media (max-width: 820px) { .ways-grid { grid-template-columns: 1fr; } .way { padding: 22px; } .prompt { flex-direction: column; align-items: stretch; } }
+
 /* Split rows */
 .split { display: grid; grid-template-columns: 1fr 1.25fr; gap: 56px; align-items: center; }
 .split + .split { margin-top: 80px; }
