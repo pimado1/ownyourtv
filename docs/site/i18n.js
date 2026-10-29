@@ -29,7 +29,7 @@ var FR = {
   c_title: "Contact", c_lead: "Une seule personne fait OwnYourTV, en public. Choisis ce qui te convient : chaque moyen arrive jusqu'à moi, et je réponds.",
   c1_b: "Ajouter ma TV à la liste", c1_s: "Le plus rapide, c'est le bouton Partager à la fin de l'appli. Si ta TV n'est pas allée jusque-là, donne-moi ici sa marque, son modèle et ce qui a marché.", c1_go: "Remplir le formulaire sur GitHub →",
   c2_b: "Signaler un souci", c2_s: "Un écran qui ne va pas, une étape qui ne passe pas, une appli revenue. Une photo de l'écran de la TV aide beaucoup.", c2_go: "Le signaler sur GitHub →",
-  c3_b: "M'écrire", c3_s: "Une question, une idée, la presse ou un partenariat : envoie-moi un message sur X. En français ou en anglais.",
+  c3_b: "M'écrire", c3_s: "Une question, une idée, la presse ou un partenariat. En français ou en anglais. Tu peux aussi m'écrire sur X, <span class=\"nowrap\">@PimAoff</span>.",
   c_h_before: "Avant d'écrire", c_before: "La plupart des questions (Play Protect, l'étape Wi-Fi, les mises à jour, les profils et le mode enfant) ont leur réponse dans les <a href=\"./#faq\">questions de l'accueil</a>. Un compte GitHub est gratuit et se crée en une minute : il te permet de suivre la réponse.",
   prof_eye: "Profils et mode enfant", prof_h: "Une TV, un accueil pour chacun",
   pr1_b: "Qui regarde ?", pr1_s: "Au réveil de la TV, chacun appuie sur OK sur sa bulle et retrouve son dock et sa couleur.",

@@ -253,5 +253,6 @@ section { position: relative; isolation: isolate; }
 .contact-card { display: flex; flex-direction: column; gap: 8px; padding: 20px 22px; border: 1px solid var(--line); border-radius: 16px; text-decoration: none; color: var(--paper); min-width: 0; }
 .contact-card:hover, .contact-card:focus-visible { border-color: var(--lime); }
 .contact-card b { font: 700 19px var(--display); }
-.contact-card span { color: var(--grey); font-size: 15px; }
+.contact-card > span { color: var(--grey); font-size: 15px; }
 .contact-card em { font-style: normal; color: var(--lime); font-weight: 700; margin-top: auto; padding-top: 6px; }
+.nowrap { white-space: nowrap; }
