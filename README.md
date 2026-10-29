@@ -36,8 +36,10 @@ Taken on a TCL C89B, Google TV 14.
 
 | | |
 |---|---|
-| <img src="docs/screenshots/home-netflix.jpg" alt="The OwnYourTV home with Netflix selected: the aurora turns red, and Continue watching shows the episode in progress"> | <img src="docs/screenshots/quick-settings.jpg" alt="Quick settings on the remote's gear button: volume, picture, sound, weather, sources, Wi-Fi, Bluetooth"> |
+| <img src="docs/screenshots/home-netflix.jpg" alt="The OwnYourTV home with Netflix selected: the aurora turns red"> | <img src="docs/screenshots/quick-settings.jpg" alt="Quick settings on the remote's gear button: volume, picture, sound, weather, sources, Wi-Fi, Bluetooth, update"> |
 | **The aurora takes the colour of the app you pick**, and Continue watching picks up where you left off | **Quick settings** on the remote's gear button |
+| <img src="docs/screenshots/profiles.jpg" alt="Who's watching? Two profile bubbles on the home screen, one for a child"> | <img src="docs/screenshots/bedtime.jpg" alt="That's all for today: a child's screen time is over, the parent code lifts it"> |
+| **Profiles**: each person picks their bubble when the TV wakes up | **Child mode**: bedtime and time per day, lifted with the parent code |
 | <img src="docs/screenshots/all-apps.jpg" alt="All apps, hold OK to add to the dock or uninstall"> | <img src="docs/screenshots/app-dashboard.jpg" alt="OwnYourTV's dashboard: home screen, dock, ads, tracking, clutter, preinstalled apps, and Optimise in one click"> |
 | **All apps**: hold OK to add one to the dock or uninstall it | **Your TV**: everything on one screen, and **Optimise in one click** |
 | <img src="docs/screenshots/app-ads.jpg" alt="The Ads list: each maker ad app with a tick box"> | <img src="docs/screenshots/app-dock.jpg" alt="Your dock: reorder, remove and add apps"> |
