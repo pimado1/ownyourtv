@@ -23,7 +23,6 @@ final class Glyph extends View {
     private int kind;
     private int color = Color.WHITE;
     private float value;
-    private boolean animated;
 
     Glyph(Context ctx, int kind) {
         super(ctx);
@@ -46,11 +45,6 @@ final class Glyph extends View {
     /** RING: used fraction 0-1. ARC: the sun's position along the day, 0-1. */
     void setValue(float v) {
         value = v;
-        invalidate();
-    }
-
-    void setAnimated(boolean on) {
-        animated = on;
         invalidate();
     }
 
@@ -206,7 +200,6 @@ final class Glyph extends View {
                 break;
         }
         c.restore();
-        if (animated && (kind == FOG || kind == RAIN || kind == SUN || kind == NIGHT)) postInvalidateDelayed(50);
     }
 
     private void drawRing(Canvas c, float w, float h) {

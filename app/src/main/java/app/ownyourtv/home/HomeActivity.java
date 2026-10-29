@@ -2,7 +2,6 @@ package app.ownyourtv.home;
 
 import app.ownyourtv.R;
 
-import android.animation.ValueAnimator;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.ActivityNotFoundException;
@@ -76,9 +75,7 @@ public class HomeActivity extends Activity {
     private Typeface display, displayLight, text, textBold;
 
     private SkyScene scene;
-    private TextView chipTitle;
-    private TextView greeting, clock, dateLine, moonLine, chipLine, focusName, focusHint, toast;
-    private View accentDot;
+    private TextView greeting, clock, dateLine, focusName, focusHint, toast;
     private FrameLayout carousel;
     private final List<View> cards = new ArrayList<>();
     private final List<HomeData.App> dock = new ArrayList<>();
@@ -105,7 +102,6 @@ public class HomeActivity extends Activity {
     private String liveTvPkg = "";
     private String name = "";
     private Dialog popup;
-    private ValueAnimator breathe;
 
     private final Runnable tick = new Runnable() {
         @Override
@@ -119,6 +115,8 @@ public class HomeActivity extends Activity {
         public void run() {
             updateMemory();
             refreshSpeaker();
+            // The sky follows the hour (when not always night); it holds still in between.
+            scene.invalidate();
             if (weather != null && System.currentTimeMillis() - weatherAt > (reading == null ? Weather.RETRY_MS
                     : Weather.REFRESH_MS)) refreshWeather();
             main.postDelayed(this, 15_000);
@@ -371,16 +369,8 @@ public class HomeActivity extends Activity {
         clock.setIncludeFontPadding(false);
         clock.setFontFeatureSettings("tnum");
         root.addView(clock, at(104, 104));
-        LinearLayout date = row(18);
         dateLine = label(text, 26, 0xDBFFFFFF);
-        accentDot = new View(this);
-        accentDot.setBackground(round(0xFFFF2D55, 3, 0, 0));
-        moonLine = label(text, 26, 0xDBFFFFFF);
-        date.addView(dateLine);
-        date.addView(accentDot, new LinearLayout.LayoutParams(px(6), px(6)));
-        date.addView(moonLine);
-        root.addView(date, at(112, 300));
-        root.addView(skyChip(), at(112, 352));
+        root.addView(dateLine, at(112, 300));
 
         LinearLayout top = row(14);
         inputsButton = iconButton(R.drawable.ic_input, Color.WHITE, getString(R.string.h_sources), v -> showInputs());
@@ -539,24 +529,6 @@ public class HomeActivity extends Activity {
         return b;
     }
 
-    private View skyChip() {
-        LinearLayout chip = row(14);
-        chip.setPadding(px(14), px(12), px(20), px(12));
-        chip.setBackground(round(0x6B0C0E22, 22, 1, 0x24FFFFFF));
-        Glyph g = new Glyph(this, Glyph.SPARKLE);
-        g.setColor(0xFFC9D6FF);
-        chip.addView(g, new LinearLayout.LayoutParams(px(30), px(30)));
-        LinearLayout col = column(2);
-        TextView t = label(textBold, 15, 0xADFFFFFF);
-        t.setLetterSpacing(0.13f);
-        chipTitle = t;
-        chipLine = label(text, 19, Color.WHITE);
-        col.addView(t, wrap());
-        col.addView(chipLine, wrap());
-        chip.addView(col);
-        return chip;
-    }
-
     private View weatherCard() {
         LinearLayout card = column(14);
         card.setPadding(px(24), px(20), px(24), px(20));
@@ -564,7 +536,6 @@ public class HomeActivity extends Activity {
         LinearLayout top = row(16);
         weatherIcon = new Glyph(this, Glyph.CLOUD);
         weatherIcon.setColor(0xFFDDE3FF);
-        weatherIcon.setAnimated(true);
         top.addView(weatherIcon, new LinearLayout.LayoutParams(px(52), px(52)));
         weatherTemp = label(displayLight, 72, Color.WHITE);
         weatherTemp.setLetterSpacing(-0.03f);
@@ -828,7 +799,6 @@ public class HomeActivity extends Activity {
         img.setImageDrawable(a.banner);
         img.setScaleType(ImageView.ScaleType.CENTER_CROP);
         f.addView(img, new FrameLayout.LayoutParams(-1, -1));
-        addSheen(f);
         Drawable copy = a.banner.getConstantState() != null ? a.banner.getConstantState().newDrawable().mutate() : a.banner;
         return holder(f, reflection(copy), () -> open(a.launch));
     }
@@ -845,7 +815,6 @@ public class HomeActivity extends Activity {
         t.setText(getString(R.string.h_all_apps));
         col.addView(t, wrap());
         f.addView(col, new FrameLayout.LayoutParams(-2, -2, Gravity.CENTER));
-        addSheen(f);
         GradientDrawable copy = new GradientDrawable(GradientDrawable.Orientation.TL_BR, new int[]{0xFF5A4CC0, 0xFF221A66});
         return holder(f, reflection(copy), this::showAllApps);
     }
@@ -898,16 +867,6 @@ public class HomeActivity extends Activity {
         return f;
     }
 
-    private void addSheen(FrameLayout f) {
-        View sheen = new View(this);
-        sheen.setBackground(new GradientDrawable(GradientDrawable.Orientation.LEFT_RIGHT,
-                new int[]{0x00FFFFFF, 0x66FFFFFF, 0x00FFFFFF}));
-        sheen.setRotation(18);
-        sheen.setAlpha(0f);
-        sheen.setTag("sheen");
-        f.addView(sheen, new FrameLayout.LayoutParams(px(140), px(CARD_H * 1.8f), Gravity.CENTER_VERTICAL));
-    }
-
     /**
      * Cover flow: the focused card faces the viewer, the others turn away and stack behind one another, each
      * further one smaller, dimmer and partly hidden by the one in front. Shadows and reflections move with them.
@@ -930,7 +889,7 @@ public class HomeActivity extends Activity {
             c.setZ(20 - ad);
             if (animate) {
                 c.animate().translationX(x).rotationY(rot).scaleX(scale).scaleY(scale).alpha(alpha)
-                        .setDuration(650).setInterpolator(SPRING).start();
+                        .setDuration(420).setInterpolator(SPRING).start();
             } else {
                 c.setTranslationX(x);
                 c.setRotationY(rot);
@@ -947,36 +906,18 @@ public class HomeActivity extends Activity {
             face.findViewWithTag("dim").animate().alpha(Math.min(0.7f, ad * 0.2f)).setDuration(500).start();
             Drawable fg = face.getForeground();
             if (fg != null) fg.setAlpha(d == 0 ? 255 : 0);
-            View sheen = face.findViewWithTag("sheen");
-            if (sheen != null) {
-                sheen.animate().cancel();
-                if (d == 0) runSheen(sheen);
-                else sheen.setAlpha(0f);
-            }
         }
         int color = accent;
         scene.setAccent(color);
         scene.setFocusIndex(focus);
-        accentDot.setBackground(round(color, 3, 0, 0));
         memRing.setColor(color);
         resumeBar.setBackground(round(color, 3, 0, 0));
         focusName.setShadowLayer(px(8), 0, 0, (color & 0x00FFFFFF) | 0x99000000);
         focusName.setText(focus < dock.size() ? dock.get(focus).label : getString(R.string.h_all_apps));
         focusName.setAlpha(0f);
         focusName.setTranslationY(px(14));
-        focusName.animate().alpha(1f).translationY(0).setDuration(500).setInterpolator(SPRING).start();
+        focusName.animate().alpha(1f).translationY(0).setDuration(260).setInterpolator(SPRING).start();
         updateResume();
-    }
-
-    private void runSheen(View sheen) {
-        sheen.setAlpha(1f);
-        sheen.setTranslationX(-px(220));
-        sheen.animate().translationX(px(CARD_W + 120)).setStartDelay(500).setDuration(1500).setInterpolator(SPRING)
-                .withEndAction(() -> {
-                    if (sheen.getAlpha() > 0) main.postDelayed(() -> {
-                        if (sheen.getAlpha() > 0) runSheen(sheen);
-                    }, 1800);
-                }).start();
     }
 
     /** OK held on a deck card: the dock menu opened, so the release must not also open the app. */
@@ -1069,10 +1010,6 @@ public class HomeActivity extends Activity {
         if (!time.contentEquals(clock.getText())) clock.setText(time);
         String date = new SimpleDateFormat(android.text.format.DateFormat.getBestDateTimePattern(Locale.getDefault(), "EEEEdMMMM"), Locale.getDefault()).format(now.getTime());
         dateLine.setText(Character.toUpperCase(date.charAt(0)) + date.substring(1));
-        moonLine.setText(getString(HomeData.moonPhase(now)));
-        chipLine.setText(getString(R.string.h_next_shower, HomeData.nextShower(this, now)));
-        chipTitle.setText(weather != null && !weather.place.isEmpty()
-                ? getString(R.string.h_real_sky_at, weather.place.toUpperCase()) : getString(R.string.h_real_sky));
         if (reading != null) {
             float hour = h + now.get(Calendar.MINUTE) / 60f;
             float f = (hour - reading.sunriseHour) / (reading.sunsetHour - reading.sunriseHour);
@@ -1566,15 +1503,6 @@ public class HomeActivity extends Activity {
         checkUpdate();
         // Still running a moment after showing (a pop-up may take the focus first): this start went well.
         main.postDelayed(markShown, 1500);
-        if (breathe == null) {
-            // A slow breath on the clock's alpha: animating the font weight re-shaped 184 px glyphs every frame.
-            breathe = ValueAnimator.ofFloat(1f, 0.86f);
-            breathe.setDuration(6000);
-            breathe.setRepeatMode(ValueAnimator.REVERSE);
-            breathe.setRepeatCount(ValueAnimator.INFINITE);
-            breathe.addUpdateListener(a -> clock.setAlpha((float) a.getAnimatedValue()));
-        }
-        breathe.start();
         if (!carousel.hasFocus() && getCurrentFocus() == null) carousel.requestFocus();
     }
 
@@ -1594,7 +1522,6 @@ public class HomeActivity extends Activity {
         main.removeCallbacks(tick);
         main.removeCallbacks(slowTick);
         main.removeCallbacks(markShown);
-        if (breathe != null) breathe.cancel();
     }
 
     @Override

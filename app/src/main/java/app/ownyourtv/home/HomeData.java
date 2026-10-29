@@ -29,7 +29,6 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -343,44 +342,4 @@ final class HomeData {
 
     // ---- sky --------------------------------------------------------------------------------------
 
-    /** Moon phase from the synodic month, as a string resource. */
-    static int moonPhase(Calendar now) {
-        double days = (now.getTimeInMillis() - 947182440000L) / 86400000.0;   // new moon of 6 Jan 2000, 18:14 UTC
-        double age = ((days % 29.530588) + 29.530588) % 29.530588;
-        if (age < 1.85) return R.string.m_new;
-        if (age < 5.54) return R.string.m_wax_cres;
-        if (age < 9.23) return R.string.m_first;
-        if (age < 12.92) return R.string.m_wax_gib;
-        if (age < 16.61) return R.string.m_full;
-        if (age < 20.30) return R.string.m_wan_gib;
-        if (age < 23.99) return R.string.m_last;
-        if (age < 27.68) return R.string.m_wan_cres;
-        return R.string.m_new;
-    }
-
-    /** The major meteor shower peaks: month 1-12, day, name. */
-    private static final int[][] SHOWERS = {{1, 3, R.string.s_quadrantids}, {4, 22, R.string.s_lyrids},
-            {5, 6, R.string.s_eta}, {8, 12, R.string.s_perseids}, {10, 8, R.string.s_draconids},
-            {10, 21, R.string.s_orionids}, {11, 17, R.string.s_leonids}, {12, 14, R.string.s_geminids}};
-
-    /** The next peak, "Leonids on 17 Nov" in the TV's language. */
-    static String nextShower(Context ctx, Calendar now) {
-        int m = now.get(Calendar.MONTH) + 1, d = now.get(Calendar.DAY_OF_MONTH);
-        int[] next = SHOWERS[0];
-        int year = now.get(Calendar.YEAR) + 1;
-        for (int[] s : SHOWERS) {
-            if (s[0] > m || (s[0] == m && s[1] >= d)) {
-                next = s;
-                year = now.get(Calendar.YEAR);
-                break;
-            }
-        }
-        String name = ctx.getString(next[2]);
-        if (next[0] == m && Math.abs(next[1] - d) <= 1) return ctx.getString(R.string.h_tonight_night, name);
-        Calendar peak = Calendar.getInstance();
-        peak.set(year, next[0] - 1, next[1]);
-        String day = new java.text.SimpleDateFormat(android.text.format.DateFormat.getBestDateTimePattern(
-                java.util.Locale.getDefault(), "dMMM"), java.util.Locale.getDefault()).format(peak.getTime());
-        return ctx.getString(R.string.h_shower_on, name, day);
-    }
 }

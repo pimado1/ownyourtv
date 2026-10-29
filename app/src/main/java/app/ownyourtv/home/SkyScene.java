@@ -21,32 +21,19 @@ import java.util.Calendar;
 import java.util.Random;
 
 /**
- * The the home screen home's living backdrop: sky by the time of day, twinkling stars, sparkles, shooting stars, an aurora,
- * three hills in parallax, the current weather (fog, rain, snow) and a pool of light in the
- * focused app's colour. Everything is drawn from shaders and paths, no bitmaps and no blur, at about 30 frames a
- * second while Home is on screen; {@link #setRunning} stops the loop when Home is paused.
+ * The home screen's backdrop: the sky by the time of day, still stars, an aurora and a pool of light in the focused
+ * app's colour, and three hills in parallax. It holds still: frames are only drawn while the colour or the hills move
+ * after a press on the remote, so an idle home screen costs the TV nothing.
  */
 final class SkyScene extends View {
     static final int WEATHER_CLEAR = 0, WEATHER_FOG = 1, WEATHER_RAIN = 2, WEATHER_SNOW = 3;
-    private static final long FRAME_MS = 33;
     private static final float W = 1920f, H = 1080f;
 
     private final Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
-    private final Paint line = new Paint(Paint.ANTI_ALIAS_FLAG);
-    private final Paint label = new Paint(Paint.ANTI_ALIAS_FLAG);
     private final Matrix matrix = new Matrix();
-    private final float[] starX = new float[110], starY = new float[110], starR = new float[110];
-    private final float[] starSpeed = new float[110], starPhase = new float[110];
-    private final float[] dropX = new float[90], dropSpeed = new float[90], dropPhase = new float[90];
-    private final float[] flakeX = new float[80], flakeSpeed = new float[80], flakePhase = new float[80], flakeR = new float[80];
-    private static final float[][] GLINTS = {{312, 96, 5f, 1.2f}, {884, 58, 6.5f, 3.4f}, {1180, 330, 4.2f, .4f},
-            {1560, 46, 7f, 2.6f}, {640, 300, 5.6f, 4.1f}, {1010, 190, 8f, 1.9f}};
-    /** x, y, angle in degrees, period s, delay s. */
-    private static final float[][] METEORS = {{520, 70, 24, 13, 2}, {1150, 40, 32, 17, 6.5f}, {260, 210, 18, 21, 10},
-            {1420, 150, 150, 19, 14}};
+    private final float[] starX = new float[80], starY = new float[80], starR = new float[80], starA = new float[80];
     private final Path hillFar = new Path(), hillMid = new Path(), hillNear = new Path();
     private final RadialGradient soft;
-    private final long start = SystemClock.uptimeMillis();
 
     private int accent = 0xFFFF2D55, accentFrom = accent, accentTo = accent;
     private long accentAt;
@@ -67,19 +54,7 @@ final class SkyScene extends View {
             starX[i] = r.nextFloat() * W;
             starY[i] = r.nextFloat() * 560;
             starR[i] = 0.6f + r.nextFloat() * 1.3f;
-            starSpeed[i] = (float) (2 * Math.PI / (2.5 + r.nextFloat() * 4));
-            starPhase[i] = r.nextFloat() * 6.3f;
-        }
-        for (int i = 0; i < dropX.length; i++) {
-            dropX[i] = r.nextFloat() * 2000;
-            dropSpeed[i] = 0.6f + r.nextFloat() * 0.5f;
-            dropPhase[i] = r.nextFloat();
-        }
-        for (int i = 0; i < flakeX.length; i++) {
-            flakeX[i] = r.nextFloat() * W;
-            flakeSpeed[i] = 7 + r.nextFloat() * 6;
-            flakePhase[i] = r.nextFloat();
-            flakeR[i] = 1.5f + r.nextFloat() * 2.5f;
+            starA[i] = 0.2f + 0.8f * r.nextFloat() * r.nextFloat();
         }
         hill(hillFar, 520, new float[]{0, 300, 180, 230, 330, 250, 470, 210, 620, 170, 760, 240, 900, 220, 1060, 196,
                 1180, 140, 1340, 170, 1500, 200, 1640, 150, 1800, 190, 1930, 220, 2020, 200, 2100, 210});
@@ -88,9 +63,6 @@ final class SkyScene extends View {
         hill(hillNear, 300, new float[]{0, 170, 220, 130, 380, 160, 560, 140, 760, 118, 900, 168, 1080, 156, 1260, 144,
                 1400, 110, 1600, 136, 1800, 162, 1960, 140, 2100, 150});
         soft = new RadialGradient(0, 0, 1, new int[]{Color.WHITE, 0x00FFFFFF}, null, Shader.TileMode.CLAMP);
-        line.setStyle(Paint.Style.STROKE);
-        label.setTypeface(text);
-        label.setLetterSpacing(0.2f);
     }
 
     /** Smooth cubic path through the points (x, y pairs in a 2100 x height box), closed along the bottom. */
@@ -108,7 +80,7 @@ final class SkyScene extends View {
     void setRunning(boolean on) {
         if (running == on) return;
         running = on;
-        if (on) postInvalidateOnAnimation();
+        if (on) invalidate();
     }
 
     void setAccent(int color) {
@@ -116,14 +88,17 @@ final class SkyScene extends View {
         accentFrom = accent;
         accentTo = color;
         accentAt = SystemClock.uptimeMillis();
+        invalidate();
     }
 
     void setFocusIndex(int index) {
         parallaxTarget = index;
+        invalidate();
     }
 
     void setDimmed(boolean on) {
         dimTarget = on ? 1f : 0f;
+        invalidate();
     }
 
     void setWeather(int kind, float sunriseHour, float sunsetHour) {
@@ -131,6 +106,7 @@ final class SkyScene extends View {
         sunrise = sunriseHour;
         sunset = sunsetHour;
         skyKey = -1;
+        invalidate();
     }
 
     private boolean alwaysNight = true;
@@ -139,6 +115,7 @@ final class SkyScene extends View {
     void setAlwaysNight(boolean on) {
         alwaysNight = on;
         skyKey = -1;
+        invalidate();
     }
 
     /** 0 night, 1 dawn, 2 day, 3 dusk, from the clock and today's sun times. */
@@ -176,7 +153,6 @@ final class SkyScene extends View {
     @Override
     protected void onDraw(Canvas canvas) {
         long now = SystemClock.uptimeMillis();
-        float t = (now - start) / 1000f;
         float u = getWidth() / W;
         canvas.save();
         canvas.scale(u, getHeight() / H);
@@ -184,84 +160,41 @@ final class SkyScene extends View {
 
         float a = Math.min(1f, (now - accentAt) / 900f);
         accent = lerpColor(accentFrom, accentTo, ease(a));
-        parallax += (parallaxTarget - parallax) * 0.08f;
-        dim += (dimTarget - dim) * 0.05f;
+        parallax += (parallaxTarget - parallax) * 0.14f;
+        if (Math.abs(parallaxTarget - parallax) < 0.002f) parallax = parallaxTarget;
+        dim += (dimTarget - dim) * 0.1f;
+        if (Math.abs(dimTarget - dim) < 0.002f) dim = dimTarget;
 
         paint.setShader(sky);
         canvas.drawRect(0, 0, W, H, paint);
         paint.setShader(null);
         paint.setAlpha(255);
 
-        drawStars(canvas, t);
-        drawAurora(canvas, t);
+        drawStars(canvas);
+        drawAurora(canvas);
         drawSpill(canvas);
         drawHills(canvas);
-        if (weather == WEATHER_FOG) drawFog(canvas, t);
-        else if (weather == WEATHER_RAIN) drawRain(canvas, t);
-        else if (weather == WEATHER_SNOW) drawSnow(canvas, t);
         drawScrims(canvas);
         canvas.restore();
 
-        if (running) postInvalidateDelayed(FRAME_MS);
+        // Only while something is still moving; the next press on the remote starts it again.
+        if (running && (a < 1f || parallax != parallaxTarget || dim != dimTarget)) postInvalidateOnAnimation();
     }
 
-    private void drawStars(Canvas c, float t) {
+    private void drawStars(Canvas c) {
         if (starLevel <= 0.01f) return;
         paint.setColor(Color.WHITE);
         for (int i = 0; i < starX.length; i++) {
-            float tw = 0.15f + 0.85f * (0.5f + 0.5f * (float) Math.sin(t * starSpeed[i] + starPhase[i]));
-            paint.setAlpha((int) (255 * tw * starLevel));
+            paint.setAlpha((int) (255 * starA[i] * starLevel));
             c.drawCircle(starX[i], starY[i], starR[i], paint);
         }
-        for (float[] g : GLINTS) {
-            float k = (float) (0.5 + 0.5 * Math.sin((t + g[3]) * 2 * Math.PI / g[2]));
-            float alpha = (0.25f + 0.75f * k) * starLevel;
-            c.save();
-            c.translate(g[0], g[1]);
-            c.rotate(25 * k);
-            c.scale(0.6f + 0.55f * k, 0.6f + 0.55f * k);
-            drawSoft(c, 0, 0, 10, 10, 0xFFC8DCFF, alpha * .8f);
-            paint.setShader(null);
-            paint.setColor(Color.WHITE);
-            paint.setAlpha((int) (255 * alpha));
-            c.drawCircle(0, 0, 2.2f, paint);
-            line.setPathEffect(null);
-            line.setStrokeWidth(1f);
-            line.setShader(rayH);
-            line.setAlpha((int) (255 * alpha));
-            c.drawLine(-17, 0, 17, 0, line);
-            line.setShader(rayV);
-            c.drawLine(0, -17, 0, 17, line);
-            line.setShader(null);
-            c.restore();
-        }
-        for (float[] m : METEORS) drawMeteor(c, t, m);
     }
 
-    private void drawMeteor(Canvas c, float t, float[] m) {
-        float phase = ((t - m[4]) % m[3] + m[3]) % m[3] / m[3];
-        if (t < m[4] || phase > 0.08f) return;
-        float p = phase / 0.06f;
-        float x = -260 + Math.min(p, 1f) * 880 + Math.max(0, p - 1) * 140 / 0.33f;
-        float fade = phase < 0.01f ? phase / 0.01f : phase > 0.06f ? 1 - (phase - 0.06f) / 0.02f : 1f;
-        float len = 260 * (0.3f + 0.7f * Math.min(p, 1f));
-        c.save();
-        c.translate(m[0], m[1]);
-        c.rotate(m[2]);
-        line.setStrokeWidth(2f);
-        line.setShader(new LinearGradient(x - len, 0, x, 0, new int[]{0x00FFFFFF, 0x80BED7FF, Color.WHITE},
-                new float[]{0, .6f, 1}, Shader.TileMode.CLAMP));
-        line.setAlpha((int) (255 * fade * starLevel));
-        c.drawLine(x - len, 0, x, 0, line);
-        line.setShader(null);
-        c.restore();
-    }
-
-    private void drawAurora(Canvas c, float t) {
+    private void drawAurora(Canvas c) {
         if (auroraLevel <= 0.01f) return;
         setScreen(paint, true);
-        float s1 = (float) Math.sin(t * 2 * Math.PI / 44), s2 = (float) Math.sin(t * 2 * Math.PI / 56 + 1),
-                s3 = (float) Math.sin(t * 2 * Math.PI / 68 + 2);
+        // A still aurora: the bands where a slow drift would have them, without the drift.
+        final float s1 = .3f, s2 = -.4f, s3 = .5f;
         // Every band leans toward the focused app's colour, so the whole aurora changes with the dock.
         drawSoft(c, 730 + 140 * s1, 210 + 15 * s1, 560, 150 * (1 + .15f * s1), lerpColor(0xFF28FFBE, accent, .45f),
                 .6f * auroraLevel);
@@ -291,37 +224,6 @@ final class SkyScene extends View {
         }
     }
 
-    private void drawFog(Canvas c, float t) {
-        float[][] bands = {{770, 130, 40, 1f}, {910, 150, 60, .8f}, {630, 110, 75, .55f}};
-        for (int i = 0; i < bands.length; i++) {
-            float[] b = bands[i];
-            float x = W / 2 + (float) Math.sin(t * 2 * Math.PI / b[2] * (i == 1 ? -1 : 1)) * 0.08f * W * 1.6f;
-            drawSoft(c, x, b[0], W * 0.8f, b[1], 0xFFDCE2FF, .30f * b[3]);
-        }
-    }
-
-    private void drawRain(Canvas c, float t) {
-        line.setStrokeWidth(2f);
-        line.setColor(Color.rgb(190, 215, 255));
-        for (int i = 0; i < dropX.length; i++) {
-            float p = ((t / dropSpeed[i]) + dropPhase[i]) % 1f;
-            float y = -60 + p * 1180, x = dropX[i] - p * 60;
-            line.setAlpha(110);
-            c.drawLine(x, y, x - 2.4f, y + 46, line);
-        }
-    }
-
-    private void drawSnow(Canvas c, float t) {
-        paint.setShader(null);
-        paint.setColor(Color.WHITE);
-        for (int i = 0; i < flakeX.length; i++) {
-            float p = ((t / flakeSpeed[i]) + flakePhase[i]) % 1f;
-            float y = -20 + p * 1120, x = flakeX[i] + (float) Math.sin(p * Math.PI * 2) * 40;
-            paint.setAlpha(200);
-            c.drawCircle(x, y, flakeR[i], paint);
-        }
-    }
-
     private void drawScrims(Canvas c) {
         paint.setAlpha(255);
         paint.setShader(scrimTop);
@@ -338,10 +240,6 @@ final class SkyScene extends View {
         }
     }
 
-    private final LinearGradient rayH = new LinearGradient(-17, 0, 17, 0,
-            new int[]{0x00FFFFFF, Color.WHITE, 0x00FFFFFF}, null, Shader.TileMode.CLAMP);
-    private final LinearGradient rayV = new LinearGradient(0, -17, 0, 17,
-            new int[]{0x00FFFFFF, Color.WHITE, 0x00FFFFFF}, null, Shader.TileMode.CLAMP);
     private final LinearGradient scrimTop = new LinearGradient(0, 0, 0, 420, 0x8C03050F, 0x0003050F,
             Shader.TileMode.CLAMP);
     private final LinearGradient scrimBottom = new LinearGradient(0, H, 0, H - 360, 0xC703050F, 0x0003050F,
