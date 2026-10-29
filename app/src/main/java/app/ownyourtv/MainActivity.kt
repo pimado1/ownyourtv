@@ -257,7 +257,6 @@ class MainActivity : Activity() {
                     wantUpdate && Update.canInstall(this) -> updateScreen()
                     wantGuard -> {
                         wantGuard = false
-                        app.ownyourtv.home.Profiles.enableGuard(this)
                         startActivity(Intent(this, ProfilesActivity::class.java)); finish()
                     }
                     !prefs.getBoolean(SETUP_DONE, false) -> wizTv()
@@ -296,8 +295,8 @@ class MainActivity : Activity() {
         tv!!.sh("pm grant $packageName android.permission.POST_NOTIFICATIONS 2>/dev/null; true")
         // So that later updates from GitHub install without the owner hunting for "unknown apps" in the settings.
         tv!!.sh("appops set $packageName REQUEST_INSTALL_PACKAGES allow 2>/dev/null; true")
-        // So that a child's profile can switch its guard (an accessibility service) on by itself, without ADB.
-        tv!!.sh("pm grant $packageName android.permission.WRITE_SECURE_SETTINGS 2>/dev/null; true")
+        // So that a child's profile can see which app is in front, to keep the child to their apps.
+        tv!!.sh("appops set $packageName GET_USAGE_STATS allow 2>/dev/null; true")
     }
 
     // After a TV update: what came back on is switched off again in one press.
@@ -817,7 +816,7 @@ class MainActivity : Activity() {
             // Earlier versions had a remote-key service; it is gone, so its entry in the TV's settings goes too.
             steps += Step(getString(R.string.p_perms_done)) {
                 val s = t.sh("settings get secure enabled_accessibility_services").out.trim()
-                val next = s.split(':').filter { it.isNotBlank() && it != "null" && it != KEY_SERVICE }.joinToString(":")
+                val next = s.split(':').filter { it.isNotBlank() && it != "null" && it != KEY_SERVICE && !it.startsWith("app.ownyourtv/") }.joinToString(":")
                 if (next != s) t.sh(if (next.isEmpty()) "settings delete secure enabled_accessibility_services" else "settings put secure enabled_accessibility_services $next")
                 true
             }
@@ -860,7 +859,7 @@ class MainActivity : Activity() {
             return false
         }
         val s = t.sh("settings get secure enabled_accessibility_services").out.trim()
-        val next = s.split(':').filter { it.isNotBlank() && it != "null" && it != KEY_SERVICE }.joinToString(":")
+        val next = s.split(':').filter { it.isNotBlank() && it != "null" && it != KEY_SERVICE && !it.startsWith("app.ownyourtv/") }.joinToString(":")
         t.sh(if (next.isEmpty()) "settings delete secure enabled_accessibility_services" else "settings put secure enabled_accessibility_services $next")
         return true
     }

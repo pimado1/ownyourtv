@@ -1,9 +1,7 @@
 package app.ownyourtv.home;
 
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.provider.Settings;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -193,33 +191,6 @@ public final class Profiles {
         Calendar c = Calendar.getInstance();
         int now = c.get(Calendar.HOUR_OF_DAY) * 60 + c.get(Calendar.MINUTE);
         prefs(ctx).edit().putString("awake_" + p.id, today() + (now < WAKE_MINUTES ? "n" : "")).apply();
-    }
-
-    // ---- the guard ---------------------------------------------------------------------------------
-
-    /** The accessibility service that keeps a child to their apps. */
-    public static ComponentName guard(Context ctx) {
-        return new ComponentName(ctx, GuardService.class);
-    }
-
-    public static boolean guardOn(Context ctx) {
-        String on = Settings.Secure.getString(ctx.getContentResolver(), Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES);
-        return on != null && on.contains(guard(ctx).flattenToString());
-    }
-
-    /** Switches the guard on by itself: OwnYourTV was given the right to change secure settings over ADB. */
-    public static boolean enableGuard(Context ctx) {
-        if (guardOn(ctx)) return true;
-        try {
-            String on = Settings.Secure.getString(ctx.getContentResolver(), Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES);
-            String me = guard(ctx).flattenToString();
-            String next = on == null || on.isEmpty() || "null".equals(on) ? me : on + ":" + me;
-            Settings.Secure.putString(ctx.getContentResolver(), Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES, next);
-            Settings.Secure.putInt(ctx.getContentResolver(), Settings.Secure.ACCESSIBILITY_ENABLED, 1);
-            return guardOn(ctx);
-        } catch (SecurityException notGranted) {
-            return false;
-        }
     }
 
     static SharedPreferences prefs(Context ctx) {

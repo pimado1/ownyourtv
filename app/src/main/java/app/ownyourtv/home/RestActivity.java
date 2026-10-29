@@ -16,14 +16,17 @@ import android.widget.Toast;
 import app.ownyourtv.R;
 
 /**
- * Bedtime, or a child's time used up for the day: a calm night sky that says so, then the TV goes to sleep. The
- * parent code lets the child stay up, or gives back half an hour.
+ * Bedtime, or a child's time used up for the day: a calm night sky that says so, then the screen goes dark and stays
+ * so until the TV sleeps on its own. The parent code lets the child stay up, or gives back half an hour.
  */
 public final class RestActivity extends Activity {
-    /** Seconds the goodnight stays on screen before the TV is put to sleep. */
+    /** Seconds the goodnight stays on screen before it fades to black. */
     private static final int GOODNIGHT_S = 12;
     private final android.os.Handler main = new android.os.Handler(android.os.Looper.getMainLooper());
-    private final Runnable sleep = GuardService::sleep;
+    private View dark;
+    private final Runnable sleep = () -> {
+        if (dark != null) dark.animate().alpha(1f).setDuration(4000).start();
+    };
 
     @Override
     protected void onCreate(Bundle state) {
@@ -74,6 +77,8 @@ public final class RestActivity extends Activity {
         parent.setBackground(bg);
         parent.setOnClickListener(v -> {
             main.removeCallbacks(sleep);
+            dark.animate().cancel();
+            dark.setAlpha(0f);
             PinPad.show(this, PinPad.title(this, false), code -> {
                 if (!Profiles.pinIs(this, code)) {
                     Toast.makeText(this, R.string.pf_pin_wrong, Toast.LENGTH_SHORT).show();
@@ -92,6 +97,11 @@ public final class RestActivity extends Activity {
         pl.topMargin = (int) (56 * u);
         col.addView(parent, pl);
         root.addView(col, new FrameLayout.LayoutParams(-2, -2, Gravity.CENTER));
+        // The dark that follows the goodnight: the parent button below it still answers the remote.
+        dark = new View(this);
+        dark.setBackgroundColor(Color.BLACK);
+        dark.setAlpha(0f);
+        root.addView(dark, new FrameLayout.LayoutParams(-1, -1));
         setContentView(root);
         parent.post(parent::requestFocus);
         col.setAlpha(0f);

@@ -230,11 +230,11 @@ class ProfilesActivity : Activity() {
         val i = list.indexOfFirst { it.id == pr.id }
         if (i >= 0) list[i] = pr else list += pr
         Profiles.save(this, list)
-        if (pr.kid && !Profiles.enableGuard(this)) { guardNeeded(); return }
+        if (pr.kid && !app.ownyourtv.home.GuardService.allowed(this)) { guardNeeded(); return }
         list()
     }
 
-    // The guard switches itself on with a right granted over ADB, once: from 1.8 the assistant grants it.
+    // The guard reads which app is in front with usage access, granted over ADB once: the assistant grants it.
     private fun guardNeeded() {
         val p = page().apply { gravity = Gravity.CENTER_VERTICAL }
         p.addView(ui.title(getString(R.string.pf_guard_title), 40))

@@ -1724,6 +1724,7 @@ public class HomeActivity extends Activity {
         focus = 0;
         loadDock();
         refreshProfile();
+        GuardService.sync(this);
         restIfNeeded();
     }
 
@@ -1753,6 +1754,7 @@ public class HomeActivity extends Activity {
         checkComeBack();
         checkUpdate();
         refreshProfile();
+        GuardService.sync(this);
         if (!restIfNeeded() && slept && Profiles.on(this) && (popup == null || !popup.isShowing())) main.post(() -> showProfiles(true));
         slept = false;
         // Still running a moment after showing (a pop-up may take the focus first): this start went well.
