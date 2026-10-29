@@ -58,7 +58,11 @@
     // Keyboard: the range input. Mouse and finger: anywhere on the picture, while vertical swipes still scroll the page.
     range.addEventListener("input", function () { touched = true; set(+range.value); });
     var at = function (e) { var r = cmp.getBoundingClientRect(); return Math.min(100, Math.max(0, (e.clientX - r.left) / r.width * 100)); };
+    // No image drag or text selection while sliding: the browser would grab the picture instead.
+    cmp.addEventListener("dragstart", function (e) { e.preventDefault(); });
     cmp.addEventListener("pointerdown", function (e) {
+      if (e.button > 0) return;
+      e.preventDefault();
       touched = true; cmp.classList.add("dragging"); set(at(e));
       cmp.setPointerCapture(e.pointerId);
     });
