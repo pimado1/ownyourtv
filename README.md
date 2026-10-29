@@ -21,7 +21,7 @@ that is yours. From the remote, no computer needed.</p>
   apps as a 3D deck of cards, the weather, quick settings on the remote's gear button.
 - **Profiles and child mode**: everyone gets their own home screen and dock, picked with a bubble when the TV wakes
   up. A child's profile keeps to the apps you choose, with a bedtime, a time per day, a volume ceiling and a parent
-  code; the TV goes to sleep when time is up. Everything stays on the TV.
+  code; the TV goes to sleep when time is up. Set up with the Profile pill on the home screen. Everything stays on the TV.
 - **After a TV update**: if the update switched apps back on, the home screen and a notice say so, and one press
   switches them off again.
 - **A backup home**: if the OwnYourTV home ever fails to start, a plain home with your apps takes over, never a
