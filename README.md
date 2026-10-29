@@ -17,8 +17,11 @@ that is yours. From the remote, no computer needed.</p>
 - **Tracking**: telemetry, advertising IDs and usage reports.
 - **Clutter**: leftovers nobody uses on a TV.
 - **Preinstalled apps**: keep the ones you use, switch off the rest.
-- **A home screen of its own**: A night sky with shooting stars, an aurora that takes the colour of the app you
-  pick, your apps as a 3D deck of cards, the weather, quick settings on the remote's gear button.
+- **A home screen of its own**: a calm night sky with an aurora that takes the colour of the app you pick, your
+  apps as a 3D deck of cards, the weather, quick settings on the remote's gear button.
+- **Profiles and child mode**: everyone gets their own home screen and dock, picked with a bubble when the TV wakes
+  up. A child's profile keeps to the apps you choose, with a bedtime, a time per day, a volume ceiling and a parent
+  code; the TV goes to sleep when time is up. Everything stays on the TV.
 - **After a TV update**: if the update switched apps back on, the home screen and a notice say so, and one press
   switches them off again.
 - **A backup home**: if the OwnYourTV home ever fails to start, a plain home with your apps takes over, never a
