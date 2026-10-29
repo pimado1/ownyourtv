@@ -6,12 +6,13 @@ page. Run it after editing a page or the dictionary, before tools/site_version.p
 import json, re, subprocess, pathlib
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent / "docs"
-PAGES = ["index.html", "privacy.html", "contact.html"]
+PAGES = ["index.html", "privacy.html", "contact.html", "other-tvs.html"]
 SITE = "https://ownyour.tv/"
 META = {  # what sits outside data-i18n: titles and descriptions
     "index.html": ("OwnYourTV : ta TV, sans pubs ni pistage", "Coupe les pubs et le pistage installés d'usine sur ta TV Android TV ou Google TV, et donne-lui un accueil calme, avec profils et mode enfant. À la télécommande, sans ordinateur. Gratuit et open source."),
     "privacy.html": ("Confidentialité · OwnYourTV", "Ce qu'OwnYourTV envoie, et quand : rien, sauf si tu choisis une ville pour la météo ou appuies sur Partager."),
     "contact.html": ("Contact · OwnYourTV", "Ajouter ta TV à la liste, signaler un souci ou écrire au développeur d'OwnYourTV."),
+    "other-tvs.html": ("Samsung, LG, Roku, Vizio : coupe le pistage · OwnYourTV", "OwnYourTV tourne sur Android TV et Google TV. Sur une TV Samsung, LG, Roku, Vizio ou VIDAA, tu peux quand même l'empêcher de signaler ce que tu regardes, à la télécommande, en cinq minutes."),
 }
 
 FR = json.loads(subprocess.check_output(["node", "-e",

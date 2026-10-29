@@ -305,3 +305,4 @@ main { overflow-x: clip; }
 .get .sub { margin-bottom: 32px; }
 .get .hero-links { justify-content: center; margin-top: 20px; }
 @media (max-width: 600px) { .get .code { width: 100%; } .get .hero-links .btn { flex: 1 1 0; justify-content: center; } }
+.doc .muted { color: var(--grey); font-weight: 400; font-size: 0.7em; }
