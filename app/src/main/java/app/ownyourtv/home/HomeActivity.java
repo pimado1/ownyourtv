@@ -106,6 +106,11 @@ public class HomeActivity extends Activity {
     private String liveTvPkg = "";
     private String name = "";
     private Dialog popup;
+    private LinearLayout profilePill;
+    private TextView profileName, profileBadge;
+    /** The screen went dark while the home screen was up: at wake, whoever is there picks their profile. */
+    private boolean slept;
+    private boolean sourcesVisible;
 
     private final Runnable tick = new Runnable() {
         @Override
@@ -169,6 +174,7 @@ public class HomeActivity extends Activity {
         else showNoCity();
         if (getIntent().getBooleanExtra(QuickPanelActivity.EXTRA_INPUTS, false)) main.post(this::showInputs);
         if (getIntent().getBooleanExtra(EXTRA_PICK_CITY, false)) main.post(this::showCityPicker);
+        if (getIntent().getBooleanExtra(EXTRA_PROFILES, false)) main.post(() -> showProfiles(false));
     }
 
     // ---- first launch without a computer -----------------------------------------------------------
@@ -256,6 +262,8 @@ public class HomeActivity extends Activity {
 
     /** Réglages rapides ▸ Météo opens Home with this extra to choose the weather's city. */
     static final String EXTRA_PICK_CITY = "pick_city";
+    /** From quick settings: show who is watching. */
+    static final String EXTRA_PROFILES = "profiles";
 
     private void showNoCity() {
         showWeatherLine(getString(R.string.h_weather), getString(R.string.h_pick_city_hint));
@@ -693,13 +701,26 @@ public class HomeActivity extends Activity {
         Glyph refresh = new Glyph(this, Glyph.REFRESH);
         memPill.addView(refresh, new LinearLayout.LayoutParams(px(24), px(24)));
         memPill.setOnClickListener(v -> freeMemory());
-        bar.addView(memPill, new FrameLayout.LayoutParams(-2, -1, Gravity.END));
+        profilePill = pill(Glyph.GRID, getString(R.string.pf_pill), true);
+        profileName = (TextView) profilePill.getTag();
+        profileBadge = label(textBold, 18, 0xFF0B0D12);
+        profileBadge.setGravity(Gravity.CENTER);
+        profilePill.removeViewAt(0);
+        profilePill.addView(profileBadge, 0, new LinearLayout.LayoutParams(px(36), px(36)));
+        profilePill.setOnClickListener(v -> showProfiles(false));
+        LinearLayout right = row(16);
+        right.setClipChildren(false);
+        right.addView(profilePill, new LinearLayout.LayoutParams(-2, -1));
+        right.addView(memPill, new LinearLayout.LayoutParams(-2, -1));
+        bar.addView(right, new FrameLayout.LayoutParams(-2, -1, Gravity.END));
 
-        for (View v : new View[]{soirPill, speakerPill, sourcesPill, memPill}) v.setNextFocusUpId(carousel.getId());
+        for (View v : new View[]{soirPill, speakerPill, sourcesPill, memPill, profilePill}) v.setNextFocusUpId(carousel.getId());
         soirPill.setNextFocusLeftId(soirPill.getId());
         memPill.setNextFocusRightId(memPill.getId());
-        memPill.setNextFocusLeftId(sourcesPill.getId());
-        sourcesPill.setNextFocusRightId(memPill.getId());
+        memPill.setNextFocusLeftId(profilePill.getId());
+        profilePill.setNextFocusLeftId(sourcesPill.getId());
+        profilePill.setNextFocusRightId(memPill.getId());
+        sourcesPill.setNextFocusRightId(profilePill.getId());
         return bar;
     }
 
@@ -1173,13 +1194,16 @@ public class HomeActivity extends Activity {
         bg.post(() -> {
             List<HomeData.Input> list = HomeData.inputs(this);
             main.post(() -> {
-                boolean any = !list.isEmpty();
+                sourcesVisible = !list.isEmpty();
+                // A child keeps to their apps: the TV's inputs (a console on HDMI) are left out.
+                boolean any = sourcesVisible && !Profiles.kidNow(this);
                 if (any) sourcesValue.setText(list.get(0).label);
                 sourcesPill.setVisibility(any ? View.VISIBLE : View.GONE);
                 if (inputsButton != null) inputsButton.setVisibility(any ? View.VISIBLE : View.GONE);
                 View last = any ? sourcesPill : castPill.getVisibility() == View.VISIBLE ? castPill : speakerPill;
-                memPill.setNextFocusLeftId(last.getId());
-                last.setNextFocusRightId(memPill.getId());
+                View next = profilePill.getVisibility() == View.VISIBLE ? profilePill : memPill;
+                next.setNextFocusLeftId(last.getId());
+                last.setNextFocusRightId(next.getId());
             });
         });
     }
@@ -1302,6 +1326,8 @@ public class HomeActivity extends Activity {
 
     /** Hold OK on a deck card: move it left or right, or take it off the deck. */
     private void showDockMenu(int index) {
+        // A child's dock is set by the parent, in their profile.
+        if (Profiles.kidNow(this)) return;
         HomeData.App app = dock.get(index);
         LinearLayout actions = row(18);
         List<String> pkgs = dockPackages();
@@ -1340,6 +1366,7 @@ public class HomeActivity extends Activity {
 
     /** Hold OK on an app in Toutes les apps: add it to the dock, uninstall it, or open its info screen. */
     private void showAppMenu(HomeData.App app) {
+        if (Profiles.kidNow(this)) return;
         LinearLayout actions = row(18);
         if (!dockPackages().contains(app.pkg)) actions.addView(dockAction(getString(R.string.h_dock), getString(R.string.h_add_dock), () -> {
             List<String> pkgs = dockPackages();
@@ -1434,7 +1461,12 @@ public class HomeActivity extends Activity {
         Set<String> skip = HomeData.hidden(this);
         for (HomeData.App a : dock) skip.add(a.pkg);
         List<HomeData.App> others = new ArrayList<>();
-        for (HomeData.App a : HomeData.allApps(this)) if (!skip.contains(a.pkg)) others.add(a);
+        Profiles.Profile kid = Profiles.current(this);
+        for (HomeData.App a : HomeData.allApps(this)) {
+            if (skip.contains(a.pkg)) continue;
+            if (kid != null && kid.kid && !kid.apps.contains(a.pkg)) continue;
+            others.add(a);
+        }
         LinearLayout grid = column(28);
         LinearLayout row = null;
         for (int i = 0; i < others.size(); i++) {
@@ -1597,6 +1629,103 @@ public class HomeActivity extends Activity {
         actions.post(() -> actions.getChildAt(0).requestFocus());
     }
 
+    // ---- profiles -----------------------------------------------------------------------------------
+
+    private void refreshProfile() {
+        Profiles.Profile p = Profiles.current(this);
+        profilePill.setVisibility(p == null ? View.GONE : View.VISIBLE);
+        if (p == null) {
+            refreshInputs();
+            return;
+        }
+        profileName.setText(p.name);
+        profileBadge.setText(p.name.trim().isEmpty() ? "?" : p.name.trim().substring(0, 1).toUpperCase(Locale.getDefault()));
+        GradientDrawable dot = new GradientDrawable();
+        dot.setShape(GradientDrawable.OVAL);
+        dot.setColor(p.color);
+        profileBadge.setBackground(dot);
+        refreshInputs();
+    }
+
+    /** Who is watching: one bubble per profile. Leaving a child's profile asks for the parent code. */
+    private void showProfiles(boolean wake) {
+        List<Profiles.Profile> list = Profiles.all(this);
+        if (list.size() < 2) {
+            startActivity(new Intent(this, app.ownyourtv.ProfilesActivity.class).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+            return;
+        }
+        Profiles.Profile now = Profiles.current(this);
+        LinearLayout bubbles = row(36);
+        bubbles.setClipChildren(false);
+        View focusFirst = null;
+        for (Profiles.Profile p : list) {
+            LinearLayout col = column(14);
+            col.setGravity(Gravity.CENTER_HORIZONTAL);
+            TextView b = label(displayLight, 56, 0xFF0B0D12);
+            b.setGravity(Gravity.CENTER);
+            b.setText(p.name.trim().isEmpty() ? "?" : p.name.trim().substring(0, 1).toUpperCase(Locale.getDefault()));
+            GradientDrawable dot = new GradientDrawable();
+            dot.setShape(GradientDrawable.OVAL);
+            dot.setColor(p.color);
+            b.setBackground(dot);
+            FrameLayout ring = ringed(b, 66, 8, px(132), px(132));
+            col.addView(ring, wrap());
+            TextView n = label(text, 24, Color.WHITE);
+            n.setText(p.name);
+            col.addView(n, wrap());
+            if (p.kid) {
+                TextView k = label(textBold, 14, 0xFFC6F432);
+                k.setLetterSpacing(0.15f);
+                k.setText(getString(R.string.pf_kid).toUpperCase(Locale.getDefault()));
+                col.addView(k, wrap());
+            }
+            ring.setOnClickListener(v -> pickProfile(p, now));
+            bubbles.addView(col, wrap());
+            if (focusFirst == null || (now != null && now.id.equals(p.id))) focusFirst = ring;
+        }
+        LinearLayout body = column(32);
+        body.addView(bubbles, wrap());
+        if (now == null || !now.kid) {
+            body.addView(dockAction(getString(R.string.pf_title), getString(R.string.pf_manage), () -> {
+                dismissPopup();
+                startActivity(new Intent(this, app.ownyourtv.ProfilesActivity.class).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+            }), new LinearLayout.LayoutParams(-2, px(72)));
+        }
+        dismissPopup();
+        popup = sheet(getString(R.string.pf_who_watches), getString(wake ? R.string.pf_wake_hint : R.string.pf_pick_hint), body);
+        popup.show();
+        View f = focusFirst;
+        f.post(f::requestFocus);
+    }
+
+    private void pickProfile(Profiles.Profile p, Profiles.Profile now) {
+        if (now != null && now.kid && !p.id.equals(now.id) && Profiles.hasPin(this)) {
+            PinPad.show(this, PinPad.title(this, false), code -> {
+                if (Profiles.pinIs(this, code)) switchTo(p);
+                else showToast(getString(R.string.pf_pin_wrong));
+            });
+            return;
+        }
+        switchTo(p);
+    }
+
+    private void switchTo(Profiles.Profile p) {
+        dismissPopup();
+        Profiles.use(this, p.id);
+        focus = 0;
+        loadDock();
+        refreshProfile();
+        restIfNeeded();
+    }
+
+    /** A child at bedtime or out of time for the day: the goodnight screen instead of the home screen. */
+    private boolean restIfNeeded() {
+        Profiles.Profile p = Profiles.current(this);
+        if (p == null || !p.kid || (!Profiles.bedtimeNow(this, p) && !Profiles.timeUp(this, p))) return false;
+        startActivity(new Intent(this, RestActivity.class).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+        return true;
+    }
+
     // ---- lifecycle --------------------------------------------------------------------------------
 
     @Override
@@ -1614,6 +1743,9 @@ public class HomeActivity extends Activity {
         refreshResumes();
         checkComeBack();
         checkUpdate();
+        refreshProfile();
+        if (!restIfNeeded() && slept && Profiles.on(this) && (popup == null || !popup.isShowing())) main.post(() -> showProfiles(true));
+        slept = false;
         // Still running a moment after showing (a pop-up may take the focus first): this start went well.
         main.postDelayed(markShown, 1500);
         if (!carousel.hasFocus() && getCurrentFocus() == null) carousel.requestFocus();
@@ -1626,6 +1758,13 @@ public class HomeActivity extends Activity {
         super.onWindowFocusChanged(hasFocus);
         // On screen and focused: this start went well.
         if (hasFocus) SafeMode.shown(this);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        android.os.PowerManager pm = getSystemService(android.os.PowerManager.class);
+        if (pm != null && !pm.isInteractive()) slept = true;
     }
 
     @Override
@@ -1647,6 +1786,10 @@ public class HomeActivity extends Activity {
         }
         if (intent.getBooleanExtra(EXTRA_PICK_CITY, false)) {
             main.post(this::showCityPicker);
+            return;
+        }
+        if (intent.getBooleanExtra(EXTRA_PROFILES, false)) {
+            main.post(() -> showProfiles(false));
             return;
         }
         carousel.requestFocus();

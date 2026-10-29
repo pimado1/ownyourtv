@@ -52,6 +52,7 @@ class MainActivity : Activity() {
     private var still = false
     /** Opened from the home screen's "update" pop-up: once connected, the update comes first. */
     private var wantUpdate = false
+    private var wantGuard = false
     private var updateStatus: TextView? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -78,6 +79,7 @@ class MainActivity : Activity() {
             else -> when {
                 intent.getBooleanExtra(Update.EXTRA, false) -> startUpdate()
                 intent.getBooleanExtra(Update.EXTRA_CHECK, false) -> checkUpdate()
+                intent.getBooleanExtra(EXTRA_GUARD, false) -> { wantGuard = true; if (adbOn()) connect() else devMode() }
                 intent.getBooleanExtra(Recheck.EXTRA, false) -> if (adbOn()) connect() else devMode()
                 else -> welcome()
             }
@@ -253,6 +255,11 @@ class MainActivity : Activity() {
             main.post {
                 if (screen == "connect") when {
                     wantUpdate && Update.canInstall(this) -> updateScreen()
+                    wantGuard -> {
+                        wantGuard = false
+                        app.ownyourtv.home.Profiles.enableGuard(this)
+                        startActivity(Intent(this, ProfilesActivity::class.java)); finish()
+                    }
                     !prefs.getBoolean(SETUP_DONE, false) -> wizTv()
                     back.isNotEmpty() -> recheck()
                     else -> home()
@@ -289,6 +296,8 @@ class MainActivity : Activity() {
         tv!!.sh("pm grant $packageName android.permission.POST_NOTIFICATIONS 2>/dev/null; true")
         // So that later updates from GitHub install without the owner hunting for "unknown apps" in the settings.
         tv!!.sh("appops set $packageName REQUEST_INSTALL_PACKAGES allow 2>/dev/null; true")
+        // So that a child's profile can switch its guard (an accessibility service) on by itself, without ADB.
+        tv!!.sh("pm grant $packageName android.permission.WRITE_SECURE_SETTINGS 2>/dev/null; true")
     }
 
     // After a TV update: what came back on is switched off again in one press.
@@ -1013,6 +1022,8 @@ class MainActivity : Activity() {
         const val SHARED = "shared_"
         const val SETUP_DONE = "setup_done"
         const val EXTRA_HOME = "computer_home"
+        /** From the profiles screen: connect once so the child guard can switch itself on. */
+        const val EXTRA_GUARD = "guard"
         const val EXTRA_HOME_ON = "on"
         val ANIM_KEYS = listOf("window_animation_scale", "transition_animation_scale", "animator_duration_scale")
         const val WIZARD = "com.google.android.tungsten.setupwraith"

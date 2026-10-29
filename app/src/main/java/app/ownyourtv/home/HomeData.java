@@ -116,21 +116,28 @@ final class HomeData {
     /** The dock chosen on the TV (hold OK on an app), which wins over the overlay's dock_apps. */
     static void saveDock(Context ctx, List<String> pkgs) {
         ctx.getSharedPreferences(DOCK_PREFS, Context.MODE_PRIVATE).edit()
-                .putString("apps", android.text.TextUtils.join(",", pkgs)).apply();
+                .putString(Profiles.dockKey(ctx), android.text.TextUtils.join(",", pkgs)).apply();
     }
 
     /** Forgets the dock chosen on the TV: the default dock applies again. */
     static void resetDock(Context ctx) {
-        ctx.getSharedPreferences(DOCK_PREFS, Context.MODE_PRIVATE).edit().remove("apps").apply();
+        ctx.getSharedPreferences(DOCK_PREFS, Context.MODE_PRIVATE).edit().remove(Profiles.dockKey(ctx)).apply();
     }
 
     static boolean dockChosen(Context ctx) {
-        return ctx.getSharedPreferences(DOCK_PREFS, Context.MODE_PRIVATE).contains("apps");
+        return ctx.getSharedPreferences(DOCK_PREFS, Context.MODE_PRIVATE).contains(Profiles.dockKey(ctx));
     }
 
     static List<String> dock(Context ctx) {
         List<String> out = new ArrayList<>();
-        String chosen = ctx.getSharedPreferences(DOCK_PREFS, Context.MODE_PRIVATE).getString("apps", null);
+        String chosen = ctx.getSharedPreferences(DOCK_PREFS, Context.MODE_PRIVATE).getString(Profiles.dockKey(ctx), null);
+        Profiles.Profile kid = Profiles.current(ctx);
+        if (kid != null && kid.kid) {
+            // A child's dock is their allowed apps, in the order the parent set or picked them.
+            if (chosen != null) for (String p : chosen.split(",")) if (kid.apps.contains(p.trim())) out.add(p.trim());
+            for (String p : kid.apps) if (!out.contains(p)) out.add(p);
+            return out;
+        }
         if (chosen != null) {
             for (String p : chosen.split(",")) if (!p.trim().isEmpty()) out.add(p.trim());
             return out;

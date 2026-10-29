@@ -127,27 +127,38 @@ public class QuickPanelActivity extends Activity {
 
         View volume = volumeRow();
         panel.addView(volume, rowParams());
-        addRow(Glyph.SPARKLE, getString(R.string.h_picture), getString(R.string.h_picture_d),
-                () -> open(new Intent(Settings.ACTION_DISPLAY_SETTINGS)));
-        addRow(Glyph.SOUNDBAR, getString(R.string.h_sound), getString(R.string.h_sound_d),
-                () -> open(new Intent("com.android.tv.action.VIEW_SOUND_SETTINGS")));
-        Weather w = Weather.from(this);
-        addRow(Glyph.SPARKLE, getString(R.string.h_weather), w != null && !w.place.isEmpty() ? getString(R.string.h_city_is, w.place)
-                : getString(R.string.h_city_pick), () -> open(new Intent(this, HomeActivity.class)
-                .putExtra(HomeActivity.EXTRA_PICK_CITY, true)));
-        addRow(Glyph.TV, getString(R.string.h_sources), getString(R.string.h_sources_d),
-                () -> open(new Intent(this, HomeActivity.class).putExtra(EXTRA_INPUTS, true)));
-        addRow(Glyph.CAST, getString(R.string.h_wifi), getString(R.string.h_wifi_d), () -> open(new Intent(Settings.ACTION_WIFI_SETTINGS)));
-        addRow(Glyph.SOUNDBAR, getString(R.string.h_bluetooth), getString(R.string.h_bluetooth_d),
-                () -> open(new Intent(Settings.ACTION_BLUETOOTH_SETTINGS)));
-        // Sleep is a Google TV screen; on other TVs the row is left out rather than opening the wrong screen.
-        Intent sleep = new Intent("com.google.android.pano.action.SLEEP");
-        if (sleep.resolveActivity(getPackageManager()) != null)
-            addRow(Glyph.MOON, getString(R.string.h_saver), getString(R.string.h_saver_d), () -> open(sleep));
-        addRow(Glyph.SPARKLE, getString(R.string.app_name), getString(R.string.up_row, Update.current(this)),
-                () -> open(new Intent(this, app.ownyourtv.MainActivity.class).putExtra(Update.EXTRA_CHECK, true)));
-        addRow(Glyph.GRID, getString(R.string.h_all_settings), getString(R.string.h_all_settings_d),
-                () -> open(new Intent(Settings.ACTION_SETTINGS)));
+        Profiles.Profile who = Profiles.current(this);
+        if (who != null && who.kid) {
+            // A child: the volume and who is watching, nothing that changes the TV.
+            addRow(Glyph.GRID, getString(R.string.pf_title), getString(R.string.pf_row_on, who.name),
+                    () -> open(new Intent(this, HomeActivity.class).putExtra(HomeActivity.EXTRA_PROFILES, true)));
+        } else {
+            addRow(Glyph.SPARKLE, getString(R.string.h_picture), getString(R.string.h_picture_d),
+                    () -> open(new Intent(Settings.ACTION_DISPLAY_SETTINGS)));
+            addRow(Glyph.SOUNDBAR, getString(R.string.h_sound), getString(R.string.h_sound_d),
+                    () -> open(new Intent("com.android.tv.action.VIEW_SOUND_SETTINGS")));
+            Weather w = Weather.from(this);
+            addRow(Glyph.SPARKLE, getString(R.string.h_weather), w != null && !w.place.isEmpty() ? getString(R.string.h_city_is, w.place)
+                    : getString(R.string.h_city_pick), () -> open(new Intent(this, HomeActivity.class)
+                    .putExtra(HomeActivity.EXTRA_PICK_CITY, true)));
+            addRow(Glyph.TV, getString(R.string.h_sources), getString(R.string.h_sources_d),
+                    () -> open(new Intent(this, HomeActivity.class).putExtra(EXTRA_INPUTS, true)));
+            addRow(Glyph.CAST, getString(R.string.h_wifi), getString(R.string.h_wifi_d), () -> open(new Intent(Settings.ACTION_WIFI_SETTINGS)));
+            addRow(Glyph.SOUNDBAR, getString(R.string.h_bluetooth), getString(R.string.h_bluetooth_d),
+                    () -> open(new Intent(Settings.ACTION_BLUETOOTH_SETTINGS)));
+            // Sleep is a Google TV screen; on other TVs the row is left out rather than opening the wrong screen.
+            Intent sleep = new Intent("com.google.android.pano.action.SLEEP");
+            if (sleep.resolveActivity(getPackageManager()) != null)
+                addRow(Glyph.MOON, getString(R.string.h_saver), getString(R.string.h_saver_d), () -> open(sleep));
+            addRow(Glyph.SPARKLE, getString(R.string.app_name), getString(R.string.up_row, Update.current(this)),
+                    () -> open(new Intent(this, app.ownyourtv.MainActivity.class).putExtra(Update.EXTRA_CHECK, true)));
+            addRow(Glyph.GRID, getString(R.string.h_all_settings), getString(R.string.h_all_settings_d),
+                    () -> open(new Intent(Settings.ACTION_SETTINGS)));
+            addRow(Glyph.GRID, getString(R.string.pf_title), who != null ? getString(R.string.pf_row_on, who.name)
+                    : getString(R.string.pf_row_off), () -> open(who != null
+                    ? new Intent(this, HomeActivity.class).putExtra(HomeActivity.EXTRA_PROFILES, true)
+                    : new Intent(this, app.ownyourtv.ProfilesActivity.class)));
+        }
 
         FrameLayout.LayoutParams pl = new FrameLayout.LayoutParams(px(600), -2, Gravity.END | Gravity.CENTER_VERTICAL);
         pl.rightMargin = px(56);
@@ -231,7 +242,11 @@ public class QuickPanelActivity extends Activity {
     private void step(int dir) {
         int max = audio.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
         int cur = audio.getStreamVolume(AudioManager.STREAM_MUSIC);
-        int next = Math.max(0, Math.min(max, cur + dir * Math.max(1, Math.round(max / 20f))));
+        int top = max;
+        Profiles.Profile kid = Profiles.current(this);
+        // A child's volume stops at the ceiling the parent chose.
+        if (kid != null && kid.kid && kid.maxVolume > 0) top = Math.max(1, max * kid.maxVolume / 100);
+        int next = Math.max(0, Math.min(top, cur + dir * Math.max(1, Math.round(max / 20f))));
         try {
             audio.setStreamVolume(AudioManager.STREAM_MUSIC, next, 0);
         } catch (SecurityException ignored) {
