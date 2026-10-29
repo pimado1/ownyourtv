@@ -136,6 +136,12 @@ public final class Profiles {
         prefs(ctx).edit().putString("pin", pin).apply();
     }
 
+    /** The code only guards children: with no child profile left, there is no code at all. */
+    public static void dropPinWithoutKids(Context ctx) {
+        for (Profile p : all(ctx)) if (p.kid) return;
+        prefs(ctx).edit().remove("pin").apply();
+    }
+
     // ---- a child's day ---------------------------------------------------------------------------
 
     private static String today() {

@@ -34,6 +34,8 @@ class ProfilesActivity : Activity() {
         if (Profiles.all(this).isEmpty()) {
             Profiles.save(this, listOf(Profiles.Profile().apply { id = Profiles.MAIN; name = getString(R.string.pf_me); color = Profiles.COLORS[0] }))
         }
+        // No code by default: one is asked for with the first child's profile, and dropped with the last one.
+        Profiles.dropPinWithoutKids(this)
         if (Profiles.hasPin(this)) {
             PinPad.show(this, PinPad.title(this, false)) { code ->
                 if (Profiles.pinIs(this, code)) list() else { Toast.makeText(this, R.string.pf_pin_wrong, Toast.LENGTH_SHORT).show(); finish() }
@@ -85,7 +87,7 @@ class ProfilesActivity : Activity() {
         }
         p.addView(r, ui.lp().apply { topMargin = ui.dp(30) })
         val actions = ui.row(16)
-        actions.addView(ui.button(getString(if (Profiles.hasPin(this)) R.string.pf_pin_change else R.string.pf_pin_set), false) { setPin { list() } })
+        if (Profiles.hasPin(this)) actions.addView(ui.button(getString(R.string.pf_pin_change), false) { setPin { list() } })
         actions.addView(ui.button(getString(R.string.pf_back_home), false) { finish() })
         p.addView(actions, ui.lp().apply { topMargin = ui.dp(34) })
         p.addView(ui.text(getString(R.string.pf_private), 14, Ui.GREY).apply { maxWidth = ui.dp(900) }, ui.lp().apply { topMargin = ui.dp(22) })
@@ -207,6 +209,7 @@ class ProfilesActivity : Activity() {
         actions.addView(save)
         if (!isNew && pr.id != Profiles.MAIN) actions.addView(ui.button(getString(R.string.pf_delete), false) {
             Profiles.save(this, Profiles.all(this).filter { it.id != pr.id })
+            Profiles.dropPinWithoutKids(this)
             list()
         })
         actions.addView(ui.button(getString(R.string.cancel), false) { list() })

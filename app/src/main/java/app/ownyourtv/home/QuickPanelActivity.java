@@ -154,10 +154,6 @@ public class QuickPanelActivity extends Activity {
                     () -> open(new Intent(this, app.ownyourtv.MainActivity.class).putExtra(Update.EXTRA_CHECK, true)));
             addRow(Glyph.GRID, getString(R.string.h_all_settings), getString(R.string.h_all_settings_d),
                     () -> open(new Intent(Settings.ACTION_SETTINGS)));
-            addRow(Glyph.GRID, getString(R.string.pf_title), who != null ? getString(R.string.pf_row_on, who.name)
-                    : getString(R.string.pf_row_off), () -> open(who != null
-                    ? new Intent(this, HomeActivity.class).putExtra(HomeActivity.EXTRA_PROFILES, true)
-                    : new Intent(this, app.ownyourtv.ProfilesActivity.class)));
         }
 
         FrameLayout.LayoutParams pl = new FrameLayout.LayoutParams(px(600), -2, Gravity.END | Gravity.CENTER_VERTICAL);

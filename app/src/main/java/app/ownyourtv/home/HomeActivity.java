@@ -1633,11 +1633,20 @@ public class HomeActivity extends Activity {
 
     private void refreshProfile() {
         Profiles.Profile p = Profiles.current(this);
-        profilePill.setVisibility(p == null ? View.GONE : View.VISIBLE);
+        // Always on the home screen: with no profiles yet, it invites to add the family.
+        profilePill.setVisibility(View.VISIBLE);
         if (p == null) {
+            profileName.setText(getString(R.string.pf_row_off));
+            profileBadge.setText("+");
+            GradientDrawable dot = new GradientDrawable();
+            dot.setShape(GradientDrawable.OVAL);
+            dot.setColor(0x33FFFFFF);
+            profileBadge.setBackground(dot);
+            profileBadge.setTextColor(Color.WHITE);
             refreshInputs();
             return;
         }
+        profileBadge.setTextColor(0xFF0B0D12);
         profileName.setText(p.name);
         profileBadge.setText(p.name.trim().isEmpty() ? "?" : p.name.trim().substring(0, 1).toUpperCase(Locale.getDefault()));
         GradientDrawable dot = new GradientDrawable();
