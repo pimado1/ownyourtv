@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<link rel="canonical" href="https://ownyour.tv/fr/computer.html">
+<link rel="alternate" hreflang="en" href="https://ownyour.tv/computer.html">
+<link rel="alternate" hreflang="fr" href="https://ownyour.tv/fr/computer.html">
+<link rel="alternate" hreflang="x-default" href="https://ownyour.tv/computer.html">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Depuis un ordinateur, avec un agent IA · OwnYourTV</title>
+<meta name="description" content="Nettoyer une Android TV ou une Google TV depuis un ordinateur : des prompts prêts à copier pour Claude Code ou tout agent IA, pour installer OwnYourTV proprement et pour tout remettre comme avant.">
+<meta name="theme-color" content="#0b0d12">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect x='3' y='11' width='26' height='14' rx='4' fill='%23c6f432'/%3E%3Cpath d='M12 11V7.5a4 4 0 0 1 8 0' fill='none' stroke='%23f4f4f0' stroke-width='3' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="../site/style.css?v=202610300002">
+</head>
+<body>
+
+<header class="bar">
+  <div class="wrap">
+    <a class="brand" href="./" aria-label="OwnYourTV">
+      <svg viewBox="0 0 32 32" aria-hidden="true"><rect x="3" y="12" width="26" height="14" rx="4" fill="#c6f432"/><path d="M11.5 12V8a4.5 4.5 0 0 1 9 0v1" fill="none" stroke="#f4f4f0" stroke-width="3" stroke-linecap="round"/><circle cx="16" cy="17.5" r="2" fill="#0b0d12"/><path d="M15.2 18.5h1.6l.5 4h-2.6z" fill="#0b0d12"/><rect x="11" y="28" width="10" height="2" rx="1" fill="#f4f4f0"/></svg>
+      <span>Own<b>Your</b>TV</span>
+    </a>
+    <nav><a href="./" data-i18n="p_back">← Retour à l'accueil</a></nav>
+    <a class="lang" id="lang" href="../computer.html" hreflang="en" lang="en" aria-label="English">EN</a>
+  </div>
+</header>
+
+<main class="wrap doc doc-wide">
+  <p class="eyebrow" data-i18n="cp_eye">Depuis un ordinateur</p>
+  <h1 data-i18n="cp_title">Colle un prompt, ton agent IA fait le reste</h1>
+  <p class="lead-p" data-i18n="cp_lead">Aucune appli à télécharger sur la TV : ton ordinateur lui parle par le Wi-Fi. Colle un de ces prompts dans Claude Code, Codex, Gemini CLI ou tout agent capable de lancer des commandes. Il installe ce qu'il lui faut, te montre ce qu'il a trouvé, demande avant de désactiver quoi que ce soit, et garde une trace pour tout remettre comme avant.</p>
+
+  <ol class="pre-steps">
+    <li data-i18n="cp_pre1">Sur la TV, active le mode développeur et le <b>débogage USB</b> (<a href="./#how">étape 1 ici</a>).</li>
+    <li data-i18n="cp_pre2">Ton ordinateur est sur le <b>même Wi-Fi</b> que la TV.</li>
+    <li data-i18n="cp_pre3">Tape l'adresse IP de ta TV ci-dessous : chaque prompt la reprend.</li>
+  </ol>
+
+  <div class="ipbox">
+    <label for="ip" data-i18n="cp_ip_label">L'adresse IP de ta TV</label>
+    <input id="ip" inputmode="decimal" autocomplete="off" spellcheck="false" placeholder="192.168.1.42">
+    <small data-i18n="cp_ip_hint">Sur la TV : Paramètres › Réseau et Internet › ton Wi-Fi.</small>
+  </div>
+
+  <div class="prompts">
+    <section class="prompt-card">
+      <span class="pc-num">1</span>
+      <h2 data-i18n="cp1_h">Nettoyer ma TV</h2>
+      <p data-i18n="cp1_p">L'installation complète : pubs, pistage et superflu coupés, l'accueil OwnYourTV si tu le veux, les boutons de la télécommande qui marchent toujours.</p>
+      <pre class="prompt-code"><code id="p1" data-i18n="cp1_code">Clone https://github.com/pimado1/ownyourtv et suis son PROMPT.md pour nettoyer ma TV. Demande-moi avant de désactiver quoi que ce soit et avant de changer l'accueil. L'adresse IP de ma TV est <span class="ip">IP_DE_TA_TV</span>.</code></pre>
+      <button class="btn btn-lime copy" type="button" data-copy="p1" data-i18n="cp_copy">Copier le prompt</button>
+    </section>
+    <section class="prompt-card">
+      <span class="pc-num">2</span>
+      <h2 data-i18n="cp2_h">Tout remettre comme avant</h2>
+      <p data-i18n="cp2_p">Chaque appli désactivée par OwnYourTV se rallume, et l'accueil d'origine de la TV revient. Rien n'a jamais été supprimé.</p>
+      <pre class="prompt-code"><code id="p2" data-i18n="cp2_code">Clone https://github.com/pimado1/ownyourtv s'il n'est pas déjà là. Lance python3 ownyourtv.py <span class="ip">IP_DE_TA_TV</span> undo pour remettre tout ce qu'OwnYourTV a changé sur ma TV, montre-moi ce qui s'est rallumé, puis rappelle-moi de désactiver le débogage USB.</code></pre>
+      <button class="btn btn-lime copy" type="button" data-copy="p2" data-i18n="cp_copy">Copier le prompt</button>
+    </section>
+    <section class="prompt-card">
+      <span class="pc-num">3</span>
+      <h2 data-i18n="cp3_h">Une mise à jour de la TV a remis les pubs</h2>
+      <p data-i18n="cp3_p">Les mises à jour rallument parfois les applis du fabricant. L'agent les retrouve et les recoupe, avec ton accord.</p>
+      <pre class="prompt-code"><code id="p3" data-i18n="cp3_code">Clone https://github.com/pimado1/ownyourtv s'il n'est pas déjà là. Lance python3 ownyourtv.py <span class="ip">IP_DE_TA_TV</span> list, dis-moi quelles applis désactivées par OwnYourTV sont rallumées, et ne les recoupe qu'après mon accord.</code></pre>
+      <button class="btn btn-lime copy" type="button" data-copy="p3" data-i18n="cp_copy">Copier le prompt</button>
+    </section>
+  </div>
+
+  <h2 data-i18n="cp_demo_h">À quoi ça ressemble</h2>
+  <div class="term" id="term" aria-label="Un agent IA qui nettoie une TV" data-i18n-aria="cp_demo_aria">
+    <div class="term-bar"><i></i><i></i><i></i><span>claude</span></div>
+    <p class="t-in" data-i18n="cp_t1">› Clone pimado1/ownyourtv et suis son PROMPT.md…</p>
+    <p class="t-cmd">$ adb connect 192.168.1.42:5555</p>
+    <p class="t-out" data-i18n="cp_t2">TCL Smart TV Pro (Google TV 14) trouvée et reconnue : liste testée pour ce modèle.</p>
+    <p class="t-cmd">$ python3 ownyourtv.py 192.168.1.42 list</p>
+    <p class="t-out" data-i18n="cp_t3">Pubs 12 · Pistage 7 · Superflu 9 · Tes applis : Netflix, YouTube, Prime Video, jamais touchées.</p>
+    <p class="t-ask" data-i18n="cp_t4">Désactiver les 28 applis recommandées et mettre l'accueil OwnYourTV ? [o/n]</p>
+    <p class="t-in" data-i18n="cp_t_y">› o</p>
+    <p class="t-ok" data-i18n="cp_t5">✓ 28 applis désactivées, rien supprimé. ✓ Accueil OwnYourTV actif. ✓ Boutons de la télécommande OK.</p>
+    <p class="t-out" data-i18n="cp_t6">Pour annuler : python3 ownyourtv.py 192.168.1.42 undo. Pense à désactiver le débogage USB.</p>
+  </div>
+
+  <h2 data-i18n="cp_hand_h">Sans agent IA</h2>
+  <p data-i18n="cp_hand_p">La même chose, tapée toi-même. Il te faut Python 3 et adb (les outils Android).</p>
+  <div class="cmds">
+    <div class="cmd"><span data-i18n="cp_c1">Installer adb sur macOS</span><pre><code id="c1">brew install android-platform-tools</code></pre><button class="btn btn-ghost copy" type="button" data-copy="c1" data-i18n="copy">Copier</button></div>
+    <div class="cmd"><span data-i18n="cp_c1w">Installer adb sur Windows</span><pre><code id="c1w">winget install Google.PlatformTools</code></pre><button class="btn btn-ghost copy" type="button" data-copy="c1w" data-i18n="copy">Copier</button></div>
+    <div class="cmd"><span data-i18n="cp_c2">Récupérer OwnYourTV</span><pre><code id="c2">git clone https://github.com/pimado1/ownyourtv &amp;&amp; cd ownyourtv</code></pre><button class="btn btn-ghost copy" type="button" data-copy="c2" data-i18n="copy">Copier</button></div>
+    <div class="cmd"><span data-i18n="cp_c3">Nettoyer, avec un menu</span><pre><code id="c3">python3 ownyourtv.py <span class="ip">YOUR_TV_IP</span></code></pre><button class="btn btn-ghost copy" type="button" data-copy="c3" data-i18n="copy">Copier</button></div>
+    <div class="cmd"><span data-i18n="cp_c4">Le nettoyage recommandé d'un coup</span><pre><code id="c4">python3 ownyourtv.py <span class="ip">YOUR_TV_IP</span> optimise</code></pre><button class="btn btn-ghost copy" type="button" data-copy="c4" data-i18n="copy">Copier</button></div>
+    <div class="cmd"><span data-i18n="cp_c5">Tout remettre comme avant</span><pre><code id="c5">python3 ownyourtv.py <span class="ip">YOUR_TV_IP</span> undo</code></pre><button class="btn btn-ghost copy" type="button" data-copy="c5" data-i18n="copy">Copier</button></div>
+  </div>
+  <p class="note" data-i18n="cp_safe">Mêmes listes et mêmes règles de sécurité que l'appli TV : les applis sont désactivées, jamais supprimées, et ce dont la TV a besoin pour démarrer, lire une chaîne ou une entrée HDMI n'est jamais proposé. Quand c'est fini, désactive le débogage USB sur la TV.</p>
+</main>
+
+<footer>
+  <div class="wrap">
+    <a class="brand" href="./"><span>Own<b>Your</b>TV</span></a>
+    <a href="https://github.com/pimado1/ownyourtv">GitHub</a>
+    <a href="privacy.html" data-i18n="ft_privacy">Confidentialité</a>
+    <span data-i18n="ft_mit">Gratuit et open source, licence MIT</span>
+  </div>
+</footer>
+
+<script src="../site/i18n.js?v=202610300002"></script>
+<script>
+  (function () {
+    var ip = document.getElementById("ip"), saved = "";
+    try { saved = localStorage.getItem("tv_ip") || ""; } catch (e) {}
+    function fill() {
+      var v = ip.value.replace(/[^0-9.:]/g, "");
+      document.querySelectorAll(".ip").forEach(function (s) {
+        if (!s.dataset.ph) s.dataset.ph = s.textContent;
+        s.textContent = v || s.dataset.ph;
+        s.classList.toggle("set", !!v);
+      });
+      try { localStorage.setItem("tv_ip", v); } catch (e) {}
+    }
+    ip.value = saved;
+    ip.addEventListener("input", fill);
+    fill();
+    document.querySelectorAll("[data-copy]").forEach(function (b) {
+      b.addEventListener("click", function () {
+        var label = b.textContent;
+        navigator.clipboard.writeText(document.getElementById(b.getAttribute("data-copy")).textContent).then(function () {
+          b.textContent = t("copied"); setTimeout(function () { b.textContent = label; }, 1600);
+        });
+      });
+    });
+    // The terminal plays once, line by line, when it comes into view.
+    var term = document.getElementById("term");
+    if (window.IntersectionObserver && !matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      term.classList.add("play");
+      new IntersectionObserver(function (es, o) {
+        if (!es[0].isIntersecting) return;
+        o.disconnect();
+        term.querySelectorAll("p").forEach(function (p, i) { setTimeout(function () { p.classList.add("on"); }, 350 + i * 650); });
+      }, { threshold: 0.4 }).observe(term);
+    }
+  })();
+</script>
+<!-- Cloudflare Web Analytics: counts visits to this website without cookies; the TV app sends nothing to it. -->
+<script type='module' src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "6277e9947f4b43d3aec17fa0660c9f18"}'></script>
+</body>
+</html>
