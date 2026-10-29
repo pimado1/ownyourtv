@@ -267,6 +267,16 @@ class MainActivity : Activity() {
         }
     }
 
+    /**
+     * The network the TV is on was saved by the setup wizard: switching the wizard off would take it away. Only that
+     * one counts; other networks the wizard saved, never used now, are not a reason to wait.
+     */
+    private fun wizardWifi(t: Tv): Boolean {
+        val now = t.sh("dumpsys wifi | grep 'mostRecentlyConnected=true' | grep -o 'cname=[^ ]*'").out
+        return if (now.isNotBlank()) now.contains("setupwraith")
+        else t.sh("dumpsys wifi | grep -o 'cname=[^ ]*'").out.contains("setupwraith")
+    }
+
     private fun pkgs(flag: String) = tv!!.sh("pm list packages $flag").out.lines().map { it.removePrefix("package:").trim() }.filter { it.isNotEmpty() }.toSet()
 
     private fun load() {
@@ -277,7 +287,7 @@ class MainActivity : Activity() {
         items = Catalog.forTv(this, installed, disabled, knownTv, db.brand())
         ourHome = homeNow() == HOME_ACTIVITY
         wizardOn = WIZARD in installed && WIZARD !in disabled
-        wizardOwnsWifi = wizardOn && tv!!.sh("dumpsys wifi | grep -o 'cname=[^ ]*'").out.contains("setupwraith")
+        wizardOwnsWifi = wizardOn && wizardWifi(tv!!)
         val flags = knownTv?.flags ?: emptySet()
         val homes = tv!!.sh("cmd package query-activities --brief -a android.intent.action.MAIN -c android.intent.category.HOME").out
         homeBlock = when {
@@ -775,8 +785,8 @@ class MainActivity : Activity() {
         val open = ui.button(getString(R.string.wf_open), false) { openSettings(Settings.ACTION_WIFI_SETTINGS) }
         val done = ui.button(getString(R.string.wf_check), true) {
             thread {
-                val owned = runCatching { tv!!.sh("dumpsys wifi | grep -o 'cname=[^ ]*'").out.contains("setupwraith") }
-                    .getOrElse { tv = runCatching { Tv.connect(this) }.getOrNull(); tv?.sh("dumpsys wifi | grep -o 'cname=[^ ]*'")?.out?.contains("setupwraith") ?: true }
+                val owned = runCatching { wizardWifi(tv!!) }
+                    .getOrElse { tv = runCatching { Tv.connect(this) }.getOrNull(); tv?.let { wizardWifi(it) } ?: true }
                 main.post { wizardOwnsWifi = owned; if (owned) wifiStep(still = true) else runSteps(buildSteps()) }
             }
         }
@@ -873,7 +883,7 @@ class MainActivity : Activity() {
         val enabled = pkgs("-e")
         val offNow = mutableListOf<String>()
         if (WIZARD in enabled) {
-            if (t.sh("dumpsys wifi | grep -o 'cname=[^ ]*'").out.contains("setupwraith")) return false
+            if (wizardWifi(t)) return false
             if (t.sh("pm disable-user --user 0 $WIZARD").out.contains("disabled")) offNow += WIZARD
         }
         (STOCK_HOMES + listOfNotNull(knownTv?.home)).distinct().filter { it in enabled }
