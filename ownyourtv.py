@@ -31,6 +31,8 @@ APK_URL = "https://github.com/pimado1/ownyourtv/releases/latest/download/OwnYour
 PKG = "app.ownyourtv"
 HOME = f"{PKG}/.home.HomeActivity"
 KEY_SERVICE = f"{PKG}/.home.HomeKeyService"  # versions before 1.2 only
+KEYS_PKG = "app.ownyourtv.keys"
+KEYS_SERVICE = "app.ownyourtv.keys/app.ownyourtv.keys.KeyService"
 STOCK_HOMES = ["com.google.android.apps.tv.launcherx", "com.google.android.tvlauncher", "com.google.android.leanbacklauncher"]
 WIZARD = "com.google.android.tungsten.setupwraith"
 ANIM_KEYS = ["window_animation_scale", "transition_animation_scale", "animator_duration_scale"]
@@ -272,9 +274,32 @@ def make_home(tv, apk=None):
             print("This TV does not let another app be its home: its own home is back, nothing else changed.")
             return False
         tv.state["home_off"] = sorted(set(tv.state.get("home_off", [])) | set(done))
+        install_keys(tv)
     tv.state["home"] = True
     tv.save()
     print("The OwnYourTV home is the TV's home.")
+    return True
+
+
+def install_keys(tv):
+    """The remote's app and gear buttons went to the stock home, now off: OwnYourTV's buttons module answers them.
+    It ships inside the app (assets/keys.apk), so it is taken from the app on the TV, the same version."""
+    import zipfile
+    base = tv.sh(f"pm path {PKG}").strip().splitlines()[0].split("package:", 1)[-1]
+    tmp = Path(tempfile.gettempdir())
+    tv.adb("pull", base, str(tmp / "OwnYourTV-installed.apk"), timeout=120)
+    try:
+        with zipfile.ZipFile(tmp / "OwnYourTV-installed.apk") as z:
+            (tmp / "OwnYourTV-keys.apk").write_bytes(z.read("assets/keys.apk"))
+    except (OSError, KeyError, zipfile.BadZipFile):
+        print("This OwnYourTV has no buttons module (1.8.7 and later do): the remote's app buttons may not work.")
+        return False
+    tv.adb("install", "-r", str(tmp / "OwnYourTV-keys.apk"), timeout=120)
+    old = [x for x in tv.sh("settings get secure enabled_accessibility_services").strip().split(":")
+           if x and x != "null" and not x.startswith(KEYS_PKG + "/")]
+    tv.sh(f"cmd appops set {KEYS_PKG} AUTO_START allow; settings put secure enabled_accessibility_services "
+          + ":".join(old + [KEYS_SERVICE]) + "; settings put secure accessibility_enabled 1")
+    print("The remote's app and gear buttons work with the OwnYourTV home.")
     return True
 
 
@@ -300,8 +325,11 @@ def undo_home(tv):
         return
     tv.sh(f"am start -f 0x20000000 -n {PKG}/.MainActivity --ez computer_home true --ez on false")
     time.sleep(2)
-    services = [s for s in tv.sh("settings get secure enabled_accessibility_services").strip().split(":") if s and s != "null" and s != KEY_SERVICE]
+    services = [s for s in tv.sh("settings get secure enabled_accessibility_services").strip().split(":")
+                if s and s != "null" and s != KEY_SERVICE and not s.startswith(KEYS_PKG + "/")]
     tv.sh("settings put secure enabled_accessibility_services " + ":".join(services) if services else "settings delete secure enabled_accessibility_services")
+    # The stock home answers the remote's buttons again.
+    tv.sh(f"pm uninstall {KEYS_PKG}")
     tv.state.pop("home_off", None)
     tv.state.pop("home", None)
     tv.save()

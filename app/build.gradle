@@ -55,4 +55,14 @@ tasks.register('copyNotices', Copy) {
     into notices
 }
 android.sourceSets.main.assets.srcDir(notices)
-tasks.named('preBuild') { dependsOn 'copyNotices' }
+
+// The buttons module (keys/) travels inside the app as assets/keys.apk; the app installs it over its debugging
+// connection when the TV's own home, which answers the remote's app and gear buttons, has to be switched off.
+def keysApk = layout.buildDirectory.dir('generated/keys')
+tasks.register('copyKeys', Copy) {
+    dependsOn ':keys:assembleRelease'
+    from(project(':keys').layout.buildDirectory.file('outputs/apk/release/keys-release.apk')) { rename { 'keys.apk' } }
+    into keysApk
+}
+android.sourceSets.main.assets.srcDir(keysApk)
+tasks.named('preBuild') { dependsOn 'copyNotices', 'copyKeys' }

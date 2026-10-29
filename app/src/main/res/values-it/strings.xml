@@ -237,4 +237,5 @@
     <string name="sh_remind_no">No grazie</string>
     <string name="sh_remind_lead">Una sola riga anonima, quella qui sotto, aggiunge la tua TV alla lista pubblica: chi ha lo stesso modello avrà tutto giusto fin dall\'inizio.</string>
     <string name="sh_remind_thanks">Grazie, la tua TV è nella lista!</string>
+    <string name="p_keys">Mantenere i tasti del telecomando (app, ingranaggio)</string>
 </resources>

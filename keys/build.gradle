@@ -1,0 +1,39 @@
+plugins {
+    id 'com.android.application'
+}
+// The remote's buttons, as a separate APK: the TV app installs it over its own debugging connection, so the
+// accessibility service lives outside the APK people download (Play Protect blocks a downloaded app that has one).
+def signingProps = new Properties()
+def signingFile = new File(System.getProperty('user.home'), '.ownyourtv-signing/keystore.properties')
+if (signingFile.exists()) signingFile.withInputStream { signingProps.load(it) }
+
+android {
+    namespace 'app.ownyourtv.keys'
+    compileSdk 34
+    defaultConfig {
+        applicationId 'app.ownyourtv.keys'
+        minSdk 26
+        targetSdk 34
+        versionCode 1
+        versionName '1'
+    }
+    signingConfigs {
+        release {
+            if (signingFile.exists()) {
+                storeFile file(signingProps['storeFile'])
+                storePassword signingProps['storePassword']
+                keyAlias signingProps['keyAlias']
+                keyPassword signingProps['keyPassword']
+            }
+        }
+    }
+    buildTypes {
+        release {
+            minifyEnabled true
+            shrinkResources true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt')
+            signingConfig signingFile.exists() ? signingConfigs.release : signingConfigs.debug
+        }
+    }
+    compileOptions { sourceCompatibility JavaVersion.VERSION_17; targetCompatibility JavaVersion.VERSION_17 }
+}

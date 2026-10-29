@@ -278,6 +278,23 @@ public class QuickPanelActivity extends Activity {
         finish();
     }
 
+    /** The gear again while the panel is open, sent back here by the buttons module: the same button closes it. */
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        finish();
+    }
+
+    /** The gear again on a TV where it reaches the panel itself. */
+    @Override
+    public boolean onKeyUp(int keyCode, KeyEvent e) {
+        if (keyCode == KeyEvent.KEYCODE_SETTINGS || keyCode == KeyEvent.KEYCODE_NOTIFICATION) {
+            finish();
+            return true;
+        }
+        return super.onKeyUp(keyCode, e);
+    }
+
     @Override
     public void finish() {
         super.finish();

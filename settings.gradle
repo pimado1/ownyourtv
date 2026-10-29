@@ -6,4 +6,4 @@ dependencyResolutionManagement {
     repositories { google(); mavenCentral() }
 }
 rootProject.name = "ownyourtv"
-include ':app'
+include ':app', ':keys'

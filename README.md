@@ -121,6 +121,10 @@ offers it; the app installs it only if it is signed with the same key as the one
 - **Google Home panel on Google TV.** The lights-and-cameras panel reads its account from Google's own home screen.
   On TVs where that home has to be switched off for OwnYourTV's to take over, the panel opens and closes at once.
   Undo (one button) brings it back.
+- **The remote's app and gear buttons** (YouTube, Netflix, Prime Video, the gear) go to Google's own home on Google
+  TV. When that home has to be switched off, OwnYourTV installs a small buttons module (`keys/`, 9 KB) over its
+  debugging connection: it answers those buttons only, never the volume or the arrows, and goes away with Undo.
+  The gear opens OwnYourTV's quick settings, and closes them on a second press.
 - **Some apps are never offered.** What Android or the TV needs to start, play a channel or an HDMI input, take a
   remote, a keyboard or a network, and `com.android.sdksandbox` (switched off, it left a TCL stuck on its boot logo).
 - **Partner customizers are offered, never ticked.** On some builds of the same TV model they hold what the TV's

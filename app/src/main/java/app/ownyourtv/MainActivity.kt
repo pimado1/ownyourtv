@@ -33,6 +33,8 @@ class MainActivity : Activity() {
     private var ourHome = false
     private var wantHome = true
     private var fastNow = false
+    /** OwnYourTV's home is on, the TV's own is off, and the buttons module is missing: the step offers it. */
+    private var keysNeeded = false
     private var wantFast = false
     private var homeRefused = false
     /** Apps switched off by name after a TV update, counted with the catalogue's on the last screen. */
@@ -301,6 +303,8 @@ class MainActivity : Activity() {
         wantHome = ourHome || homeBlock == null
         fastNow = prefs.contains(ANIM)
         wantFast = fastNow
+        // Not a choice to make: without the module the remote's app and gear buttons are dead, so it goes on at once.
+        keysNeeded = ourHome && STOCK_HOMES.any { it in disabled } && !keysOn(tv!!) && !installKeys(tv!!)
         Recheck.remember(this)
         tv!!.sh("pm grant $packageName android.permission.POST_NOTIFICATIONS 2>/dev/null; true")
         // So that later updates from GitHub install without the owner hunting for "unknown apps" in the settings.
@@ -344,7 +348,8 @@ class MainActivity : Activity() {
 
     private fun homeNow() = tv!!.sh("cmd package resolve-activity --brief -a android.intent.action.MAIN -c android.intent.category.HOME").out.lines().last().trim()
 
-    private fun changes() = items.count { it.changes } + (if (wantHome != ourHome) 1 else 0) + (if (wantFast && !fastNow) 1 else 0)
+    private fun changes() = items.count { it.changes } + (if (wantHome != ourHome) 1 else 0) + (if (wantFast && !fastNow) 1 else 0) +
+        (if (keysNeeded && wantHome) 1 else 0)
 
     // 4. The dashboard: every choice in one screen.
     private fun home() {
@@ -831,6 +836,9 @@ class MainActivity : Activity() {
                 true
             }
             steps += Step(getString(R.string.p_home)) { makeHome(t).also { homeResult = if (it) "ok" else "refused" } }
+            steps += Step(getString(R.string.p_keys)) { if (STOCK_HOMES.any { it in pkgs("-d") }) installKeys(t) else true }
+        } else if (wantHome && ourHome && keysNeeded) {
+            steps += Step(getString(R.string.p_keys)) { installKeys(t).also { if (it) keysNeeded = false } }
         } else if (!wantHome && ourHome) {
             steps += Step(getString(R.string.p_restore_home)) { undoHome(t) }
         }
@@ -854,6 +862,28 @@ class MainActivity : Activity() {
         if (on) getSharedPreferences("horizon_onboarding", MODE_PRIVATE).edit().putBoolean("done", true).apply()
     }
 
+    /** The buttons module is installed and switched on. */
+    private fun keysOn(t: Tv): Boolean =
+        KEYS_PKG in pkgs("") && t.sh("settings get secure enabled_accessibility_services").out.contains(KEYS_SERVICE)
+
+    /**
+     * The remote's app and gear buttons go to the TV's own home, which is off now. The buttons module answers them
+     * instead; installed from here, over the debugging connection, so Play Protect never sees a downloaded app ask
+     * for an accessibility service. It takes those buttons only, never the volume or the arrows.
+     */
+    private fun installKeys(t: Tv): Boolean {
+        val apk = java.io.File(cacheDir, "keys.apk")
+        assets.open("keys.apk").use { input -> apk.outputStream().use { input.copyTo(it) } }
+        val installed = t.install(apk)
+        apk.delete()
+        if (!installed) return false
+        val s = t.sh("settings get secure enabled_accessibility_services").out.trim()
+        val list = s.split(':').filter { it.isNotBlank() && it != "null" && !it.startsWith("$KEYS_PKG/") } + KEYS_SERVICE
+        // TCL firmware stops a service at boot unless the app may start on its own.
+        return t.sh("cmd appops set $KEYS_PKG AUTO_START allow 2>/dev/null; settings put secure enabled_accessibility_services ${list.joinToString(":")}; " +
+            "settings put secure accessibility_enabled 1").ok
+    }
+
     /** The original home comes back: what OwnYourTV switched off for the home screen comes back on, the home screen steps aside. */
     private fun undoHome(t: Tv): Boolean {
         prefs.getStringSet(OURS_HOME, emptySet())!!.sortedBy { if (it == WIZARD) 1 else 0 }
@@ -869,8 +899,10 @@ class MainActivity : Activity() {
             return false
         }
         val s = t.sh("settings get secure enabled_accessibility_services").out.trim()
-        val next = s.split(':').filter { it.isNotBlank() && it != "null" && it != KEY_SERVICE && !it.startsWith("app.ownyourtv/") }.joinToString(":")
+        val next = s.split(':').filter { it.isNotBlank() && it != "null" && it != KEY_SERVICE && !it.startsWith("app.ownyourtv/") && !it.startsWith("$KEYS_PKG/") }.joinToString(":")
         t.sh(if (next.isEmpty()) "settings delete secure enabled_accessibility_services" else "settings put secure enabled_accessibility_services $next")
+        // The TV's own home answers the remote's buttons again.
+        t.sh("pm uninstall $KEYS_PKG 2>/dev/null; true")
         return true
     }
 
@@ -1033,6 +1065,8 @@ class MainActivity : Activity() {
         const val HOME_ACTIVITY = "app.ownyourtv/.home.HomeActivity"
         /** The remote-key service of versions before 1.2, cleaned out of the TV's settings. */
         const val KEY_SERVICE = "app.ownyourtv/.home.HomeKeyService"
+        const val KEYS_PKG = "app.ownyourtv.keys"
+        const val KEYS_SERVICE = "app.ownyourtv.keys/app.ownyourtv.keys.KeyService"
         const val OURS = "ours"
         const val OURS_HOME = "ours_home"
         const val ANIM = "anim_before"

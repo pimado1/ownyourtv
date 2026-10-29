@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="name">OwnYourTV buttons</string>
+    <string name="what">Keeps the remote\'s gear, YouTube, Netflix and Prime Video buttons working once the TV\'s own home screen is off. It reads no screen content and only these buttons.</string>
+</resources>

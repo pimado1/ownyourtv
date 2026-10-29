@@ -238,4 +238,5 @@
     <string name="sh_remind_no">No thanks</string>
     <string name="sh_remind_lead">One anonymous line, the one below, adds your TV to the public list, so the next owner of the same model gets it right from the start.</string>
     <string name="sh_remind_thanks">Thank you, your TV is on the list!</string>
+    <string name="p_keys">Keep the remote\'s app and gear buttons working</string>
 </resources>

@@ -24,6 +24,9 @@
     <uses-feature android:name="android.software.leanback" android:required="false" />
     <uses-feature android:name="android.hardware.touchscreen" android:required="false" />
 
+    <!-- Only an app signed with OwnYourTV's key (its buttons module) may open the quick panel from outside. -->
+    <permission android:name="app.ownyourtv.permission.PANEL" android:protectionLevel="signature" />
+
     <application
         android:label="@string/app_name"
         android:icon="@mipmap/ic_launcher"
@@ -68,7 +71,8 @@
 
         <activity
             android:name=".home.QuickPanelActivity"
-            android:exported="false"
+            android:exported="true"
+            android:permission="app.ownyourtv.permission.PANEL"
             android:excludeFromRecents="true"
             android:noHistory="true"
             android:taskAffinity="app.ownyourtv.panel"

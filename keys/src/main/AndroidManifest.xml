@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <uses-permission android:name="app.ownyourtv.permission.PANEL" />
+    <!-- Android 11+ hides other apps unless they are named here: the apps the buttons open, and any TV app. -->
+    <queries>
+        <package android:name="app.ownyourtv" />
+        <package android:name="com.google.android.youtube.tv" />
+        <package android:name="com.netflix.ninja" />
+        <package android:name="com.amazon.amazonvideo.livingroom" />
+        <intent>
+            <action android:name="android.intent.action.MAIN" />
+            <category android:name="android.intent.category.LEANBACK_LAUNCHER" />
+        </intent>
+    </queries>
+    <application android:label="@string/name" android:allowBackup="false">
+        <service
+            android:name=".KeyService"
+            android:exported="true"
+            android:label="@string/name"
+            android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE">
+            <intent-filter>
+                <action android:name="android.accessibilityservice.AccessibilityService" />
+            </intent-filter>
+            <meta-data android:name="android.accessibilityservice" android:resource="@xml/keys" />
+        </service>
+    </application>
+</manifest>
