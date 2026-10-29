@@ -62,7 +62,7 @@ def translate(html):
         pos = b
     out.append(html[pos:])
     html = "".join(out)
-    for attr, data in (("alt", "data-i18n-alt"), ("aria-label", "data-i18n-aria")):
+    for attr, data in (("alt", "data-i18n-alt"), ("aria-label", "data-i18n-aria"), ("placeholder", "data-i18n-ph")):
         def sub(m):
             tag, key = m.group(0), m.group(1)
             if key not in FR:

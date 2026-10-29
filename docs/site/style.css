@@ -116,10 +116,26 @@ h3 { font: 700 21px/1.25 var(--display); margin: 0 0 8px; letter-spacing: -0.01e
 figcaption { color: var(--grey); font-size: 14px; margin-top: 10px; }
 
 /* TVs */
-.tv-stats { margin-bottom: 14px; }
-.tv-stats div { display: flex; align-items: baseline; gap: 10px; }
-.tv-stats strong { font: 700 28px/1 var(--display); color: var(--lime); }
-.tv-stats span { color: var(--grey); font-size: 15px; }
+.tv-stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; margin: 28px 0 10px; }
+.tv-stats div { display: flex; flex-direction: column; gap: 6px; padding-top: 14px; border-top: 2px solid var(--line); }
+.tv-stats strong { font: 700 34px/1 var(--display); color: var(--lime); font-variant-numeric: tabular-nums; }
+.tv-stats span { color: var(--grey); font-size: 14px; }
+@media (max-width: 700px) { .tv-stats { grid-template-columns: 1fr 1fr; } }
+.credit { color: var(--grey); font-size: 13px; margin: 0 0 28px; max-width: 70ch; }
+.credit a { color: var(--paper); }
+/* Is my TV recognised? */
+.checker { max-width: 640px; }
+.checker label { display: block; font: 700 19px var(--display); margin-bottom: 10px; }
+.checker input { width: 100%; box-sizing: border-box; padding: 14px 16px; font: 500 17px var(--body); color: var(--paper); background: var(--ink-2); border: 1px solid var(--line); border-radius: 12px; outline: none; }
+.checker input:focus { border-color: var(--lime); }
+.checker-out { list-style: none; padding: 0; margin: 10px 0 0; }
+.checker-out li { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; padding: 10px 2px; border-bottom: 1px solid var(--line); color: var(--paper); }
+.checker-out li.none, .checker-out li.more { display: block; color: var(--grey); font-size: 15px; }
+.checker-out li.none a { color: var(--lime); }
+.checker-out .tag { flex: none; }
+.tag.known { background: rgba(244, 244, 240, 0.08); color: var(--grey); }
+.check-link { display: inline-block; margin-top: 16px; color: var(--lime); font-weight: 700; text-decoration: none; }
+.check-link:hover { text-decoration: underline; }
 .share-cta { margin-top: 32px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px 24px;
   border: 1px solid var(--lime); border-radius: 16px; padding: 20px 24px; }
 .share-cta > div { flex: 1 1 320px; min-width: 0; }

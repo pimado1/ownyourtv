@@ -118,6 +118,14 @@ var FR = {
   other_tvs: "Une Samsung, une LG, une Roku ou une Vizio ? OwnYourTV ne peut pas y tourner, mais <a href=\"other-tvs.html\">tu peux couper le pistage à la télécommande</a>.",
   q11: "Ma TV est une Samsung, une LG ou une Roku",
   a11: "OwnYourTV a besoin d'Android TV ou de Google TV, il ne peut donc pas y tourner. Tu peux quand même empêcher ta TV de signaler ce que tu regardes, à la télécommande : <a href=\"other-tvs.html\">les menus, marque par marque</a>.",
+  ck_label: "Ma TV est-elle reconnue ?", ck_ph: "Marque ou modèle, par ex. TCL C89B",
+  st_models: "modèles reconnus", st_brands: "marques", st_tested: "testées avec OwnYourTV par leurs propriétaires", st_dl: "téléchargements",
+  st_credit: "Modèles reconnus grâce aux listes que la communauté <a href=\"https://github.com/Gathin23/cleanyourtv\">CleanYourTV</a> a testées sur de vraies TV (licence MIT). Testées avec OwnYourTV : les TV partagées depuis l'appli par leurs propriétaires, listées ci-dessous.",
+  cta_check: "Ma TV est-elle reconnue ? →",
+  ck_tested: "Testée avec OwnYourTV", ck_known: "Reconnue", ck_more: "et %d autres : précise le modèle",
+  ck_brand: "Ce modèle n'est pas encore dans la liste. OwnYourTV connaît la marque : il propose ce que les autres TV de la marque désactivent, rien de coché sans vérification. Après, appuie sur Partager pour l'ajouter.",
+  ck_none: "Pas encore dans la liste. Si c'est une Android TV ou une Google TV, OwnYourTV reconnaît les applis par leur nom et ne coche rien sans vérification. Une Samsung, une LG ou une Roku ? <a href=\"other-tvs.html\">Par ici</a>.",
+  ck_err: "La liste n'a pas pu se charger.",
   nt_title: "Samsung, LG, Roku, Vizio : coupe le pistage",
   nt_lead: "OwnYourTV a besoin d'Android TV ou de Google TV. Ta TV tourne sous autre chose ? Elle regarde quand même ce que tu regardes : la plupart des TV connectées reconnaissent ce qui passe à l'écran (ACR, reconnaissance automatique de contenu) et l'envoient pour la publicité. Tu peux couper ça à la télécommande, en cinq minutes environ.",
   nt_note: "Les noms des menus changent selon l'année et le pays. Si le tien est différent, cherche les mots en gras.",
@@ -143,6 +151,10 @@ var EN = {}, lang = (document.documentElement.lang || "en").slice(0, 2);
 function t(k) { return (lang === "fr" && FR[k]) || EN[k] || k; }
 
 EN.copy = "Copy"; EN.copied = "Copied";
+EN.ck_tested = "Tested with OwnYourTV"; EN.ck_known = "Recognised"; EN.ck_more = "and %d more: add the model";
+EN.ck_brand = "This model is not on the list yet. OwnYourTV knows the brand: it offers what the brand's other TVs switch off, nothing ticked unless checked. Afterwards, press Share to add it.";
+EN.ck_none = "Not on the list yet. On an Android TV or Google TV, OwnYourTV recognises apps by their name and ticks nothing unless checked. A Samsung, an LG or a Roku? <a href=\"other-tvs.html\">This way</a>.";
+EN.ck_err = "The list could not load.";
 EN.tag_ok = "Works"; EN.tag_no = "Home refused"; EN.tag_block = "Home blocked by the TV";
 EN.rep_none = "No TV shared yet.";
 EN.rep_err = "The list could not load. It is also <a href=\"https://github.com/pimado1/ownyourtv/issues?q=label%3Atv-report\">on GitHub</a>.";

@@ -19,7 +19,7 @@
 <meta name="theme-color" content="#0b0d12">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect x='3' y='11' width='26' height='14' rx='4' fill='%23c6f432'/%3E%3Cpath d='M12 11V7.5a4 4 0 0 1 8 0' fill='none' stroke='%23f4f4f0' stroke-width='3' stroke-linecap='round'/%3E%3C/svg%3E">
 <link rel="apple-touch-icon" href="../site/img/apple-touch-icon.png">
-<link rel="stylesheet" href="../site/style.css?v=202610292348">
+<link rel="stylesheet" href="../site/style.css?v=202610292354">
 </head>
 <body>
 
@@ -64,6 +64,7 @@
           <a class="btn btn-ghost" href="https://github.com/pimado1/ownyourtv/releases/latest" data-i18n="cta_apk">Télécharger l'APK</a>
         </div>
       </div>
+      <a class="check-link" href="#tvs" data-i18n="cta_check" data-reveal style="--d: 150ms">Ma TV est-elle reconnue ? →</a>
       <ul class="nos" aria-label="What you need" data-reveal style="--d: 180ms">
         <li class="no" data-i18n="no_pc">Pas d'ordinateur</li>
         <li class="no" data-i18n="no_phone">Pas de téléphone</li>
@@ -230,9 +231,18 @@
       <p class="eyebrow" data-i18n="tvs_eye">Quelles TV</p>
       <h2 data-i18n="tvs_h">Android TV et Google TV, modèle par modèle</h2>
       <p class="sub" data-i18n="tvs_sub">OwnYourTV reconnaît des centaines de modèles TCL, Sony, Xiaomi, Philips, Hisense et d'autres, grâce à des listes testées sur de vraies TV. Elle change l'accueil comme chaque modèle le demande, ou le laisse tranquille quand un modèle ne peut pas en prendre un autre sans risque. Ci-dessous, les TV que les utilisateurs d'OwnYourTV ont partagées depuis l'appli.</p>
-      <div class="tv-stats">
-        <div><strong id="n-reports">·</strong><span data-i18n="st_reports">partagées par leurs propriétaires</span></div>
+      <div class="checker">
+        <label for="tv-q" data-i18n="ck_label">Ma TV est-elle reconnue ?</label>
+        <input id="tv-q" type="search" autocomplete="off" spellcheck="false" placeholder="Marque ou modèle, par ex. TCL C89B" data-i18n-ph="ck_ph">
+        <ul class="checker-out" id="tv-out" aria-live="polite"></ul>
       </div>
+      <div class="tv-stats">
+        <div><strong id="n-models">360</strong><span data-i18n="st_models">modèles reconnus</span></div>
+        <div><strong id="n-brands">97</strong><span data-i18n="st_brands">marques</span></div>
+        <div><strong id="n-reports">·</strong><span data-i18n="st_tested">testées avec OwnYourTV par leurs propriétaires</span></div>
+        <div><strong id="n-dl">·</strong><span data-i18n="st_dl">téléchargements</span></div>
+      </div>
+      <p class="credit" data-i18n="st_credit">Modèles reconnus grâce aux listes que la communauté <a href="https://github.com/Gathin23/cleanyourtv">CleanYourTV</a> a testées sur de vraies TV (licence MIT). Testées avec OwnYourTV : les TV partagées depuis l'appli par leurs propriétaires, listées ci-dessous.</p>
       <ul class="reports" id="reports" aria-live="polite"></ul>
       <p class="empty" id="reports-note" hidden></p>
       <p class="brand-links"><span data-i18n="by_brand">Par marque :</span> <a href="tv/tcl.html">TCL</a> · <a href="tv/xiaomi.html">Xiaomi</a> · <a href="tv/sony.html">Sony</a> · <a href="tv/philips.html">Philips</a> · <a href="tv/hisense.html">Hisense</a></p>
@@ -335,8 +345,8 @@
   </div>
 </footer>
 
-<script src="../site/i18n.js?v=202610292348"></script>
-<script src="../site/effects.js?v=202610292348"></script>
+<script src="../site/i18n.js?v=202610292354"></script>
+<script src="../site/effects.js?v=202610292354"></script>
 <script>
   // The TVs owners reported from the app: one GitHub issue per model, labelled with what happened.
   (function () {
@@ -346,6 +356,7 @@
       .then(function (r) { if (!r.ok) throw 0; return r.json(); })
       .then(function (issues) {
         count.textContent = issues.length;
+        window.oytReports = issues.map(function (i) { return i.title.replace(/^TV: /, ""); });
         if (!issues.length) { note.hidden = false; note.textContent = t("rep_none"); return; }
         list.innerHTML = issues.map(function (i) {
           var m = /^TV: (.+?)(?: \(([^)]+)\))?$/.exec(i.title) || [0, i.title, ""];
@@ -356,6 +367,54 @@
         }).join("");
       })
       .catch(function () { count.textContent = "?"; note.hidden = false; note.innerHTML = t("rep_err"); });
+  })();
+
+  // Downloads of every release, from GitHub.
+  fetch("https://api.github.com/repos/pimado1/ownyourtv/releases?per_page=100")
+    .then(function (r) { if (!r.ok) throw 0; return r.json(); })
+    .then(function (rel) {
+      var n = 0;
+      rel.forEach(function (r) { r.assets.forEach(function (a) { n += a.download_count; }); });
+      document.getElementById("n-dl").textContent = n;
+    })
+    .catch(function () { document.getElementById("n-dl").textContent = "?"; });
+
+  // "Is my TV recognised?": the TVs owners tested with OwnYourTV first, then the models the CleanYourTV lists
+  // recognise, then what OwnYourTV does on a brand it knows.
+  (function () {
+    var q = document.getElementById("tv-q"), out = document.getElementById("tv-out"), db = null, base = document.documentElement.lang === "fr" ? "../" : "";
+    function esc(s) { return s.replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); }
+    function norm(s) { return s.toLowerCase().replace(/[^a-z0-9]+/g, " ").trim(); }
+    function load() {
+      if (db) return Promise.resolve(db);
+      return fetch(base + "site/tvs.json").then(function (r) { return r.json(); }).then(function (j) {
+        db = j;
+        document.getElementById("n-models").textContent = j.tvs.length;
+        document.getElementById("n-brands").textContent = j.brands;
+        return j;
+      });
+    }
+    function row(cls, name, tag) { return '<li><span>' + esc(name) + '</span><span class="tag ' + cls + '">' + tag + "</span></li>"; }
+    function search() {
+      var text = norm(q.value), words = text.split(" ").filter(function (w) { return w.length > 1; });
+      if (!words.length) { out.innerHTML = ""; return; }
+      load().then(function (j) {
+        var hits = function (s) { s = " " + norm(s) + " "; return words.every(function (w) { return s.indexOf(w) >= 0; }); };
+        var html = (window.oytReports || []).filter(hits).slice(0, 3).map(function (r) { return row("ok", r, t("ck_tested")); });
+        var models = j.tvs.filter(function (tv) { return hits(tv[0] + " " + tv[1] + " " + tv[2]); });
+        html = html.concat(models.slice(0, 6).map(function (tv) { return row("known", tv[0], t("ck_known")); }));
+        if (models.length > 6) html.push('<li class="more">' + t("ck_more").replace("%d", models.length - 6) + "</li>");
+        if (!html.length) {
+          var brand = j.tvs.some(function (tv) { return words.indexOf(norm(tv[1])) >= 0; });
+          html.push('<li class="none">' + t(brand ? "ck_brand" : "ck_none") + "</li>");
+        }
+        out.innerHTML = html.join("");
+      }).catch(function () { out.innerHTML = '<li class="none">' + t("ck_err") + "</li>"; });
+    }
+    var timer;
+    q.addEventListener("input", function () { clearTimeout(timer); timer = setTimeout(search, 120); });
+    q.addEventListener("focus", load, { once: true });
+    load().catch(function () {});
   })();
 
   document.querySelectorAll("[data-copy]").forEach(function (b) {
