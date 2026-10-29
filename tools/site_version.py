@@ -2,6 +2,8 @@
 instead of mixing a new page with old cached ones (GitHub Pages lets them keep files for 10 minutes).
 
     python3 tools/site_version.py
+
+It then rebuilds the French pages, so they carry the same stamps.
 """
 import re
 import time
@@ -15,3 +17,7 @@ for page in DOCS.glob("*.html"):
     if new != text:
         page.write_text(new)
         print(page.name, stamp)
+
+# The French pages are copies of the English ones: rebuilt after the stamps change.
+import subprocess, sys
+subprocess.run([sys.executable, str(Path(__file__).resolve().parent / "build_fr.py")], check=True)

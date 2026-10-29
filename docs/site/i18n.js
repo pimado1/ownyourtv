@@ -25,6 +25,12 @@ var FR = {
   clean_cap: "Recommandé, en un appui, ou les listes une par une.",
   home_eye: "Un accueil bien à elle", home_h: "Un ciel de nuit vivant, tes applis devant",
   cta_b: "Ta TV n'est pas dans la liste ?", cta_s: "À la fin de l'appli, appuie sur <strong>Partager</strong> : une ligne anonyme (marque, modèle, ce qui a marché) l'ajoute ici, et le prochain qui a la même TV aura tout bon dès le début. Oublié ? L'accueil te le repropose une fois le lendemain.", cta_btn: "Ou dis-le-nous ici",
+  nav_contact: "Contact", ft_contact: "Contact",
+  c_title: "Contact", c_lead: "Une seule personne fait OwnYourTV, en public. Choisis ce qui te convient : chaque moyen arrive jusqu'à moi, et je réponds.",
+  c1_b: "Ajouter ma TV à la liste", c1_s: "Le plus rapide, c'est le bouton Partager à la fin de l'appli. Si ta TV n'est pas allée jusque-là, donne-moi ici sa marque, son modèle et ce qui a marché.", c1_go: "Remplir le formulaire sur GitHub →",
+  c2_b: "Signaler un souci", c2_s: "Un écran qui ne va pas, une étape qui ne passe pas, une appli revenue. Une photo de l'écran de la TV aide beaucoup.", c2_go: "Le signaler sur GitHub →",
+  c3_b: "M'écrire", c3_s: "Une question, une idée, la presse ou un partenariat : envoie-moi un message sur X. En français ou en anglais.",
+  c_h_before: "Avant d'écrire", c_before: "La plupart des questions (Play Protect, l'étape Wi-Fi, les mises à jour, les profils et le mode enfant) ont leur réponse dans les <a href=\"./#faq\">questions de l'accueil</a>. Un compte GitHub est gratuit et se crée en une minute : il te permet de suivre la réponse.",
   prof_eye: "Profils et mode enfant", prof_h: "Une TV, un accueil pour chacun",
   pr1_b: "Qui regarde ?", pr1_s: "Au réveil de la TV, chacun appuie sur OK sur sa bulle et retrouve son dock et sa couleur.",
   pr2_b: "Un profil enfant reste dans ses applis", pr2_s: "Seulement les applis que tu choisis, une heure de coucher, un temps par jour et un volume maximum. Une appli ouverte autrement le ramène à son accueil.",
@@ -97,44 +103,21 @@ var FR = {
   p_updated: "Mis à jour le 29 octobre 2026.", p_back: "← Retour à l'accueil"
 };
 
-var EN = {}, lang = "en";
+var EN = {}, lang = (document.documentElement.lang || "en").slice(0, 2);
 function t(k) { return (lang === "fr" && FR[k]) || EN[k] || k; }
-
-function apply(next) {
-  lang = next;
-  document.documentElement.lang = next;
-  document.querySelectorAll("[data-i18n]").forEach(function (el) {
-    var k = el.getAttribute("data-i18n");
-    if (!(k in EN)) EN[k] = el.innerHTML;
-    el.innerHTML = t(k);
-  });
-  document.querySelectorAll("[data-i18n-alt]").forEach(function (el) {
-    var k = el.getAttribute("data-i18n-alt");
-    if (!(k in EN)) EN[k] = el.getAttribute("alt");
-    el.setAttribute("alt", t(k));
-  });
-  document.querySelectorAll("[data-i18n-aria]").forEach(function (el) {
-    var k = el.getAttribute("data-i18n-aria");
-    if (!(k in EN)) EN[k] = el.getAttribute("aria-label");
-    el.setAttribute("aria-label", t(k));
-  });
-  var b = document.getElementById("lang");
-  if (b) { b.textContent = next === "fr" ? "EN" : "FR"; b.setAttribute("aria-label", next === "fr" ? "English" : "Français"); }
-}
 
 EN.copy = "Copy"; EN.copied = "Copied";
 EN.tag_ok = "Works"; EN.tag_no = "Home refused"; EN.tag_block = "Home blocked by the TV";
 EN.rep_none = "No TV shared yet.";
 EN.rep_err = "The list could not load. It is also <a href=\"https://github.com/pimado1/ownyourtv/issues?q=label%3Atv-report\">on GitHub</a>.";
 
+// Each language has its own pages (written by tools/build_fr.py). A French browser landing on an English page is sent
+// to the French one, once; the language link remembers a choice made by hand.
 (function () {
   var saved = null;
   try { saved = localStorage.getItem("lang"); } catch (e) {}
-  apply(saved || ((navigator.language || "").toLowerCase().indexOf("fr") === 0 ? "fr" : "en"));
   var b = document.getElementById("lang");
-  if (b) b.addEventListener("click", function () {
-    var next = lang === "fr" ? "en" : "fr";
-    try { localStorage.setItem("lang", next); } catch (e) {}
-    apply(next);
-  });
+  if (b) b.addEventListener("click", function () { try { localStorage.setItem("lang", b.getAttribute("hreflang")); } catch (e) {} });
+  var wantsFr = saved ? saved === "fr" : (navigator.language || "").toLowerCase().indexOf("fr") === 0;
+  if (lang === "en" && wantsFr && b && !/bot|crawl|spider/i.test(navigator.userAgent)) location.replace(b.href);
 })();

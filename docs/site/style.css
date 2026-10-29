@@ -35,7 +35,7 @@ a { color: var(--lime); text-underline-offset: 3px; }
 .bar nav { display: flex; gap: 22px; margin-left: auto; }
 .bar nav a { color: var(--grey); text-decoration: none; font-size: 15px; }
 .bar nav a:hover { color: var(--paper); }
-.lang { background: none; border: 1px solid var(--line); color: var(--paper); border-radius: 8px; padding: 6px 10px; font: 600 13px var(--body); cursor: pointer; }
+.lang { text-decoration: none; background: none; border: 1px solid var(--line); color: var(--paper); border-radius: 8px; padding: 6px 10px; font: 600 13px var(--body); cursor: pointer; }
 .lang:hover { border-color: var(--grey); }
 @media (max-width: 760px) { .bar nav { display: none; } .lang { margin-left: auto; } }
 
@@ -248,3 +248,10 @@ section { position: relative; isolation: isolate; }
 .stand { width: 18%; height: 14px; margin: 0 auto; background: linear-gradient(#11141b, #07080c); border-radius: 0 0 10px 10px; }
 .try-hint { text-align: center; color: var(--grey); font-size: 14px; margin-top: 18px; }
 @media (max-width: 600px) { .screen { border-width: 5px; border-radius: 10px; } }
+
+.contact-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin-top: 32px; }
+.contact-card { display: flex; flex-direction: column; gap: 8px; padding: 20px 22px; border: 1px solid var(--line); border-radius: 16px; text-decoration: none; color: var(--paper); min-width: 0; }
+.contact-card:hover, .contact-card:focus-visible { border-color: var(--lime); }
+.contact-card b { font: 700 19px var(--display); }
+.contact-card span { color: var(--grey); font-size: 15px; }
+.contact-card em { font-style: normal; color: var(--lime); font-weight: 700; margin-top: auto; padding-top: 6px; }

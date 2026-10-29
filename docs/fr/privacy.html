@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<link rel="canonical" href="https://ownyour.tv/fr/privacy.html">
+<link rel="alternate" hreflang="en" href="https://ownyour.tv/privacy.html">
+<link rel="alternate" hreflang="fr" href="https://ownyour.tv/fr/privacy.html">
+<link rel="alternate" hreflang="x-default" href="https://ownyour.tv/privacy.html">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Confidentialité · OwnYourTV</title>
+<meta name="description" content="Ce qu'OwnYourTV envoie, et quand : rien, sauf si tu choisis une ville pour la météo ou appuies sur Partager.">
+<meta name="theme-color" content="#0b0d12">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect x='3' y='11' width='26' height='14' rx='4' fill='%23c6f432'/%3E%3Cpath d='M12 11V7.5a4 4 0 0 1 8 0' fill='none' stroke='%23f4f4f0' stroke-width='3' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="../site/style.css?v=202610291904">
+</head>
+<body>
+
+<header class="bar">
+  <div class="wrap">
+    <a class="brand" href="./" aria-label="OwnYourTV">
+      <svg viewBox="0 0 32 32" aria-hidden="true"><rect x="3" y="12" width="26" height="14" rx="4" fill="#c6f432"/><path d="M11.5 12V8a4.5 4.5 0 0 1 9 0v1" fill="none" stroke="#f4f4f0" stroke-width="3" stroke-linecap="round"/><circle cx="16" cy="17.5" r="2" fill="#0b0d12"/><path d="M15.2 18.5h1.6l.5 4h-2.6z" fill="#0b0d12"/><rect x="11" y="28" width="10" height="2" rx="1" fill="#f4f4f0"/></svg>
+      <span>Own<b>Your</b>TV</span>
+    </a>
+    <nav><a href="./" data-i18n="p_back">← Retour à l'accueil</a></nav>
+    <a class="lang" id="lang" href="../privacy.html" hreflang="en" lang="en" aria-label="English">EN</a>
+  </div>
+</header>
+
+<main class="wrap doc">
+  <h1 data-i18n="p_title">Confidentialité</h1>
+  <p data-i18n="p_lead">OwnYourTV ne collecte rien. Voici exactement ce qui sort de ta TV, et quand.</p>
+
+  <h2 data-i18n="p_h1">Sur ta TV</h2>
+  <p data-i18n="p_t1">L'appli se connecte au port de débogage de ta propre TV (127.0.0.1) pour couper des applis et changer l'accueil. Rien de cette connexion ne quitte la TV. Pas de compte, pas de publicité, pas de mesure d'audience.</p>
+
+  <h2 data-i18n="p_h2">La météo</h2>
+  <p data-i18n="p_t2">Si tu choisis une ville pour la météo, son nom (pour la trouver) puis ses coordonnées sont envoyés à <a href="https://open-meteo.com">Open-Meteo</a>, un service météo gratuit et sans compte. Sans ville choisie, rien n'est envoyé.</p>
+
+  <h2 data-i18n="p_h9">Ce site</h2>
+  <p data-i18n="p_t9">ownyour.tv compte ses visites avec Cloudflare Web Analytics : aucun cookie, aucun suivi d'un site à l'autre, aucun profil sur toi. Il voit la page ouverte, d'où tu viens (par exemple un lien sur X), ton pays et ton type d'appareil. L'appli TV n'a rien à voir avec lui et ne lui envoie rien.</p>
+
+  <h2 data-i18n="p_h7">Les mises à jour</h2>
+  <p data-i18n="p_t7">Une fois par jour, OwnYourTV demande à GitHub (api.github.com) le numéro de sa dernière version. Rien sur ta TV n'est envoyé ; comme tout serveur, GitHub voit l'adresse IP de la requête. Si tu choisis de mettre à jour, la nouvelle version est téléchargée depuis GitHub.</p>
+
+  <h2 data-i18n="p_h8">Profils et mode enfant</h2>
+  <p data-i18n="p_t8">Les profils, le code parent et le temps d'écran d'un enfant restent sur la TV et ne sont jamais envoyés. Pour garder un enfant dans ses applis, OwnYourTV utilise l'accès aux données d'utilisation d'Android pour savoir quelle appli est au premier plan, jamais ce qu'elle affiche, et seulement quand un profil enfant est utilisé.</p>
+
+  <h2 data-i18n="p_h3">Le partage, seulement si tu appuies sur Partager</h2>
+  <p data-i18n="p_t3">Au dernier écran, le bouton Partager envoie un rapport anonyme. L'écran affiche la ligne envoyée avant que tu appuies.</p>
+  <table>
+    <thead><tr><th data-i18n="p_c1">Ce qui est envoyé</th><th data-i18n="p_c2">Ce qui n'est jamais envoyé</th></tr></thead>
+    <tbody>
+      <tr><td data-i18n="p_r1">Marque et nom de modèle donnés par Android (ex. TCL Smart TV Pro, G08)</td><td data-i18n="p_n1">Ton nom, ton compte Google, ton adresse e-mail</td></tr>
+      <tr><td data-i18n="p_r2">Versions d'Android et d'OwnYourTV</td><td data-i18n="p_n2">La liste de tes applis</td></tr>
+      <tr><td data-i18n="p_r3">TV reconnue ou non, ce qui s'est passé pour l'accueil, si l'étape Wi-Fi a été nécessaire</td><td data-i18n="p_n3">Ton numéro de série, ta position, ta ville</td></tr>
+      <tr><td data-i18n="p_r4">Combien d'applis ont été coupées, et lesquelles de la liste OwnYourTV n'ont pas pu l'être</td><td data-i18n="p_n4">Ton historique de visionnage</td></tr>
+    </tbody>
+  </table>
+
+  <h2 data-i18n="p_h4">Où va le rapport</h2>
+  <p data-i18n="p_t4">Il passe par un petit relais hébergé chez Cloudflare, qui ne garde rien : il vérifie le rapport et l'ajoute à une page publique sur GitHub, une par modèle de TV. Le relais voit l'adresse IP de la requête, comme tout serveur, et ne l'utilise que pour limiter à 5 rapports par minute, sans l'enregistrer. Le rapport devient public : c'est la liste des TV compatibles.</p>
+
+  <h2 data-i18n="p_h5">Supprimer un rapport</h2>
+  <p data-i18n="p_t5">Le rapport ne contient rien qui te désigne. Si tu veux quand même qu'il disparaisse, ouvre une issue sur GitHub en indiquant le modèle.</p>
+
+  <h2 data-i18n="p_h6">Le code est public</h2>
+  <p data-i18n="p_t6">Tout ce qui est décrit ici se vérifie dans le code : <a href="https://github.com/pimado1/ownyourtv/blob/main/app/src/main/java/app/ownyourtv/Report.kt">ce que l'appli envoie</a> et <a href="https://github.com/pimado1/ownyourtv/blob/main/relay/worker.js">ce que fait le relais</a>.</p>
+
+  <p data-i18n="p_updated">Mis à jour le 29 octobre 2026.</p>
+</main>
+
+<footer>
+  <div class="wrap">
+    <a class="brand" href="./"><span>Own<b>Your</b>TV</span></a>
+    <a href="https://github.com/pimado1/ownyourtv">GitHub</a>
+    <a href="contact.html" data-i18n="ft_contact">Contact</a>
+    <span data-i18n="ft_mit">Gratuit et open source, licence MIT</span>
+  </div>
+</footer>
+
+<script src="../site/i18n.js?v=202610291904"></script>
+<!-- Cloudflare Web Analytics: counts visits to this website without cookies; the TV app sends nothing to it. -->
+<script type='module' src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "6277e9947f4b43d3aec17fa0660c9f18"}'></script>
+</body>
+</html>
