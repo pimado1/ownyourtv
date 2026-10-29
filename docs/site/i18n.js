@@ -101,6 +101,10 @@ var FR = {
   try_hint: "Une TCL C89B sous Google TV 14, sans montage.",
   video_aria: "L'accueil OwnYourTV sur une vraie TV : le dock défile appli par appli et l'aurore prend la couleur de chacune.",
   bar_cta: "Installer",
+  nav_feat: "Fonctions",
+  faq_sub: "Une autre question ? <a href=\"contact.html\">Écris-moi</a>, je réponds à chaque message.",
+  get_eye: "Prêt ?", get_h: "Dix minutes, la télécommande, et elle est à toi",
+  get_sub: "Gratuit, open source, et un bouton remet tout comme avant.",
   p_updated: "Mis à jour le 29 octobre 2026.", p_back: "← Retour à l'accueil"
 };
 

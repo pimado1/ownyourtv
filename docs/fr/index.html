@@ -7,9 +7,9 @@
 <link rel="alternate" hreflang="fr" href="https://ownyour.tv/fr/">
 <link rel="alternate" hreflang="x-default" href="https://ownyour.tv/">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>OwnYourTV : ta TV, sans pubs ni pistage</title>
+<title>OwnYourTV : ta TV, sans pubs ni pistage</title>
 <meta name="description" content="Coupe les pubs et le pistage installés d'usine sur ta TV Android TV ou Google TV, et donne-lui un accueil calme, avec profils et mode enfant. À la télécommande, sans ordinateur. Gratuit et open source.">
-<meta property="og:title" content="OwnYourTV : ta TV, sans pubs ni pistage">
+<meta property="og:title" content="OwnYourTV : ta TV, sans pubs ni pistage">
 <meta property="og:description" content="Coupe les pubs et le pistage installés d'usine sur ta TV Android TV ou Google TV, et donne-lui un accueil calme, avec profils et mode enfant. À la télécommande, sans ordinateur. Gratuit et open source.">
 <meta property="og:image" content="https://ownyour.tv/site/img/social.png">
 <meta property="og:image:width" content="1280">
@@ -19,7 +19,7 @@
 <meta name="theme-color" content="#0b0d12">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect x='3' y='11' width='26' height='14' rx='4' fill='%23c6f432'/%3E%3Cpath d='M12 11V7.5a4 4 0 0 1 8 0' fill='none' stroke='%23f4f4f0' stroke-width='3' stroke-linecap='round'/%3E%3C/svg%3E">
 <link rel="apple-touch-icon" href="../site/img/apple-touch-icon.png">
-<link rel="stylesheet" href="../site/style.css?v=202610292001">
+<link rel="stylesheet" href="../site/style.css?v=202610292244">
 </head>
 <body>
 
@@ -30,11 +30,12 @@
       <span>Own<b>Your</b>TV</span>
     </a>
     <nav>
+      <a href="#features" data-i18n="nav_feat">Fonctions</a>
       <a href="#how" data-i18n="nav_how">Comment ça marche</a>
       <a href="#tvs" data-i18n="nav_tvs">Quelles TV</a>
       <a href="#faq" data-i18n="nav_faq">Questions</a>
       <a href="contact.html" data-i18n="nav_contact">Contact</a>
-      <a href="https://github.com/pimado1/ownyourtv">GitHub</a>
+      <a class="nav-gh" href="https://github.com/pimado1/ownyourtv">GitHub</a>
     </nav>
     <a class="btn btn-lime bar-cta" href="#how" data-i18n="bar_cta">Installer</a>
     <a class="lang" id="lang" href="../" hreflang="en" lang="en" aria-label="English">EN</a>
@@ -46,44 +47,39 @@
     <canvas class="sky" id="sky" aria-hidden="true"></canvas>
     <div class="aurora" aria-hidden="true"><span></span><span></span></div>
     <div class="wrap hero-grid">
-      <div data-reveal>
+      <div class="hero-text" data-reveal>
         <h1 data-i18n="h1">Tu l'as payée. <em>Elle est à toi.</em></h1>
         <p class="lead" data-i18n="lead">Coupe les pubs et le pistage installés d'usine sur ta TV Android TV ou Google TV, et donne-lui un accueil qui te ressemble. À la télécommande, sans ordinateur.</p>
-        <ul class="nos" aria-label="What you need">
-          <li class="no" data-i18n="no_pc">Pas d'ordinateur</li>
-          <li class="no" data-i18n="no_phone">Pas de téléphone</li>
-          <li class="no" data-i18n="no_ai">Pas d'IA</li>
-          <li class="yes" data-i18n="yes_remote">Juste la télécommande</li>
-        </ul>
       </div>
       <div class="hero-side" data-reveal style="--d: 120ms">
         <div class="code">
           <small data-i18n="code_label">Sur ta TV, dans l'appli Downloader, tape</small>
           <div class="code-row">
-            <span class="code-num" id="code" aria-label="8225348">8225348</span>
-            <button class="btn btn-ghost" id="copy" type="button" data-i18n="copy">Copier</button>
+            <span class="code-num" aria-label="8225348">8225348</span>
+            <button class="btn btn-ghost" type="button" data-copy data-i18n="copy">Copier</button>
           </div>
         </div>
         <div class="hero-links">
           <a class="btn btn-lime" href="#how" data-i18n="cta_how">Voir les 3 étapes</a>
           <a class="btn btn-ghost" href="https://github.com/pimado1/ownyourtv/releases/latest" data-i18n="cta_apk">Télécharger l'APK</a>
         </div>
-        <div class="facts">
-          <div><strong>0</strong><span data-i18n="f_pc">ordinateur ou téléphone nécessaire</span></div>
-          <div><strong class="count" data-to="6">6</strong><span data-i18n="f_langs">langues</span></div>
-          <div><strong>1</strong><span data-i18n="f_undo">bouton remet tout comme avant</span></div>
-        </div>
       </div>
+      <ul class="nos" aria-label="What you need" data-reveal style="--d: 180ms">
+        <li class="no" data-i18n="no_pc">Pas d'ordinateur</li>
+        <li class="no" data-i18n="no_phone">Pas de téléphone</li>
+        <li class="no" data-i18n="no_ai">Pas d'IA</li>
+        <li class="yes" data-i18n="yes_remote">Juste la télécommande</li>
+      </ul>
       <figure class="ba" data-reveal style="--d: 220ms">
         <div class="compare" id="compare" style="--pos: 50%">
-          <img src="../site/img/after.webp" draggable="false" width="1600" height="900" alt="Après : l'accueil OwnYourTV avec un ciel de nuit, la météo et les applis en cartes 3D." data-i18n-alt="after_alt">
-          <div class="compare-before"><img src="../site/img/before.webp" draggable="false" width="1600" height="900" alt="Avant : l'accueil Google TV d'origine avec une pub plein écran et des recommandations." data-i18n-alt="before_alt"></div>
+          <img src="../site/img/after.webp" draggable="false" width="1600" height="900" alt="Après : l'accueil OwnYourTV avec un ciel de nuit, la météo et les applis en cartes 3D." data-i18n-alt="after_alt">
+          <div class="compare-before"><img src="../site/img/before.webp" draggable="false" width="1600" height="900" alt="Avant : l'accueil Google TV d'origine avec une pub plein écran et des recommandations." data-i18n-alt="before_alt"></div>
           <span class="chip chip-before" data-i18n="before_chip">Avant</span>
           <span class="chip chip-after" data-i18n="after_chip">Après</span>
           <div class="handle" aria-hidden="true"><span><svg viewBox="0 0 24 24"><path d="M9 6l-6 6 6 6M15 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
           <input type="range" min="0" max="100" value="50" step="0.1" id="compare-range" aria-label="Avant et après" data-i18n-aria="compare_aria">
         </div>
-        <figcaption class="ba-hint" data-i18n="ba_hint">Fais glisser pour comparer : l'accueil Google TV d'origine, puis OwnYourTV.</figcaption>
+        <figcaption class="ba-hint" data-i18n="ba_hint">Fais glisser pour comparer : l'accueil Google TV d'origine, puis OwnYourTV.</figcaption>
       </figure>
     </div>
   </div>
@@ -95,7 +91,7 @@
       <p class="sub" data-i18n="try_sub">Filmé sur une vraie TV, en parcourant le dock à la télécommande. L'aurore prend la couleur de chaque appli.</p>
       <div class="tvset">
         <div class="screen">
-          <video autoplay muted loop playsinline preload="metadata" poster="site/img/dock-poster.webp" aria-label="L'accueil OwnYourTV sur une vraie TV : le dock défile appli par appli et l'aurore prend la couleur de chacune." data-i18n-aria="video_aria">
+          <video autoplay muted loop playsinline preload="metadata" poster="../site/img/dock-poster.webp" aria-label="L'accueil OwnYourTV sur une vraie TV : le dock défile appli par appli et l'aurore prend la couleur de chacune." data-i18n-aria="video_aria">
             <source src="../site/img/dock.webm" type="video/webm">
             <source src="../site/img/dock.mp4" type="video/mp4">
           </video>
@@ -106,29 +102,7 @@
     </div>
   </section>
 
-  <section id="how">
-    <div class="wrap">
-      <p class="eyebrow" data-i18n="how_eye">Comment ça marche</p>
-      <h2 data-i18n="how_h">Trois étapes, tout à la télécommande</h2>
-      <p class="sub" data-i18n="how_sub">Une dizaine de minutes. Rien n'est supprimé : les applis sont désactivées, et un bouton les rallume.</p>
-      <ol class="steps">
-        <li>
-          <h3 data-i18n="s1_h">Active le mode développeur</h3>
-          <p data-i18n="s1_p">Paramètres › Système › À propos : clique 7 fois sur <kbd>Build de l'OS Android TV</kbd>. Puis Paramètres › Système › Options pour les développeurs : active <kbd>Débogage USB</kbd>.</p>
-        </li>
-        <li>
-          <h3 data-i18n="s2_h">Installe avec Downloader</h3>
-          <p data-i18n="s2_p">Installe l'appli gratuite <kbd>Downloader</kbd> depuis le Play Store de ta TV, tape le code <kbd>8225348</kbd>, puis installe OwnYourTV.</p>
-        </li>
-        <li>
-          <h3 data-i18n="s3_h">Suis l'assistant</h3>
-          <p data-i18n="s3_p">Accepte une fois la demande de débogage. L'assistant reconnaît ta TV, te propose le nettoyage recommandé, le nouvel accueil et ton dock. Puis un appui : c'est fait.</p>
-        </li>
-      </ol>
-    </div>
-  </section>
-
-  <section>
+  <section id="features">
     <div class="wrap">
       <div class="split">
         <div>
@@ -142,7 +116,7 @@
           </ul>
         </div>
         <figure>
-          <div class="shot"><img src="../site/img/step-clean.webp" width="1280" height="688" loading="lazy" alt="L'étape de nettoyage de l'assistant : Recommandé, ou je choisis moi-même" data-i18n-alt="clean_alt"></div>
+          <div class="shot"><img src="../site/img/step-clean.webp" width="1280" height="688" loading="lazy" alt="L'étape de nettoyage de l'assistant : Recommandé, ou je choisis moi-même" data-i18n-alt="clean_alt"></div>
           <figcaption data-i18n="clean_cap">Recommandé, en un appui, ou les listes une par une.</figcaption>
         </figure>
       </div>
@@ -171,19 +145,41 @@
           <p class="eyebrow" data-i18n="prof_eye">Profils et mode enfant</p>
           <h2 data-i18n="prof_h">Une TV, un accueil pour chacun</h2>
           <ul class="ticks">
-            <li><div><b data-i18n="pr1_b">Qui regarde ?</b><span data-i18n="pr1_s">Au réveil de la TV, chacun appuie sur OK sur sa bulle et retrouve son dock et sa couleur.</span></div></li>
+            <li><div><b data-i18n="pr1_b">Qui regarde ?</b><span data-i18n="pr1_s">Au réveil de la TV, chacun appuie sur OK sur sa bulle et retrouve son dock et sa couleur.</span></div></li>
             <li><div><b data-i18n="pr2_b">Un profil enfant reste dans ses applis</b><span data-i18n="pr2_s">Seulement les applis que tu choisis, une heure de coucher, un temps par jour et un volume maximum. Une appli ouverte autrement le ramène à son accueil.</span></div></li>
             <li><div><b data-i18n="pr3_b">Un code parent, et rien ne quitte la TV</b><span data-i18n="pr3_s">Quatre chiffres lèvent les limites pour la soirée ou donnent 30 minutes de plus. Les profils et le temps d'écran restent sur la TV.</span></div></li>
           </ul>
         </div>
         <figure class="glow-fig">
-          <div class="shot"><img src="../site/img/profiles.webp" width="1280" height="720" loading="lazy" alt="Qui regarde ? Deux bulles de profil sur l'accueil" data-i18n-alt="profiles_alt"></div>
+          <div class="shot"><img src="../site/img/profiles.webp" width="1280" height="720" loading="lazy" alt="Qui regarde ? Deux bulles de profil sur l'accueil" data-i18n-alt="profiles_alt"></div>
           <div class="pair">
-            <div class="shot"><img src="../site/img/bedtime.webp" width="1280" height="720" loading="lazy" alt="C'est fini pour aujourd'hui : la fin du temps d'écran d'un enfant" data-i18n-alt="bedtime_alt"></div>
+            <div class="shot"><img src="../site/img/bedtime.webp" width="1280" height="720" loading="lazy" alt="C'est fini pour aujourd'hui : la fin du temps d'écran d'un enfant" data-i18n-alt="bedtime_alt"></div>
             <div class="shot"><img src="../site/img/kid-home.webp" width="1280" height="720" loading="lazy" alt="L'accueil d'un enfant avec seulement ses applis" data-i18n-alt="kidhome_alt"></div>
           </div>
         </figure>
       </div>
+    </div>
+  </section>
+
+  <section id="how">
+    <div class="wrap">
+      <p class="eyebrow" data-i18n="how_eye">Comment ça marche</p>
+      <h2 data-i18n="how_h">Trois étapes, tout à la télécommande</h2>
+      <p class="sub" data-i18n="how_sub">Une dizaine de minutes. Rien n'est supprimé : les applis sont désactivées, et un bouton les rallume.</p>
+      <ol class="steps">
+        <li>
+          <h3 data-i18n="s1_h">Active le mode développeur</h3>
+          <p data-i18n="s1_p">Paramètres › Système › À propos : clique 7 fois sur <kbd>Build de l'OS Android TV</kbd>. Puis Paramètres › Système › Options pour les développeurs : active <kbd>Débogage USB</kbd>.</p>
+        </li>
+        <li>
+          <h3 data-i18n="s2_h">Installe avec Downloader</h3>
+          <p data-i18n="s2_p">Installe l'appli gratuite <kbd>Downloader</kbd> depuis le Play Store de ta TV, tape le code <kbd>8225348</kbd>, puis installe OwnYourTV.</p>
+        </li>
+        <li>
+          <h3 data-i18n="s3_h">Suis l'assistant</h3>
+          <p data-i18n="s3_p">Accepte une fois la demande de débogage. L'assistant reconnaît ta TV, te propose le nettoyage recommandé, le nouvel accueil et ton dock. Puis un appui : c'est fait.</p>
+        </li>
+      </ol>
     </div>
   </section>
 
@@ -200,7 +196,7 @@
         <div><span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 3l8 3v6c0 4.5-3.4 8.3-8 9-4.6-.7-8-4.5-8-9V6z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M8.5 12l2.5 2.5 4.5-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
           <h3 data-i18n="sf3_h">Un accueil de secours</h3><p data-i18n="sf3_p">Si le nouvel accueil n'arrive pas à démarrer, un accueil simple avec toutes tes applis prend le relais. Jamais d'écran noir.</p></div>
         <div><span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M9 14l-5-5 5-5M4 9h11a5 5 0 0 1 0 10h-3" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
-          <h3 data-i18n="sf4_h">Un bouton remet tout</h3><p data-i18n="sf4_p">« Tout remettre » rallume chaque appli et ramène ton accueil d'origine.</p></div>
+          <h3 data-i18n="sf4_h">Un bouton remet tout</h3><p data-i18n="sf4_p">« Tout remettre » rallume chaque appli et ramène ton accueil d'origine.</p></div>
       </div>
     </div>
   </section>
@@ -215,11 +211,11 @@
       </div>
       <ul class="reports" id="reports" aria-live="polite"></ul>
       <p class="empty" id="reports-note" hidden></p>
-      <p class="brand-links"><span data-i18n="by_brand">Par marque :</span> <a href="tv/tcl.html">TCL</a> · <a href="tv/xiaomi.html">Xiaomi</a> · <a href="tv/sony.html">Sony</a> · <a href="tv/philips.html">Philips</a> · <a href="tv/hisense.html">Hisense</a></p>
+      <p class="brand-links"><span data-i18n="by_brand">Par marque :</span> <a href="tv/tcl.html">TCL</a> · <a href="tv/xiaomi.html">Xiaomi</a> · <a href="tv/sony.html">Sony</a> · <a href="tv/philips.html">Philips</a> · <a href="tv/hisense.html">Hisense</a></p>
       <div class="share-cta">
         <div>
-          <b data-i18n="cta_b">Ta TV n'est pas dans la liste ?</b>
-          <p data-i18n="cta_s">À la fin de l'appli, appuie sur <strong>Partager</strong> : une ligne anonyme (marque, modèle, ce qui a marché) l'ajoute ici, et le prochain qui a la même TV aura tout bon dès le début. Oublié ? L'accueil te le repropose une fois le lendemain.</p>
+          <b data-i18n="cta_b">Ta TV n'est pas dans la liste ?</b>
+          <p data-i18n="cta_s">À la fin de l'appli, appuie sur <strong>Partager</strong> : une ligne anonyme (marque, modèle, ce qui a marché) l'ajoute ici, et le prochain qui a la même TV aura tout bon dès le début. Oublié ? L'accueil te le repropose une fois le lendemain.</p>
         </div>
         <a class="btn btn-ghost" href="https://github.com/pimado1/ownyourtv/issues/new?template=my-tv.yml" data-i18n="cta_btn">Ou dis-le-nous ici</a>
       </div>
@@ -228,48 +224,72 @@
 
   <section id="faq">
     <div class="wrap faq">
-      <p class="eyebrow" data-i18n="faq_eye">Questions</p>
-      <h2 data-i18n="faq_h">Avant de commencer</h2>
+      <div class="faq-head">
+        <p class="eyebrow" data-i18n="faq_eye">Questions</p>
+        <h2 data-i18n="faq_h">Avant de commencer</h2>
+        <p class="sub" data-i18n="faq_sub">Une autre question ? <a href="contact.html">Écris-moi</a>, je réponds à chaque message.</p>
+      </div>
+      <div class="faq-list">
       <details>
-        <summary data-i18n="q1">Est-ce sans risque pour ma TV ?</summary>
-        <p data-i18n="a1">Les applis sont désactivées, jamais supprimées, et seules celles vérifiées sur une vraie TV sont cochées. Sur un modèle reconnu, OwnYourTV garde ce dont ce modèle a besoin. Si son accueil n'arrive pas à démarrer, un accueil de secours avec tes applis prend le relais. « Tout remettre » dans l'appli rallume chaque appli coupée et ramène ton accueil d'origine.</p>
+        <summary data-i18n="q1">Est-ce sans risque pour ma TV ?</summary>
+        <p data-i18n="a1">Les applis sont désactivées, jamais supprimées, et seules celles vérifiées sur une vraie TV sont cochées. Sur un modèle reconnu, OwnYourTV garde ce dont ce modèle a besoin. Si son accueil n'arrive pas à démarrer, un accueil de secours avec tes applis prend le relais. « Tout remettre » dans l'appli rallume chaque appli coupée et ramène ton accueil d'origine.</p>
       </details>
       <details>
         <summary data-i18n="q8">Une mise à jour de la TV a remis les pubs</summary>
-        <p data-i18n="a8">Ça arrive : les fabricants rallument leurs applis pendant les mises à jour. OwnYourTV le repère au démarrage suivant et propose de les recouper en un appui. Active le débogage USB quand elle le demande, puis recoupe-le à la fin.</p>
+        <p data-i18n="a8">Ça arrive : les fabricants rallument leurs applis pendant les mises à jour. OwnYourTV le repère au démarrage suivant et propose de les recouper en un appui. Active le débogage USB quand elle le demande, puis recoupe-le à la fin.</p>
       </details>
       <details>
-        <summary data-i18n="q10">Chacun, ou un enfant, peut-il avoir son propre accueil ?</summary>
-        <p data-i18n="a10">Oui, depuis la version 1.8. Chaque profil a son dock et sa couleur, choisis avec une bulle au réveil de la TV. Un profil enfant ne montre que les applis que tu choisis, avec une heure de coucher, un temps par jour et un volume maximum. Quand le temps est écoulé, un écran « Bonne nuit » apparaît, puis l'écran s'assombrit jusqu'à la mise en veille de la TV. Un code parent à 4 chiffres lève les limites, et une appli ouverte par les réglages ou par la voix ramène l'enfant à son accueil. Ça se règle avec la pastille Profil, en bas de l'accueil.</p>
+        <summary data-i18n="q10">Chacun, ou un enfant, peut-il avoir son propre accueil ?</summary>
+        <p data-i18n="a10">Oui, depuis la version 1.8. Chaque profil a son dock et sa couleur, choisis avec une bulle au réveil de la TV. Un profil enfant ne montre que les applis que tu choisis, avec une heure de coucher, un temps par jour et un volume maximum. Quand le temps est écoulé, un écran « Bonne nuit » apparaît, puis l'écran s'assombrit jusqu'à la mise en veille de la TV. Un code parent à 4 chiffres lève les limites, et une appli ouverte par les réglages ou par la voix ramène l'enfant à son accueil. Ça se règle avec la pastille Profil, en bas de l'accueil.</p>
       </details>
       <details>
-        <summary data-i18n="q9">Comment avoir les nouvelles versions ?</summary>
-        <p data-i18n="a9">Depuis la version 1.7, l'accueil te prévient quand une nouvelle version sort. Appuie sur Mettre à jour : OwnYourTV vérifie qu'elle est signée avec la même clé, puis Android te demande de confirmer. Tes choix et ton dock restent. Avant la 1.7, installe-la par-dessus l'ancienne avec le même code Downloader.</p>
+        <summary data-i18n="q9">Comment avoir les nouvelles versions ?</summary>
+        <p data-i18n="a9">Depuis la version 1.7, l'accueil te prévient quand une nouvelle version sort. Appuie sur Mettre à jour : OwnYourTV vérifie qu'elle est signée avec la même clé, puis Android te demande de confirmer. Tes choix et ton dock restent. Avant la 1.7, installe-la par-dessus l'ancienne avec le même code Downloader.</p>
       </details>
       <details>
         <summary data-i18n="q2">Google Play Protect dit que l'appli est bloquée</summary>
-        <p data-i18n="a2">Play Protect prévient pour toute appli installée hors du Play Store. Choisis « Plus de détails », puis « Installer quand même ». OwnYourTV est open source : tout le monde peut lire ce qu'elle fait sur GitHub.</p>
+        <p data-i18n="a2">Play Protect prévient pour toute appli installée hors du Play Store. Choisis « Plus de détails », puis « Installer quand même ». OwnYourTV est open source : tout le monde peut lire ce qu'elle fait sur GitHub.</p>
       </details>
       <details>
         <summary data-i18n="q3">L'appli me demande de reconnecter le Wi-Fi</summary>
-        <p data-i18n="a3">Sur certaines Google TV (Xiaomi, entre autres), le réseau Wi-Fi est enregistré par l'appli de première installation de la TV. Changer d'accueil coupe cette appli, ce qui oublierait le réseau. L'assistant te guide : oublie le réseau, reconnecte-le, et l'accueil peut changer sans couper Internet.</p>
+        <p data-i18n="a3">Sur certaines Google TV (Xiaomi, entre autres), le réseau Wi-Fi est enregistré par l'appli de première installation de la TV. Changer d'accueil coupe cette appli, ce qui oublierait le réseau. L'assistant te guide : oublie le réseau, reconnecte-le, et l'accueil peut changer sans couper Internet.</p>
       </details>
       <details>
         <summary data-i18n="q4">Ma TV ne veut pas d'un autre accueil</summary>
-        <p data-i18n="a4">Certains modèles n'acceptent que leur propre accueil. OwnYourTV les connaît et te le dit : les pubs et le pistage sont quand même coupés, et ton accueil actuel reste.</p>
+        <p data-i18n="a4">Certains modèles n'acceptent que leur propre accueil. OwnYourTV les connaît et te le dit : les pubs et le pistage sont quand même coupés, et ton accueil actuel reste.</p>
       </details>
       <details>
-        <summary data-i18n="q5">Je peux le faire depuis un ordinateur ?</summary>
-        <p data-i18n="a5">Oui : <code>ownyourtv.py</code> fait la même chose depuis Windows, macOS ou Linux, avec adb. Voir <a href="https://github.com/pimado1/ownyourtv#from-a-computer">From a computer</a> sur GitHub.</p>
+        <summary data-i18n="q5">Je peux le faire depuis un ordinateur ?</summary>
+        <p data-i18n="a5">Oui : <code>ownyourtv.py</code> fait la même chose depuis Windows, macOS ou Linux, avec adb. Voir <a href="https://github.com/pimado1/ownyourtv#from-a-computer">From a computer</a> sur GitHub.</p>
       </details>
       <details>
-        <summary data-i18n="q6">OwnYourTV collecte-t-elle des données ?</summary>
+        <summary data-i18n="q6">OwnYourTV collecte-t-elle des données ?</summary>
         <p data-i18n="a6">Non. Tout se passe sur la TV. À la fin, l'appli propose de partager le modèle de ta TV et ce qui a marché, anonymement, seulement si tu appuies sur Partager. Détails sur la <a href="privacy.html">page confidentialité</a>.</p>
       </details>
       <details>
-        <summary data-i18n="q7">Combien ça coûte ?</summary>
+        <summary data-i18n="q7">Combien ça coûte ?</summary>
         <p data-i18n="a7">Rien. OwnYourTV est gratuite et open source, sous licence MIT.</p>
       </details>
+      </div>
+    </div>
+  </section>
+
+  <section id="get" class="get">
+    <div class="wrap">
+      <p class="eyebrow" data-i18n="get_eye">Prêt ?</p>
+      <h2 data-i18n="get_h">Dix minutes, la télécommande, et elle est à toi</h2>
+      <p class="sub" data-i18n="get_sub">Gratuit, open source, et un bouton remet tout comme avant.</p>
+      <div class="code">
+        <small data-i18n="code_label">Sur ta TV, dans l'appli Downloader, tape</small>
+        <div class="code-row">
+          <span class="code-num" aria-label="8225348">8225348</span>
+          <button class="btn btn-ghost" type="button" data-copy data-i18n="copy">Copier</button>
+        </div>
+      </div>
+      <div class="hero-links">
+        <a class="btn btn-lime" href="#how" data-i18n="cta_how">Voir les 3 étapes</a>
+        <a class="btn btn-ghost" href="https://github.com/pimado1/ownyourtv/releases/latest" data-i18n="cta_apk">Télécharger l'APK</a>
+      </div>
     </div>
   </section>
 </main>
@@ -286,8 +306,8 @@
   </div>
 </footer>
 
-<script src="../site/i18n.js?v=202610292001"></script>
-<script src="../site/effects.js?v=202610292001"></script>
+<script src="../site/i18n.js?v=202610292244"></script>
+<script src="../site/effects.js?v=202610292244"></script>
 <script>
   // The TVs owners reported from the app: one GitHub issue per model, labelled with what happened.
   (function () {
@@ -309,9 +329,10 @@
       .catch(function () { count.textContent = "?"; note.hidden = false; note.innerHTML = t("rep_err"); });
   })();
 
-  document.getElementById("copy").addEventListener("click", function () {
-    var b = this;
-    navigator.clipboard.writeText("8225348").then(function () { b.textContent = t("copied"); setTimeout(function () { b.textContent = t("copy"); }, 1600); });
+  document.querySelectorAll("[data-copy]").forEach(function (b) {
+    b.addEventListener("click", function () {
+      navigator.clipboard.writeText("8225348").then(function () { b.textContent = t("copied"); setTimeout(function () { b.textContent = t("copy"); }, 1600); });
+    });
   });
 </script>
 <!-- Cloudflare Web Analytics: counts visits to this website without cookies; the TV app sends nothing to it. -->

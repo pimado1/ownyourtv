@@ -21,6 +21,15 @@ FR = json.loads(subprocess.check_output(["node", "-e",
     str(ROOT / "site/i18n.js")]))
 
 
+def nbsp(text):
+    """French puts a space before : ; ? ! and inside « »: a non-breaking one, so the mark never starts a line alone."""
+    return re.sub(r"« ", "«\u00a0", re.sub(r" ([:;?!»])", "\u00a0\\1", text))
+
+
+FR = {k: nbsp(v) for k, v in FR.items()}
+META = {k: (nbsp(a), nbsp(b)) for k, (a, b) in META.items()}
+
+
 def inner_span(html, start):
     """End of the element whose opening tag starts at `start`: matching close tag, nested same-name tags counted."""
     name = re.match(r"<([a-zA-Z0-9]+)", html[start:]).group(1)
@@ -97,7 +106,7 @@ for page in PAGES:
     fr = re.sub(r'<meta name="description" content="[^"]*">', '<meta name="description" content="%s">' % desc.replace('"', "&quot;"), fr, count=1)
     fr = re.sub(r'<meta property="og:description" content="[^"]*">', '<meta property="og:description" content="%s">' % desc.replace('"', "&quot;"), fr, count=1)
     fr = re.sub(r'<meta property="og:title" content="[^"]*">', '<meta property="og:title" content="%s">' % title.replace('"', "&quot;"), fr, count=1)
-    fr = re.sub(r'(href|src)="site/', r'\1="../site/', fr)
+    fr = re.sub(r'(href|src|poster)="site/', r'\1="../site/', fr)
     fr = lang_link(fr, False, page)
     (ROOT / "fr" / page).write_text(fr)
 
