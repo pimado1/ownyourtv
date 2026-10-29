@@ -757,26 +757,19 @@ public class HomeActivity extends Activity {
     }
 
     /** The bottom of the card mirrored, fading out: drawn once per card, then just shown. */
-    private Bitmap reflection(Drawable face) {
-        int cw = px(CARD_W), ch = px(CARD_H), rh = px(REFL);
-        Bitmap full = Bitmap.createBitmap(cw, ch, Bitmap.Config.ARGB_8888);
-        Canvas fc = new Canvas(full);
-        Path clip = new Path();
-        clip.addRoundRect(new RectF(0, 0, cw, ch), px(28), px(28), Path.Direction.CW);
-        fc.clipPath(clip);
-        face.setBounds(0, 0, cw, ch);
-        face.draw(fc);
-        Bitmap out = Bitmap.createBitmap(cw, rh, Bitmap.Config.ARGB_8888);
+    private Bitmap reflection(Bitmap baked) {
+        // Made from the smooth card picture, clear border included, so the mirror's corners and sides stay clean too.
+        int w = baked.getWidth(), rh = px(REFL) + EDGE;
+        Bitmap out = Bitmap.createBitmap(w, rh, Bitmap.Config.ARGB_8888);
         Canvas c = new Canvas(out);
         Matrix m = new Matrix();
         m.setScale(1, -1);
-        m.postTranslate(0, ch);
-        c.drawBitmap(full, m, null);
+        m.postTranslate(0, baked.getHeight());
+        c.drawBitmap(baked, m, new Paint(Paint.FILTER_BITMAP_FLAG));
         Paint fade = new Paint();
         fade.setShader(new LinearGradient(0, 0, 0, rh, 0x80000000, 0x00000000, Shader.TileMode.CLAMP));
         fade.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.DST_IN));
-        c.drawRect(0, 0, cw, rh, fade);
-        full.recycle();
+        c.drawRect(0, 0, w, rh, fade);
         return out;
     }
 
@@ -828,8 +821,7 @@ public class HomeActivity extends Activity {
         img.setImageDrawable(a.banner);
         img.setScaleType(ImageView.ScaleType.CENTER_CROP);
         f.addView(img, new FrameLayout.LayoutParams(-1, -1));
-        Drawable copy = a.banner.getConstantState() != null ? a.banner.getConstantState().newDrawable().mutate() : a.banner;
-        return holder(f, reflection(copy), () -> open(a.launch));
+        return holder(f, () -> open(a.launch));
     }
 
     private View allAppsCard() {
@@ -844,12 +836,14 @@ public class HomeActivity extends Activity {
         t.setText(getString(R.string.h_all_apps));
         col.addView(t, wrap());
         f.addView(col, new FrameLayout.LayoutParams(-2, -2, Gravity.CENTER));
-        GradientDrawable copy = new GradientDrawable(GradientDrawable.Orientation.TL_BR, new int[]{0xFF5A4CC0, 0xFF221A66});
-        return holder(f, reflection(copy), this::showAllApps);
+        return holder(f, this::showAllApps);
     }
 
     /** A card in the carousel: its floor shadow, its reflection and its face, moved and turned as one. */
-    private View holder(FrameLayout face, Bitmap refl, Runnable click) {
+    private View holder(FrameLayout face, Runnable click) {
+        Drawable ring = face.getForeground();
+        face.setForeground(null);
+        Bitmap baked = bakeFace(face);
         FrameLayout h = new FrameLayout(this);
         h.setClipChildren(false);
         ImageView shadow = new ImageView(this);
@@ -859,20 +853,18 @@ public class HomeActivity extends Activity {
         sl.topMargin = px(30);
         h.addView(shadow, sl);
         ImageView mirror = new ImageView(this);
-        mirror.setImageBitmap(refl);
+        mirror.setImageBitmap(reflection(baked));
         mirror.setTag("mirror");
-        FrameLayout.LayoutParams ml = new FrameLayout.LayoutParams(px(CARD_W), px(REFL));
-        ml.leftMargin = px(S);
-        ml.topMargin = px(S + CARD_H + 10);
+        FrameLayout.LayoutParams ml = new FrameLayout.LayoutParams(px(CARD_W) + 2 * EDGE, px(REFL) + EDGE);
+        ml.leftMargin = px(S) - EDGE;
+        ml.topMargin = px(S + CARD_H + 10) - EDGE;
         h.addView(mirror, ml);
         // Tilted in 3D, a view's own edges are not smoothed and step like stairs. The face is drawn once into a
         // picture with a thin clear border, and a picture is filtered when it is turned, so its edges stay clean,
         // without the cost of an offscreen layer per card.
         int e = EDGE;
         ImageView img = new ImageView(this);
-        Drawable ring = face.getForeground();
-        face.setForeground(null);
-        img.setImageBitmap(bakeFace(face));
+        img.setImageBitmap(baked);
         if (ring != null) img.setForeground(new android.graphics.drawable.InsetDrawable(ring, e));
         FrameLayout.LayoutParams fl = new FrameLayout.LayoutParams(px(CARD_W) + 2 * e, px(CARD_H) + 2 * e);
         fl.leftMargin = px(S) - e;
