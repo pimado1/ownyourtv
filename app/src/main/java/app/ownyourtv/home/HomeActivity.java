@@ -1460,6 +1460,9 @@ public class HomeActivity extends Activity {
         }), new LinearLayout.LayoutParams(-2, px(72)));
         LinearLayout body = column(28);
         TextView which = label(text, 26, 0xD9FFFFFF);
+        which.setSingleLine(false);
+        which.setMaxLines(2);
+        which.setMaxWidth(px(1180));
         which.setText(Recheck.labels(this, back, 6));
         body.addView(which, wrap());
         body.addView(actions, wrap());
@@ -1493,6 +1496,10 @@ public class HomeActivity extends Activity {
         }), new LinearLayout.LayoutParams(-2, px(72)));
         LinearLayout body = column(28);
         TextView lead = label(text, 26, 0xD9FFFFFF);
+        lead.setSingleLine(false);
+        lead.setMaxLines(3);
+        lead.setMaxWidth(px(1180));
+        lead.setLineSpacing(px(6), 1f);
         lead.setText(R.string.up_lead);
         body.addView(lead, wrap());
         body.addView(actions, wrap());
