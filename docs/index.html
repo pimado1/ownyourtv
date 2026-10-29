@@ -19,7 +19,7 @@
 <meta name="theme-color" content="#0b0d12">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect x='3' y='11' width='26' height='14' rx='4' fill='%23c6f432'/%3E%3Cpath d='M12 11V7.5a4 4 0 0 1 8 0' fill='none' stroke='%23f4f4f0' stroke-width='3' stroke-linecap='round'/%3E%3C/svg%3E">
 <link rel="apple-touch-icon" href="site/img/apple-touch-icon.png">
-<link rel="stylesheet" href="site/style.css?v=202610300002">
+<link rel="stylesheet" href="site/style.css?v=202610300010">
 </head>
 <body>
 
@@ -30,9 +30,9 @@
       <span>Own<b>Your</b>TV</span>
     </a>
     <nav>
-      <a href="#features" data-i18n="nav_feat">Features</a>
-      <a href="#how" data-i18n="nav_how">How it works</a>
-      <a href="#tvs" data-i18n="nav_tvs">Which TVs</a>
+      <a href="#how" data-i18n="nav_install">Install</a>
+      <a href="computer.html" data-i18n="nav_computer">From a computer</a>
+      <a href="#tvs" data-i18n="nav_mytv">My TV</a>
       <a href="#faq" data-i18n="nav_faq">Questions</a>
       <a href="contact.html" data-i18n="nav_contact">Contact</a>
       <a class="nav-gh" href="https://github.com/pimado1/ownyourtv">GitHub</a>
@@ -61,7 +61,7 @@
         </div>
         <div class="hero-links">
           <a class="btn btn-lime" href="#how" data-i18n="cta_how">See the 3 steps</a>
-          <a class="btn btn-ghost" href="https://github.com/pimado1/ownyourtv/releases/latest" data-i18n="cta_apk">Download the APK</a>
+          <a class="btn btn-ghost" href="computer.html" data-i18n="cta_pc">From a computer</a>
         </div>
       </div>
       <a class="check-link" href="#tvs" data-i18n="cta_check" data-reveal style="--d: 150ms">Is my TV recognised? →</a>
@@ -100,6 +100,77 @@
         <div class="stand" aria-hidden="true"></div>
       </div>
       <p class="try-hint" data-i18n="try_hint">A TCL C89B with Google TV 14, no editing.</p>
+    </div>
+  </section>
+
+  <section id="how">
+    <div class="wrap">
+      <p class="eyebrow" data-i18n="how_eye">Install</p>
+      <h2 data-i18n="how_h">Two ways to install, the same result</h2>
+      <p class="sub" data-i18n="how_sub">About ten minutes. Nothing is deleted: apps are switched off, and one button switches them back on.</p>
+      <div class="ways-grid ways-top">
+        <a class="way" href="#steps">
+          <p class="eyebrow" data-i18n="w1_eye">On the TV</p>
+          <h4 data-i18n="w1_h">With the remote</h4>
+          <p data-i18n="w1_p">The OwnYourTV app guides you on the TV screen, from the clean-up to the new home screen.</p>
+          <p class="way-need" data-i18n="w1_need">You need: the remote. Nothing else.</p>
+          <span class="way-more" data-i18n="w1_go">See the 3 steps ↓</span>
+        </a>
+        <a class="way" href="computer.html">
+          <p class="eyebrow" data-i18n="w2_eye">From a computer</p>
+          <h4 data-i18n="w2_h">With an AI agent</h4>
+          <p data-i18n="w2_p">No app to download on the TV: your computer talks to it over Wi-Fi. Copy a ready-made prompt into Claude Code or any AI agent, to install or to put everything back.</p>
+          <p class="way-need" data-i18n="w2_need">You need: a computer on the same Wi-Fi and an AI agent, or Python to type the commands yourself.</p>
+          <span class="way-more" data-i18n="w2_more">The prompts, ready to copy →</span>
+        </a>
+      </div>
+      <h3 class="steps-h" id="steps" data-i18n="steps_h">With the remote, in three steps</h3>
+      <ol class="steps">
+        <li>
+          <h3 data-i18n="s1_h">Turn on developer mode</h3>
+          <p data-i18n="s1_p">Settings › System › About: click <kbd>Android TV OS build</kbd> 7 times. Then Settings › System › Developer options: turn on <kbd>USB debugging</kbd>.</p>
+        </li>
+        <li>
+          <h3 data-i18n="s2_h">Install with Downloader</h3>
+          <p data-i18n="s2_p">Install the free <kbd>Downloader</kbd> app from your TV's Play Store, type the code <kbd>8225348</kbd>, then install OwnYourTV.</p>
+        </li>
+        <li>
+          <h3 data-i18n="s3_h">Follow the assistant</h3>
+          <p data-i18n="s3_p">Accept the debugging prompt once. The assistant recognises your TV, offers the recommended clean-up, the new home screen and your dock. Then one press: done.</p>
+        </li>
+      </ol>
+      <p class="ways-foot" data-i18n="ways_foot">Both use the same lists and the same safety rules, and both can put everything back.</p>
+    </div>
+  </section>
+
+  <section id="tvs">
+    <div class="wrap">
+      <p class="eyebrow" data-i18n="tvs_eye">Which TVs</p>
+      <h2 data-i18n="tvs_h">Android TV and Google TV, model by model</h2>
+      <p class="sub" data-i18n="tvs_sub">OwnYourTV recognises hundreds of models from TCL, Sony, Xiaomi, Philips, Hisense and more, from lists tested on real sets. It changes the home screen the way each model needs, or leaves it alone when a model cannot safely take another one. Below, the TVs OwnYourTV owners shared from the app.</p>
+      <div class="checker">
+        <label for="tv-q" data-i18n="ck_label">Is my TV recognised?</label>
+        <input id="tv-q" type="search" autocomplete="off" spellcheck="false" placeholder="Brand or model, e.g. TCL C89B" data-i18n-ph="ck_ph">
+        <ul class="checker-out" id="tv-out" aria-live="polite"></ul>
+      </div>
+      <div class="tv-stats">
+        <div><strong id="n-models">360</strong><span data-i18n="st_models">models recognised</span></div>
+        <div><strong id="n-brands">97</strong><span data-i18n="st_brands">brands</span></div>
+        <div><strong id="n-reports">·</strong><span data-i18n="st_tested">tested with OwnYourTV by their owners</span></div>
+        <div><strong id="n-dl">·</strong><span data-i18n="st_dl">downloads</span></div>
+      </div>
+      <p class="credit" data-i18n="st_credit">Models recognised thanks to the lists the <a href="https://github.com/Gathin23/cleanyourtv">CleanYourTV</a> community tested on real TVs (MIT licence). Tested with OwnYourTV: the TVs owners shared from the app, listed below.</p>
+      <ul class="reports" id="reports" aria-live="polite"></ul>
+      <p class="empty" id="reports-note" hidden></p>
+      <p class="brand-links"><span data-i18n="by_brand">By brand:</span> <a href="tv/tcl.html">TCL</a> · <a href="tv/xiaomi.html">Xiaomi</a> · <a href="tv/sony.html">Sony</a> · <a href="tv/philips.html">Philips</a> · <a href="tv/hisense.html">Hisense</a></p>
+      <p class="brand-links" data-i18n="other_tvs">A Samsung, LG, Roku or Vizio? OwnYourTV cannot run there, but <a href="other-tvs.html">you can stop the tracking from the remote</a>.</p>
+      <div class="share-cta">
+        <div>
+          <b data-i18n="cta_b">Your TV is not on the list?</b>
+          <p data-i18n="cta_s">At the end of the app, press <strong>Share</strong>: one anonymous line (brand, model, what worked) adds it here, and the next owner of the same TV gets it right from the start. Forgot? The home screen offers it once more the next day.</p>
+        </div>
+        <a class="btn btn-ghost" href="https://github.com/pimado1/ownyourtv/issues/new?template=my-tv.yml" data-i18n="cta_btn">Or tell us here</a>
+      </div>
     </div>
   </section>
 
@@ -162,53 +233,6 @@
     </div>
   </section>
 
-  <section id="how">
-    <div class="wrap">
-      <p class="eyebrow" data-i18n="how_eye">How it works</p>
-      <h2 data-i18n="how_h">Three steps, all from the remote</h2>
-      <p class="sub" data-i18n="how_sub">About ten minutes. Nothing is deleted: apps are switched off, and one button switches them back on.</p>
-      <ol class="steps">
-        <li>
-          <h3 data-i18n="s1_h">Turn on developer mode</h3>
-          <p data-i18n="s1_p">Settings › System › About: click <kbd>Android TV OS build</kbd> 7 times. Then Settings › System › Developer options: turn on <kbd>USB debugging</kbd>.</p>
-        </li>
-        <li>
-          <h3 data-i18n="s2_h">Install with Downloader</h3>
-          <p data-i18n="s2_p">Install the free <kbd>Downloader</kbd> app from your TV's Play Store, type the code <kbd>8225348</kbd>, then install OwnYourTV.</p>
-        </li>
-        <li>
-          <h3 data-i18n="s3_h">Follow the assistant</h3>
-          <p data-i18n="s3_p">Accept the debugging prompt once. The assistant recognises your TV, offers the recommended clean-up, the new home screen and your dock. Then one press: done.</p>
-        </li>
-      </ol>
-
-      <div class="ways" data-reveal>
-        <h3 class="ways-h" data-i18n="ways_h">Two ways, same result</h3>
-        <div class="ways-grid">
-          <div class="way">
-            <p class="eyebrow" data-i18n="w1_eye">On the TV</p>
-            <h4 data-i18n="w1_h">With the remote</h4>
-            <p data-i18n="w1_p">The three steps above: the OwnYourTV app guides you on the TV screen, from the clean-up to the new home screen.</p>
-            <p class="way-need" data-i18n="w1_need">You need: the remote. Nothing else.</p>
-          </div>
-          <div class="way">
-            <p class="eyebrow" data-i18n="w2_eye">From a computer</p>
-            <h4 data-i18n="w2_h">With an AI agent</h4>
-            <p data-i18n="w2_p">No app to download on the TV: your computer talks to it over Wi-Fi. Turn on developer mode (step 1), then paste this into Claude Code or any agent that can run commands:</p>
-            <div class="prompt">
-              <code id="agent-prompt" data-i18n="w2_prompt">Clone https://github.com/pimado1/ownyourtv and follow its PROMPT.md to clean my TV. My TV's IP address is:</code>
-              <button class="btn btn-ghost" type="button" data-copy="agent-prompt" data-i18n="copy">Copy</button>
-            </div>
-            <p data-i18n="w2_p2">The agent installs what it needs, shows what it found, asks before switching anything off, and tells you how to undo it. The new home screen is installed only if you ask for it.</p>
-            <p class="way-need" data-i18n="w2_need">You need: a computer on the same Wi-Fi, an AI agent, your TV's IP address (Settings › Network). Rather type the commands yourself? <a href="https://github.com/pimado1/ownyourtv#from-a-computer">ownyourtv.py</a></p>
-            <a class="way-more" href="computer.html" data-i18n="w2_more">All the prompts, and how to put everything back →</a>
-          </div>
-        </div>
-        <p class="ways-foot" data-i18n="ways_foot">Both use the same lists and the same safety rules, and both can put everything back.</p>
-      </div>
-    </div>
-  </section>
-
   <section id="safe">
     <div class="wrap">
       <p class="eyebrow" data-i18n="safe_eye">Safe by design</p>
@@ -223,37 +247,6 @@
           <h3 data-i18n="sf3_h">A backup home</h3><p data-i18n="sf3_p">If the new home screen ever fails to start, a plain home with all your apps takes over. Never a black screen.</p></div>
         <div><span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M9 14l-5-5 5-5M4 9h11a5 5 0 0 1 0 10h-3" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
           <h3 data-i18n="sf4_h">One button puts it all back</h3><p data-i18n="sf4_p">"Put everything back" switches every app on again and brings your original home screen back.</p></div>
-      </div>
-    </div>
-  </section>
-
-  <section id="tvs">
-    <div class="wrap">
-      <p class="eyebrow" data-i18n="tvs_eye">Which TVs</p>
-      <h2 data-i18n="tvs_h">Android TV and Google TV, model by model</h2>
-      <p class="sub" data-i18n="tvs_sub">OwnYourTV recognises hundreds of models from TCL, Sony, Xiaomi, Philips, Hisense and more, from lists tested on real sets. It changes the home screen the way each model needs, or leaves it alone when a model cannot safely take another one. Below, the TVs OwnYourTV owners shared from the app.</p>
-      <div class="checker">
-        <label for="tv-q" data-i18n="ck_label">Is my TV recognised?</label>
-        <input id="tv-q" type="search" autocomplete="off" spellcheck="false" placeholder="Brand or model, e.g. TCL C89B" data-i18n-ph="ck_ph">
-        <ul class="checker-out" id="tv-out" aria-live="polite"></ul>
-      </div>
-      <div class="tv-stats">
-        <div><strong id="n-models">360</strong><span data-i18n="st_models">models recognised</span></div>
-        <div><strong id="n-brands">97</strong><span data-i18n="st_brands">brands</span></div>
-        <div><strong id="n-reports">·</strong><span data-i18n="st_tested">tested with OwnYourTV by their owners</span></div>
-        <div><strong id="n-dl">·</strong><span data-i18n="st_dl">downloads</span></div>
-      </div>
-      <p class="credit" data-i18n="st_credit">Models recognised thanks to the lists the <a href="https://github.com/Gathin23/cleanyourtv">CleanYourTV</a> community tested on real TVs (MIT licence). Tested with OwnYourTV: the TVs owners shared from the app, listed below.</p>
-      <ul class="reports" id="reports" aria-live="polite"></ul>
-      <p class="empty" id="reports-note" hidden></p>
-      <p class="brand-links"><span data-i18n="by_brand">By brand:</span> <a href="tv/tcl.html">TCL</a> · <a href="tv/xiaomi.html">Xiaomi</a> · <a href="tv/sony.html">Sony</a> · <a href="tv/philips.html">Philips</a> · <a href="tv/hisense.html">Hisense</a></p>
-      <p class="brand-links" data-i18n="other_tvs">A Samsung, LG, Roku or Vizio? OwnYourTV cannot run there, but <a href="other-tvs.html">you can stop the tracking from the remote</a>.</p>
-      <div class="share-cta">
-        <div>
-          <b data-i18n="cta_b">Your TV is not on the list?</b>
-          <p data-i18n="cta_s">At the end of the app, press <strong>Share</strong>: one anonymous line (brand, model, what worked) adds it here, and the next owner of the same TV gets it right from the start. Forgot? The home screen offers it once more the next day.</p>
-        </div>
-        <a class="btn btn-ghost" href="https://github.com/pimado1/ownyourtv/issues/new?template=my-tv.yml" data-i18n="cta_btn">Or tell us here</a>
       </div>
     </div>
   </section>
@@ -337,17 +330,24 @@
 <footer>
   <div class="wrap">
     <a class="brand" href="#top"><span>Own<b>Your</b>TV</span></a>
-    <a href="https://github.com/pimado1/ownyourtv">GitHub</a>
-    <a href="https://github.com/pimado1/ownyourtv/releases/latest" data-i18n="ft_dl">Download</a>
-    <a href="contact.html" data-i18n="ft_contact">Contact</a>
-    <a href="privacy.html" data-i18n="ft_privacy">Privacy</a>
-    <a href="https://github.com/pimado1/ownyourtv/blob/main/NOTICE.md" data-i18n="ft_credits">Credits</a>
+    <nav class="ft-nav">
+      <a href="#how" data-i18n="nav_install">Install</a>
+      <a href="computer.html" data-i18n="nav_computer">From a computer</a>
+      <a href="#tvs" data-i18n="nav_mytv">My TV</a>
+      <a href="other-tvs.html" data-i18n="ft_other">Samsung, LG, Roku</a>
+      <a href="#faq" data-i18n="nav_faq">Questions</a>
+      <a href="contact.html" data-i18n="ft_contact">Contact</a>
+      <a href="privacy.html" data-i18n="ft_privacy">Privacy</a>
+      <a href="https://github.com/pimado1/ownyourtv/blob/main/NOTICE.md" data-i18n="ft_credits">Credits</a>
+      <a href="https://github.com/pimado1/ownyourtv/releases/latest" data-i18n="ft_dl">Download</a>
+      <a href="https://github.com/pimado1/ownyourtv">GitHub</a>
+    </nav>
     <span data-i18n="ft_mit">Free and open source, MIT licence</span>
   </div>
 </footer>
 
-<script src="site/i18n.js?v=202610300002"></script>
-<script src="site/effects.js?v=202610300002"></script>
+<script src="site/i18n.js?v=202610300010"></script>
+<script src="site/effects.js?v=202610300010"></script>
 <script>
   // The TVs owners reported from the app: one GitHub issue per model, labelled with what happened.
   (function () {

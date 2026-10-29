@@ -11,7 +11,7 @@
 <meta name="description" content="Add your TV to the list, report a problem or write to the developer of OwnYourTV.">
 <meta name="theme-color" content="#0b0d12">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect x='3' y='11' width='26' height='14' rx='4' fill='%23c6f432'/%3E%3Cpath d='M12 11V7.5a4 4 0 0 1 8 0' fill='none' stroke='%23f4f4f0' stroke-width='3' stroke-linecap='round'/%3E%3C/svg%3E">
-<link rel="stylesheet" href="site/style.css?v=202610300002">
+<link rel="stylesheet" href="site/style.css?v=202610300010">
 </head>
 <body>
 
@@ -21,7 +21,15 @@
       <svg viewBox="0 0 32 32" aria-hidden="true"><rect x="3" y="12" width="26" height="14" rx="4" fill="#c6f432"/><path d="M11.5 12V8a4.5 4.5 0 0 1 9 0v1" fill="none" stroke="#f4f4f0" stroke-width="3" stroke-linecap="round"/><circle cx="16" cy="17.5" r="2" fill="#0b0d12"/><path d="M15.2 18.5h1.6l.5 4h-2.6z" fill="#0b0d12"/><rect x="11" y="28" width="10" height="2" rx="1" fill="#f4f4f0"/></svg>
       <span>Own<b>Your</b>TV</span>
     </a>
-    <nav><a href="./" data-i18n="p_back">← Back to the home page</a></nav>
+    <nav>
+      <a href="./#how" data-i18n="nav_install">Install</a>
+      <a href="computer.html" data-i18n="nav_computer">From a computer</a>
+      <a href="./#tvs" data-i18n="nav_mytv">My TV</a>
+      <a href="./#faq" data-i18n="nav_faq">Questions</a>
+      <a href="contact.html" data-i18n="nav_contact" aria-current="page">Contact</a>
+      <a class="nav-gh" href="https://github.com/pimado1/ownyourtv">GitHub</a>
+    </nav>
+    <a class="btn btn-lime bar-cta" href="./#how" data-i18n="bar_cta">Install</a>
     <a class="lang" id="lang" href="fr/contact.html" hreflang="fr" lang="fr" aria-label="Français">FR</a>
   </div>
 </header>
@@ -55,13 +63,23 @@
 <footer>
   <div class="wrap">
     <a class="brand" href="./"><span>Own<b>Your</b>TV</span></a>
-    <a href="https://github.com/pimado1/ownyourtv">GitHub</a>
-    <a href="privacy.html" data-i18n="ft_privacy">Privacy</a>
+    <nav class="ft-nav">
+      <a href="./#how" data-i18n="nav_install">Install</a>
+      <a href="computer.html" data-i18n="nav_computer">From a computer</a>
+      <a href="./#tvs" data-i18n="nav_mytv">My TV</a>
+      <a href="other-tvs.html" data-i18n="ft_other">Samsung, LG, Roku</a>
+      <a href="./#faq" data-i18n="nav_faq">Questions</a>
+      <a href="contact.html" data-i18n="ft_contact">Contact</a>
+      <a href="privacy.html" data-i18n="ft_privacy">Privacy</a>
+      <a href="https://github.com/pimado1/ownyourtv/blob/main/NOTICE.md" data-i18n="ft_credits">Credits</a>
+      <a href="https://github.com/pimado1/ownyourtv/releases/latest" data-i18n="ft_dl">Download</a>
+      <a href="https://github.com/pimado1/ownyourtv">GitHub</a>
+    </nav>
     <span data-i18n="ft_mit">Free and open source, MIT licence</span>
   </div>
 </footer>
 
-<script src="site/i18n.js?v=202610300002"></script>
+<script src="site/i18n.js?v=202610300010"></script>
 <!-- Cloudflare Web Analytics: counts visits to this website without cookies; the TV app sends nothing to it. -->
 <script type='module' src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "6277e9947f4b43d3aec17fa0660c9f18"}'></script>
 </body>

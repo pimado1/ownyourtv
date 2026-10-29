@@ -38,7 +38,15 @@ a { color: var(--lime); text-underline-offset: 3px; }
 .lang { display: inline-flex; align-items: center; justify-content: center; line-height: 1; text-decoration: none; background: none; border: 1px solid var(--line); color: var(--paper); border-radius: 8px; padding: 6px 10px; font: 600 13px var(--body); cursor: pointer; }
 .lang:hover { border-color: var(--grey); }
 @media (max-width: 1000px) { .bar nav { gap: 18px; } .nav-gh { display: none; } }
-@media (max-width: 760px) { .bar nav { display: none; } .lang { margin-left: auto; } }
+.bar nav a[aria-current] { color: var(--paper); }
+/* On a phone the menu stays: a second row that scrolls sideways, under the logo. */
+@media (max-width: 760px) {
+  .bar .wrap { flex-wrap: wrap; height: auto; padding-top: 10px; row-gap: 6px; }
+  .bar nav { order: 3; width: 100%; margin: 0; gap: 18px; overflow-x: auto; scrollbar-width: none; padding-bottom: 10px; white-space: nowrap; }
+  .bar nav::-webkit-scrollbar { display: none; }
+  .bar nav a { font-size: 14px; }
+  .lang { margin-left: auto; }
+}
 
 /* Hero */
 .hero { position: relative; overflow: hidden; padding: 72px 0 56px; isolation: isolate; text-align: center; }
@@ -365,3 +373,12 @@ main { overflow-x: clip; }
 .note { color: var(--grey); font-size: 14px; }
 .way-more { color: var(--lime); font-weight: 700; text-decoration: none; }
 .way-more:hover { text-decoration: underline; }
+
+/* Install: the two ways first, as cards that lead on */
+.ways-top { margin: 8px 0 8px; }
+a.way { text-decoration: none; color: inherit; transition: border-color 0.2s, transform 0.2s; }
+a.way:hover, a.way:focus-visible { border-color: var(--lime); transform: translateY(-2px); }
+a.way .way-more { margin-top: 4px; }
+.steps-h { font: 700 24px var(--display); margin: 56px 0 24px; scroll-margin-top: 90px; }
+.ft-nav { display: flex; flex-wrap: wrap; gap: 6px 20px; }
+footer .wrap { align-items: flex-start; }
