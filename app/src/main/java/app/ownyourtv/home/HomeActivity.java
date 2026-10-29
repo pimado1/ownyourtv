@@ -74,7 +74,9 @@ public class HomeActivity extends Activity {
     private float u;
     private Typeface display, displayLight, text, textBold;
 
-    private SkyScene scene;
+    /** Two skies, one over the other: a new app colour is drawn once into the hidden one, which then fades. */
+    private SkyScene scene, sceneTop;
+    private final SkyScene[] skies = new SkyScene[2];
     private TextView greeting, clock, dateLine, focusName, focusHint, toast;
     private FrameLayout carousel;
     private final List<View> cards = new ArrayList<>();
@@ -118,7 +120,7 @@ public class HomeActivity extends Activity {
             updateMemory();
             refreshSpeaker();
             // The sky follows the hour (when not always night); it holds still in between.
-            scene.invalidate();
+            for (SkyScene sky : skies) sky.invalidate();
             if (weather != null && System.currentTimeMillis() - weatherAt > (reading == null ? Weather.RETRY_MS
                     : Weather.REFRESH_MS)) refreshWeather();
             main.postDelayed(this, 15_000);
@@ -160,7 +162,7 @@ public class HomeActivity extends Activity {
         }
         weather = Weather.from(this);
         setContentView(build());
-        scene.setAlwaysNight(HomePrefs.alwaysNight(this));
+        for (SkyScene sky : skies) sky.setAlwaysNight(HomePrefs.alwaysNight(this));
         loadDock();
         refreshInputs();
         if (weather != null) refreshWeather();
@@ -359,16 +361,22 @@ public class HomeActivity extends Activity {
     private View build() {
         FrameLayout root = new FrameLayout(this);
         root.setClipChildren(false);
-        scene = new SkyScene(this, text);
-        // Drawn at half resolution into its own layer and scaled up: soft gradients look the same, a quarter of the
-        // pixels to fill on every frame.
+        // Drawn at half resolution into their own layers and scaled up: soft gradients look the same, a quarter of
+        // the pixels to fill.
         int sw = getResources().getDisplayMetrics().widthPixels, sh = getResources().getDisplayMetrics().heightPixels;
-        scene.setLayerType(View.LAYER_TYPE_HARDWARE, null);
-        scene.setPivotX(0);
-        scene.setPivotY(0);
-        scene.setScaleX(2f);
-        scene.setScaleY(2f);
-        root.addView(scene, new FrameLayout.LayoutParams(sw / 2, sh / 2));
+        for (int i = 0; i < 2; i++) {
+            SkyScene sky = new SkyScene(this, text);
+            sky.setLayerType(View.LAYER_TYPE_HARDWARE, null);
+            sky.setPivotX(0);
+            sky.setPivotY(0);
+            sky.setScaleX(2f);
+            sky.setScaleY(2f);
+            root.addView(sky, new FrameLayout.LayoutParams(sw / 2, sh / 2));
+            skies[i] = sky;
+        }
+        scene = skies[0];
+        sceneTop = skies[1];
+        sceneTop.setAlpha(0f);
 
         greeting = label(textBold, 22, 0xD1FFFFFF);
         greeting.setLetterSpacing(0.27f);
@@ -881,6 +889,18 @@ public class HomeActivity extends Activity {
         return f;
     }
 
+    private int skyColor;
+
+    /** The new colour goes into whichever sky is hidden, which then fades in or the top one fades out. */
+    private void skyTo(int color) {
+        if (color == skyColor) return;
+        skyColor = color;
+        sceneTop.animate().cancel();
+        boolean topShown = sceneTop.getAlpha() >= 0.5f;
+        (topShown ? scene : sceneTop).setAccent(color);
+        sceneTop.animate().alpha(topShown ? 0f : 1f).setDuration(450).start();
+    }
+
     /**
      * Cover flow: the focused card faces the viewer, the others turn away and stack behind one another, each
      * further one smaller, dimmer and partly hidden by the one in front. Shadows and reflections move with them.
@@ -922,8 +942,7 @@ public class HomeActivity extends Activity {
             if (fg != null) fg.setAlpha(d == 0 ? 255 : 0);
         }
         int color = accent;
-        scene.setAccent(color);
-        scene.setFocusIndex(focus);
+        skyTo(color);
         memRing.setColor(color);
         resumeBar.setBackground(round(color, 3, 0, 0));
         focusName.setShadowLayer(px(8), 0, 0, (color & 0x00FFFFFF) | 0x99000000);
@@ -1055,7 +1074,7 @@ public class HomeActivity extends Activity {
                 int kind = r.fog() ? SkyScene.WEATHER_FOG : r.rain() ? SkyScene.WEATHER_RAIN
                         : r.snow() ? SkyScene.WEATHER_SNOW : SkyScene.WEATHER_CLEAR;
                 weatherIcon.setKind(glyphFor(r.code, r.day));
-                scene.setWeather(kind, r.sunriseHour, r.sunsetHour);
+                for (SkyScene sky : skies) sky.setWeather(kind, r.sunriseHour, r.sunsetHour);
                 updateClock();
             });
         });
@@ -1118,7 +1137,7 @@ public class HomeActivity extends Activity {
 
     private void toggleSoir() {
         soir = !soir;
-        scene.setDimmed(soir);
+        for (SkyScene sky : skies) sky.setDimmed(soir);
         soirLabel.setText(getString(soir ? R.string.h_tonight_on : R.string.h_tonight));
         soirPill.setBackground(soir ? activeGlass() : glass(32));
         if (!soir) {
@@ -1513,7 +1532,7 @@ public class HomeActivity extends Activity {
     @Override
     protected void onResume() {
         super.onResume();
-        scene.setRunning(true);
+        for (SkyScene sky : skies) sky.setRunning(true);
         if (needsOnboarding() && (popup == null || !popup.isShowing())) main.post(this::showOnboarding);
         if (refreshAfterUninstall || !HomeData.dock(this).equals(dockLoaded)) {
             // An uninstalled dock app is skipped by loadDock; one still installed comes back unchanged.
@@ -1542,7 +1561,7 @@ public class HomeActivity extends Activity {
     @Override
     protected void onPause() {
         super.onPause();
-        scene.setRunning(false);
+        for (SkyScene sky : skies) sky.setRunning(false);
         main.removeCallbacks(tick);
         main.removeCallbacks(slowTick);
         main.removeCallbacks(markShown);

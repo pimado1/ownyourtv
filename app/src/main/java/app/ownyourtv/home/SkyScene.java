@@ -14,7 +14,6 @@ import android.graphics.RadialGradient;
 import android.graphics.Shader;
 import android.graphics.Typeface;
 import android.os.Build;
-import android.os.SystemClock;
 import android.view.View;
 
 import java.util.Calendar;
@@ -22,8 +21,8 @@ import java.util.Random;
 
 /**
  * The home screen's backdrop: the sky by the time of day, still stars, an aurora and a pool of light in the focused
- * app's colour, and three hills in parallax. It holds still: frames are only drawn while the colour or the hills move
- * after a press on the remote, so an idle home screen costs the TV nothing.
+ * app's colour, over three hills. It is drawn once per colour and then holds still: the home screen fades between
+ * two of them when the focused app changes, so moving through the dock redraws nothing.
  */
 final class SkyScene extends View {
     static final int WEATHER_CLEAR = 0, WEATHER_FOG = 1, WEATHER_RAIN = 2, WEATHER_SNOW = 3;
@@ -35,9 +34,7 @@ final class SkyScene extends View {
     private final Path hillFar = new Path(), hillMid = new Path(), hillNear = new Path();
     private final RadialGradient soft;
 
-    private int accent = 0xFFFF2D55, accentFrom = accent, accentTo = accent;
-    private long accentAt;
-    private float parallax, parallaxTarget;
+    private int accent = 0xFFFF2D55;
     private float dim, dimTarget;
     private int weather = WEATHER_CLEAR;
     private float sunrise = 8f, sunset = 17.5f;
@@ -84,15 +81,8 @@ final class SkyScene extends View {
     }
 
     void setAccent(int color) {
-        if (color == accentTo) return;
-        accentFrom = accent;
-        accentTo = color;
-        accentAt = SystemClock.uptimeMillis();
-        invalidate();
-    }
-
-    void setFocusIndex(int index) {
-        parallaxTarget = index;
+        if (color == accent) return;
+        accent = color;
         invalidate();
     }
 
@@ -152,16 +142,11 @@ final class SkyScene extends View {
 
     @Override
     protected void onDraw(Canvas canvas) {
-        long now = SystemClock.uptimeMillis();
         float u = getWidth() / W;
         canvas.save();
         canvas.scale(u, getHeight() / H);
         ensureSky();
 
-        float a = Math.min(1f, (now - accentAt) / 900f);
-        accent = lerpColor(accentFrom, accentTo, ease(a));
-        parallax += (parallaxTarget - parallax) * 0.14f;
-        if (Math.abs(parallaxTarget - parallax) < 0.002f) parallax = parallaxTarget;
         dim += (dimTarget - dim) * 0.1f;
         if (Math.abs(dimTarget - dim) < 0.002f) dim = dimTarget;
 
@@ -177,8 +162,8 @@ final class SkyScene extends View {
         drawScrims(canvas);
         canvas.restore();
 
-        // Only while something is still moving; the next press on the remote starts it again.
-        if (running && (a < 1f || parallax != parallaxTarget || dim != dimTarget)) postInvalidateOnAnimation();
+        // Only while "Tonight" dims the sky; otherwise one frame per change.
+        if (running && dim != dimTarget) postInvalidateOnAnimation();
     }
 
     private void drawStars(Canvas c) {
@@ -212,12 +197,11 @@ final class SkyScene extends View {
 
     private void drawHills(Canvas c) {
         paint.setShader(null);
-        float[] speed = {10, 24, 44};
         float[] top = {H - 520, H - 420, H - 300};
         Path[] p = {hillFar, hillMid, hillNear};
         for (int i = 0; i < 3; i++) {
             c.save();
-            c.translate(-90 - parallax * speed[i], top[i]);
+            c.translate(-90, top[i]);
             paint.setColor(hills[i]);
             c.drawPath(p[i], paint);
             c.restore();
@@ -275,10 +259,6 @@ final class SkyScene extends View {
     private static void setScreen(Paint p, boolean on) {
         if (Build.VERSION.SDK_INT >= 29) p.setBlendMode(on ? BlendMode.SCREEN : null);
         else p.setXfermode(on ? new PorterDuffXfermode(PorterDuff.Mode.SCREEN) : null);
-    }
-
-    private static float ease(float x) {
-        return 1 - (float) Math.pow(1 - x, 3);
     }
 
     static int lerpColor(int a, int b, float f) {
