@@ -145,13 +145,20 @@
   var em = document.querySelector(".hero h1 em");
   if (em && !still) {
     var target = em.textContent, glyphs = "!<>-_\\/[]{}=+*^?#01", start = null;
+    // Scrambled glyphs are wider than the letters: hold the line so a long title ("Elle est à toi.") never wraps and shakes the page.
+    var hold = function () {
+      var lh = parseFloat(getComputedStyle(em).lineHeight) || em.offsetHeight;
+      em.style.height = em.offsetHeight + "px";
+      if (em.offsetHeight < lh * 1.5) em.style.whiteSpace = "nowrap";
+    };
     var frame = function (t) {
+      if (start === null) hold();
       if (start === null) start = t;
       var p = Math.min(1, (t - start) / 1100), done = Math.floor(p * target.length), out = "";
       for (var k = 0; k < target.length; k++)
         out += k < done || target[k] === " " ? target[k] : glyphs[(Math.random() * glyphs.length) | 0];
       em.textContent = out;
-      if (p < 1) requestAnimationFrame(frame); else em.textContent = target;
+      if (p < 1) requestAnimationFrame(frame); else { em.textContent = target; em.style.height = em.style.whiteSpace = ""; }
     };
     setTimeout(function () { requestAnimationFrame(frame); }, 1300);
   }
