@@ -145,6 +145,8 @@ T = {
         "owners_link": "The list on GitHub →", "back": "← Back to the home page", "other": "Other brands",
         "faq": "More questions", "faq_link": "Read the questions on the home page →",
         "pkg": "Package",
+        "nav": ["Install", "From a computer", "My TV", "Questions", "Contact"], "cta": "Install",
+        "ft": ["Samsung, LG, Roku", "Privacy", "Credits", "Download", "Free and open source, MIT licence"],
     },
     "fr": {
         "title": "Enlever les pubs d'une TV {b} · OwnYourTV",
@@ -158,6 +160,8 @@ T = {
         "owners_link": "La liste sur GitHub →", "back": "← Retour à l'accueil", "other": "Autres marques",
         "faq": "D'autres questions", "faq_link": "Lire les questions de l'accueil →",
         "pkg": "Paquet",
+        "nav": ["Installer", "Depuis un ordinateur", "Ma TV", "Questions", "Contact"], "cta": "Installer",
+        "ft": ["Samsung, LG, Roku", "Confidentialité", "Crédits", "Télécharger", "Gratuit et open source, licence MIT"],
     },
 }
 
@@ -165,6 +169,7 @@ T = {
 def page(lang, key, stamp):
     b = BRANDS[key]
     t = {k: (v.format(b=b["name"], c=CODE) if isinstance(v, str) else [s.format(c=CODE) for s in v]) for k, v in T[lang].items()}
+    nav, ft = T[lang]["nav"], T[lang]["ft"]
     up = "../" if lang == "en" else "../../"
     home = up if lang == "en" else "../"
     other_lang = ("fr", "Français", "FR", "../fr/tv/%s.html" % key) if lang == "en" else ("en", "English", "EN", "../../tv/%s.html" % key)
@@ -199,8 +204,16 @@ def page(lang, key, stamp):
 
 <header class="bar">
   <div class="wrap">
-    <a class="brand" href="{home}" aria-label="OwnYourTV"><span>Own<b>Your</b>TV</span></a>
-    <nav><a href="{home}">{back}</a></nav>
+    <a class="brand" href="{home}" aria-label="OwnYourTV"><svg viewBox="0 0 32 32" aria-hidden="true"><rect x="3" y="12" width="26" height="14" rx="4" fill="#c6f432"/><path d="M11.5 12V8a4.5 4.5 0 0 1 9 0v1" fill="none" stroke="#f4f4f0" stroke-width="3" stroke-linecap="round"/><circle cx="16" cy="17.5" r="2" fill="#0b0d12"/><path d="M15.2 18.5h1.6l.5 4h-2.6z" fill="#0b0d12"/><rect x="11" y="28" width="10" height="2" rx="1" fill="#f4f4f0"/></svg><span>Own<b>Your</b>TV</span></a>
+    <nav>
+      <a href="{home}#how">{nav0}</a>
+      <a href="{home}computer.html">{nav1}</a>
+      <a href="{home}#tvs">{nav2}</a>
+      <a href="{home}#faq">{nav3}</a>
+      <a href="{home}contact.html">{nav4}</a>
+      <a class="nav-gh" href="https://github.com/pimado1/ownyourtv">GitHub</a>
+    </nav>
+    <a class="btn btn-lime bar-cta" href="{home}#how">{cta}</a>
     <a class="lang" id="lang" href="{ol3}" hreflang="{ol0}" lang="{ol0}" aria-label="{ol1}">{ol2}</a>
   </div>
 </header>
@@ -239,20 +252,31 @@ def page(lang, key, stamp):
 <footer>
   <div class="wrap">
     <a class="brand" href="{home}"><span>Own<b>Your</b>TV</span></a>
-    <a href="https://github.com/pimado1/ownyourtv">GitHub</a>
-    <a href="{home}contact.html">Contact</a>
-    <a href="{home}privacy.html">{privacy}</a>
+    <nav class="ft-nav">
+      <a href="{home}#how">{nav0}</a>
+      <a href="{home}computer.html">{nav1}</a>
+      <a href="{home}#tvs">{nav2}</a>
+      <a href="{home}other-tvs.html">{ft0}</a>
+      <a href="{home}#faq">{nav3}</a>
+      <a href="{home}contact.html">{nav4}</a>
+      <a href="{home}privacy.html">{ft1}</a>
+      <a href="https://github.com/pimado1/ownyourtv/blob/main/NOTICE.md">{ft2}</a>
+      <a href="https://github.com/pimado1/ownyourtv/releases/latest">{ft3}</a>
+      <a href="https://github.com/pimado1/ownyourtv">GitHub</a>
+    </nav>
+    <span>{ft4}</span>
   </div>
 </footer>
 <script src="{up}site/i18n.js?v={stamp}"></script>
+<script src="{up}site/effects.js?v={stamp}"></script>
 <!-- Cloudflare Web Analytics: counts visits to this website without cookies; the TV app sends nothing to it. -->
 <script type='module' src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{{"token": "6277e9947f4b43d3aec17fa0660c9f18"}}'></script>
 </body>
 </html>
 """.format(lang=lang, canon=canon, site=SITE, path=path, up=up, home=home, stamp=stamp, ol0=other_lang[0], ol1=other_lang[1],
            ol2=other_lang[2], ol3=other_lang[3], code=CODE, apps=apps, notes=notes, steps=steps, others=others, issues=issues,
-           privacy="Privacy" if lang == "en" else "Confidentialité", other_label=t["other"] + (":" if lang == "en" else " :"),
-           **{k: (html.escape(v, quote=True) if k in ("title", "desc") else v) for k, v in t.items() if k != "steps"})
+           **{"nav%d" % i: v for i, v in enumerate(nav)}, **{"ft%d" % i: v for i, v in enumerate(ft)}, other_label=t["other"] + (":" if lang == "en" else " :"),
+           **{k: (html.escape(v, quote=True) if k in ("title", "desc") else v) for k, v in t.items() if k not in ("steps", "nav", "ft")})
 
 
 def main():
