@@ -132,3 +132,36 @@
     });
   }
 })();
+
+// Terminal touches: the prompt types itself, "Own it." decodes, cards light up under the pointer.
+(function () {
+  var still = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var typed = document.querySelector(".typed[data-type]");
+  if (typed) {
+    var text = typed.getAttribute("data-type"), i = 0;
+    if (still) typed.textContent = text;
+    else setTimeout(function tick() { typed.textContent = text.slice(0, ++i); if (i < text.length) setTimeout(tick, 45 + Math.random() * 50); }, 350);
+  }
+  var em = document.querySelector(".hero h1 em");
+  if (em && !still) {
+    var target = em.textContent, glyphs = "!<>-_\\/[]{}=+*^?#01", start = null;
+    var frame = function (t) {
+      if (start === null) start = t;
+      var p = Math.min(1, (t - start) / 1100), done = Math.floor(p * target.length), out = "";
+      for (var k = 0; k < target.length; k++)
+        out += k < done || target[k] === " " ? target[k] : glyphs[(Math.random() * glyphs.length) | 0];
+      em.textContent = out;
+      if (p < 1) requestAnimationFrame(frame); else em.textContent = target;
+    };
+    setTimeout(function () { requestAnimationFrame(frame); }, 1300);
+  }
+  if (window.matchMedia("(hover: hover)").matches) {
+    document.querySelectorAll(".way, .prompt-card, .safe > div, .contact-card, .cmd").forEach(function (el) {
+      el.addEventListener("pointermove", function (e) {
+        var r = el.getBoundingClientRect();
+        el.style.setProperty("--mx", e.clientX - r.left + "px");
+        el.style.setProperty("--my", e.clientY - r.top + "px");
+      });
+    });
+  }
+})();

@@ -19,7 +19,7 @@
 <meta name="theme-color" content="#0b0d12">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect x='3' y='11' width='26' height='14' rx='4' fill='%23c6f432'/%3E%3Cpath d='M12 11V7.5a4 4 0 0 1 8 0' fill='none' stroke='%23f4f4f0' stroke-width='3' stroke-linecap='round'/%3E%3C/svg%3E">
 <link rel="apple-touch-icon" href="../site/img/apple-touch-icon.png">
-<link rel="stylesheet" href="../site/style.css?v=202610300010">
+<link rel="stylesheet" href="../site/style.css?v=202610300917">
 </head>
 <body>
 
@@ -46,31 +46,34 @@
   <div class="hero">
     <canvas class="sky" id="sky" aria-hidden="true"></canvas>
     <div class="aurora" aria-hidden="true"><span></span><span></span></div>
+    <div class="grid-floor" aria-hidden="true"></div>
     <div class="wrap hero-grid">
       <div class="hero-text" data-reveal>
+        <p class="boot" aria-hidden="true"><span class="ps">~/tv $</span> <span class="typed" data-type="ownyourtv --take-back"></span><span class="cursor"></span></p>
         <h1 data-i18n="h1">Tu l'as payée. <em>Elle est à toi.</em></h1>
         <p class="lead" data-i18n="lead">Coupe les pubs et le pistage installés d'usine sur ta TV Android TV ou Google TV, et donne-lui un accueil qui te ressemble. À la télécommande, sans ordinateur.</p>
-      </div>
-      <div class="hero-side" data-reveal style="--d: 120ms">
-        <div class="code">
-          <small data-i18n="code_label">Sur ta TV, dans l'appli Downloader, tape</small>
-          <div class="code-row">
-            <span class="code-num" aria-label="8225348">8225348</span>
-            <button class="btn btn-ghost" type="button" data-copy data-i18n="copy">Copier</button>
+        <ul class="nos" aria-label="What you need">
+          <li class="no" data-i18n="no_pc">Pas d'ordinateur</li>
+          <li class="no" data-i18n="no_phone">Pas de téléphone</li>
+          <li class="no" data-i18n="no_ai">Pas d'IA</li>
+          <li class="yes" data-i18n="yes_remote">Juste la télécommande</li>
+        </ul>
+        <div class="code win">
+          <div class="win-bar" aria-hidden="true"><i></i><i></i><i></i><span>downloader://</span></div>
+          <div class="win-body">
+            <small data-i18n="code_label">Sur ta TV, dans l'appli Downloader, tape</small>
+            <div class="code-row">
+              <span class="code-num" aria-label="8225348">8225348</span>
+              <button class="btn btn-ghost" type="button" data-copy data-i18n="copy">Copier</button>
+            </div>
           </div>
         </div>
         <div class="hero-links">
           <a class="btn btn-lime" href="#how" data-i18n="cta_how">Voir les 3 étapes</a>
           <a class="btn btn-ghost" href="computer.html" data-i18n="cta_pc">Depuis un ordinateur</a>
         </div>
+        <a class="check-link" href="#tvs" data-i18n="cta_check">Ma TV est-elle reconnue ? →</a>
       </div>
-      <a class="check-link" href="#tvs" data-i18n="cta_check" data-reveal style="--d: 150ms">Ma TV est-elle reconnue ? →</a>
-      <ul class="nos" aria-label="What you need" data-reveal style="--d: 180ms">
-        <li class="no" data-i18n="no_pc">Pas d'ordinateur</li>
-        <li class="no" data-i18n="no_phone">Pas de téléphone</li>
-        <li class="no" data-i18n="no_ai">Pas d'IA</li>
-        <li class="yes" data-i18n="yes_remote">Juste la télécommande</li>
-      </ul>
       <figure class="ba" data-reveal style="--d: 220ms">
         <div class="compare" id="compare" style="--pos: 50%">
           <img src="../site/img/after.webp" draggable="false" width="1600" height="900" alt="Après : l'accueil OwnYourTV avec un ciel de nuit, la météo et les applis en cartes 3D." data-i18n-alt="after_alt">
@@ -346,8 +349,8 @@
   </div>
 </footer>
 
-<script src="../site/i18n.js?v=202610300010"></script>
-<script src="../site/effects.js?v=202610300010"></script>
+<script src="../site/i18n.js?v=202610300917"></script>
+<script src="../site/effects.js?v=202610300917"></script>
 <script>
   // The TVs owners reported from the app: one GitHub issue per model, labelled with what happened.
   (function () {
